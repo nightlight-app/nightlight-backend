@@ -1,24 +1,29 @@
-import express from "express";
-import cors from "cors";
+import express from 'express';
+import cors from 'cors';
 
-import { connectMongoDB } from "./config/mongodb";
+import { connectMongoDB } from './config/mongodb';
 
-import router from './routes/router'
+import router from './routes/router';
 
-const PORT = 6060;
+// const PORT = 6060;
 
-const app = express();
+// app.listen(PORT, () => {
+//   console.log(`Express server is listening on port ${PORT}!`);
+// });
 
-connectMongoDB(); // Connect to MongoDB
+const createServer = () => {
+  const app = express();
 
-// Middleware
-app.use(express.json()); // Parse JSON bodies
-app.use(cors()); // Enable CORS
+  //connectMongoDB(); // Connect to MongoDB
 
-// Routers
-app.use("/", router);
+  // Middleware
+  app.use(express.json()); // Parse JSON bodies
+  //app.use(cors()); // Enable CORS
 
+  // Routers
+  app.use('/', router);
 
-app.listen(PORT, () => {
-    console.log(`Express server is listening on port ${PORT}!`);
-});
+  return app;
+};
+
+export default createServer;
