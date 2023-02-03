@@ -2,18 +2,17 @@ name: Backend Testing
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
-
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [ 19.x ]
+        node-version: [19.x]
 
     steps:
       - uses: actions/checkout@v3
