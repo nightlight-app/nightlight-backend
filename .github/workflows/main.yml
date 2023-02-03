@@ -1,3 +1,4 @@
+# This workflow will run the Jest tests
 name: Backend Testing
 
 on:
@@ -21,5 +22,5 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
-      - run: npm run build --if-present
+      - run: npm start
       - run: npm test
