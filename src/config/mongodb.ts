@@ -1,6 +1,6 @@
 import mongoose, { ConnectOptions } from 'mongoose';
 import dotenv from 'dotenv';
-dotenv.config({ path: '../../' });
+dotenv.config();
 
 export const connectMongoDB = async () => {
   try {
@@ -9,7 +9,6 @@ export const connectMongoDB = async () => {
     mongoose.connect(process.env.MONGODB_URI!, {
       useUnifiedTopology: true,
       useNewUrlParser: true,
-      useCreateIndex: true,
     } as ConnectOptions);
   } catch (err: any) {
     console.error(err.message);
