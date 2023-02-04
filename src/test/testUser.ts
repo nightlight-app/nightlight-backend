@@ -1,4 +1,6 @@
-export const testUser = {
+import { User } from '../interfaces/user';
+
+const testUser = {
   firebaseUid: 'THISWORKEDOMG',
   imgUrlProfileSmall: 'www.smallProfileImage.com',
   imgUrlProfileLarge: 'www.largeProfileImage.com',
@@ -13,4 +15,6 @@ export const testUser = {
     latitude: '12.8758393',
     longitude: '95.7584833',
   },
-};
+} as User;
+
+export default testUser;

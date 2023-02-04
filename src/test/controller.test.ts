@@ -1,6 +1,6 @@
 import mongoose, { ConnectOptions } from 'mongoose';
 import createServer from '../server';
-import { createTestUser } from './testData';
+import testUser from './testUser';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 
@@ -28,13 +28,11 @@ beforeEach(async () => {
 });
 
 describe('testing user actions', () => {
-  const userData = createTestUser();
-
   it('POST /user', done => {
     chai
       .request(server)
       .post('/user')
-      .send({ title: 'Test Title', body: userData })
+      .send({ title: 'Test Title', body: testUser })
       .then(res => {
         expect(res).to.have.status(201);
         done();
