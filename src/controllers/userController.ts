@@ -1,5 +1,6 @@
 /** source/controllers/posts.ts */
 import { Request, Response } from 'express';
+import Group from '../models/Group';
 import User from '../models/User';
 
 export const createUser = async (req: Request, res: Response) => {
@@ -8,6 +9,7 @@ export const createUser = async (req: Request, res: Response) => {
   try {
     await newUser.save();
   } catch (error: any) {
+    console.log(error);
     return res.status(500).send({ message: error.message });
   } finally {
     return res
@@ -30,7 +32,6 @@ export const getUser = async (req: Request, res: Response) => {
 };
 
 export const deleteUser = async (req: Request, res: Response) => {
-  let targetUser;
   try {
     await User.deleteOne({ _id: req.params.userId });
   } catch (error: any) {

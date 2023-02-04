@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
   firebaseUid: {
@@ -40,6 +40,10 @@ const UserSchema = new mongoose.Schema({
   friends: {
     type: [String],
     required: true,
+  },
+  currentGroup: {
+    type: Schema.Types.ObjectId,
+    ref: 'Group',
   },
   currentLocation: {
     latitude: {

@@ -1,4 +1,8 @@
+import mongoose from 'mongoose';
+import { Group } from './group';
+
 export interface User {
+  _id?: string;
   firebaseUid: string;
   imgUrlProfileSmall: string;
   imgUrlProfileLarge: string;
@@ -8,7 +12,8 @@ export interface User {
   email: string;
   phone: string;
   birthday: Date;
-  friends: string[];
+  currentGroup?: any;
+  friends: any[];
   currentLocation: {
     latitude: string;
     longitude: string;

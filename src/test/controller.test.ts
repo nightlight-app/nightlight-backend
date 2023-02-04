@@ -1,9 +1,9 @@
 import mongoose, { ConnectOptions } from 'mongoose';
 import createServer from '../server';
-import testUser from './testUser';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import exp from 'constants';
+import { testGroup, testUser } from './testData';
 
 require('dotenv').config();
 
@@ -29,6 +29,17 @@ const userKeys = [
   'phone',
 ];
 
+const groupKeys = [
+  '__v',
+  '_id',
+  'name',
+  'members',
+  'invitedMembers',
+  'creationTime',
+  'expirationDate',
+  'returnTime',
+];
+
 const connectToMongo = async (): Promise<void> => {
   try {
     await mongoose.connect(process.env.MONGODB_URI || '', {
@@ -44,6 +55,7 @@ beforeEach(async () => {
   server = app.listen(6060);
 });
 
+/* USER TESTS */
 describe('testing user actions', () => {
   let userId: string;
 
@@ -83,6 +95,29 @@ describe('testing user actions', () => {
         done();
       });
   });
+});
+
+/* GROUP TESTS */
+describe('testing group actions', () => {
+  let groupId: string;
+
+  it('POST /group', done => {
+    chai
+      .request(server)
+      .post('/group')
+      .send(testGroup)
+      .then(res => {
+        groupId = res.body.group._id;
+        expect(res).to.have.status(201);
+        expect(res.body.group).to.have.keys(groupKeys);
+        done();
+      });
+  });
+});
+
+/* VENUE TESTS */
+describe('testing venue actions', () => {
+  let venueId: string;
 });
 
 afterEach(async () => {
