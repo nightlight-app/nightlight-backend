@@ -1,8 +1,8 @@
 /** source/controllers/posts.ts */
 import { Request, Response } from 'express';
-import User from '../models/model';
+import User from '../models/User';
 
-export const postUser = async (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response) => {
   try {
     // Create a new example
     console.log('Creating a new example...');
@@ -10,7 +10,7 @@ export const postUser = async (req: Request, res: Response) => {
     console.log('HERE: ' + req.body.body);
 
     const userInstance = new User(req.body.body);
-    userInstance.save();
+    await userInstance.save();
   } catch (error: any) {
     // Error
     console.error(error.message);

@@ -1,8 +1,8 @@
 /** source/routes/posts.ts */
 import express from 'express';
-import { postUser } from '../controllers/controller';
+import { createUser } from '../controllers/controller';
 const router = express.Router();
 
-router.post('/user', postUser);
+router.post('/user', createUser);
 
 export = router;
