@@ -1,30 +1,24 @@
 /** source/controllers/posts.ts */
-import { Request, Response, NextFunction } from 'express';
-import Example from '../models/model'
+import { Request, Response } from 'express';
+import User from '../models/model';
 
-interface Example {
-  message: string
-}
-
-
-export const addMessage = async (req: Request, res: Response) => {
+export const postUser = async (req: Request, res: Response) => {
   try {
-      // Create a new example
-      console.log("Creating a new example...");
+    // Create a new example
+    console.log('Creating a new example...');
 
-      console.log("HERE: " + req.body.body)
+    console.log('HERE: ' + req.body.body);
 
-      const exampleInstance = new Example({message: req.body.body});
-      exampleInstance.save();
-
+    const userInstance = new User(req.body.body);
+    userInstance.save();
   } catch (error: any) {
-      // Error
-      console.error(error.message);
-      return res.status(500).send({ message: error.message });
+    // Error
+    console.error(error.message);
+    return res.status(500).send({ message: error.message });
   } finally {
-      // Success
-      const successMessage = "Successfully created a new example!";
-      console.log(successMessage);
-      return res.status(201).send({ message: "Congrats ass hole" });
+    // Success
+    const successMessage = 'Successfully created a new example!';
+    console.log(successMessage);
+    return res.status(201).send({ message: 'Congrats ass hole' });
   }
 };

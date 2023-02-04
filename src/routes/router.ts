@@ -1,9 +1,8 @@
 /** source/routes/posts.ts */
 import express from 'express';
-import { addMessage } from '../controllers/controller';
+import { postUser } from '../controllers/controller';
 const router = express.Router();
 
-
-router.post('/posts', addMessage);
+router.post('/user', postUser);
 
 export = router;
