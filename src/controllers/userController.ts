@@ -23,6 +23,7 @@ export const getUser = async (req: Request, res: Response) => {
   try {
     targetUser = await User.findById(req.params.userId);
   } catch (error: any) {
+    console.log(error);
     return res.status(500).send({ message: error.message });
   } finally {
     return res
@@ -35,6 +36,7 @@ export const deleteUser = async (req: Request, res: Response) => {
   try {
     await User.deleteOne({ _id: req.params.userId });
   } catch (error: any) {
+    console.log(error);
     return res.status(500).send({ message: error.message });
   } finally {
     return res.status(200).send({ message: 'Successfully delete user!' });

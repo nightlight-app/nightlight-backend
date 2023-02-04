@@ -72,7 +72,7 @@ describe('testing user actions', () => {
       });
   });
 
-  it('GET /user', done => {
+  it('GET /user/{userId}', done => {
     chai
       .request(server)
       .get('/user/' + userId)
@@ -84,7 +84,7 @@ describe('testing user actions', () => {
       });
   });
 
-  it('DELETE /user', done => {
+  it('DELETE /user/{userId}', done => {
     chai
       .request(server)
       .get('/user/' + userId)
@@ -109,6 +109,18 @@ describe('testing group actions', () => {
       .then(res => {
         groupId = res.body.group._id;
         expect(res).to.have.status(201);
+        expect(res.body.group).to.have.keys(groupKeys);
+        done();
+      });
+  });
+
+  it('GET /group/{groupId}', done => {
+    chai
+      .request(server)
+      .get('/group/' + groupId)
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
         expect(res.body.group).to.have.keys(groupKeys);
         done();
       });
