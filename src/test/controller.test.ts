@@ -40,7 +40,9 @@ const groupKeys = [
   'returnTime',
 ];
 
-const venueKeys = ['__v', '_id', 'name', 'address', 'location'];
+const venueKeysPost = ['__v', '_id', 'name', 'address', 'location'];
+
+const venueKeysGet = ['__v', '_id', 'name', 'address', 'location', 'reactions'];
 
 const connectToMongo = async (): Promise<void> => {
   try {
@@ -139,20 +141,7 @@ describe('testing venue actions', () => {
       .then(res => {
         venueId = res.body.venue._id;
         expect(res).to.have.status(201);
-        expect(res.body.venue).to.have.keys(venueKeys);
-        done();
-      });
-  });
-
-  it('POST /reaction', done => {
-    const testReaction = createTestReaction(userId, venueId);
-
-    chai
-      .request(server)
-      .post('/reaction')
-      .send(testReaction)
-      .then(res => {
-        expect(res).to.have.status(201);
+        expect(res.body.venue).to.have.keys(venueKeysPost);
         done();
       });
   });
@@ -164,7 +153,7 @@ describe('testing venue actions', () => {
       .send()
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.venue).to.have.keys(venueKeys);
+        expect(res.body.venue).to.have.keys(venueKeysGet);
         done();
       });
   });
@@ -183,7 +172,7 @@ describe('testing venue actions', () => {
 
 /* REACTION TESTS */
 
-describe('testing venue actions', () => {
+describe('testing reaction actions', () => {
   let userId: string;
 
   it('POST /user for reaction test', done => {
@@ -209,7 +198,7 @@ describe('testing venue actions', () => {
       .then(res => {
         venueId = res.body.venue._id;
         expect(res).to.have.status(201);
-        expect(res.body.venue).to.have.keys(venueKeys);
+        expect(res.body.venue).to.have.keys(venueKeysPost);
         done();
       });
   });
@@ -223,6 +212,18 @@ describe('testing venue actions', () => {
       .send(testReaction)
       .then(res => {
         expect(res).to.have.status(201);
+        done();
+      });
+  });
+
+  it('GET /venue/{venueId}', done => {
+    chai
+      .request(server)
+      .get('/venue/' + venueId)
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.venue).to.have.keys(venueKeysGet);
         done();
       });
   });

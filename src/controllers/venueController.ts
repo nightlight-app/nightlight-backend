@@ -25,7 +25,8 @@ export const getVenue = async (req: Request, res: Response) => {
   try {
     let unfinishedVenue = await Venue.findById(req.params.venueId);
     let targetReactions = await Reaction.find({ venueId: req.params.venueId });
-    // todo
+    // REFACTOR BELOW
+    // this works but it needs to be more efficient
 
     let shapedReactions = {
       '🔥': 0,
@@ -35,7 +36,7 @@ export const getVenue = async (req: Request, res: Response) => {
       '💩': 0,
     };
 
-    targetReactions.forEach(reaction => {
+    targetReactions?.forEach(reaction => {
       switch (reaction.emoji) {
         case '🔥':
           shapedReactions['🔥'] += 1;
@@ -56,10 +57,21 @@ export const getVenue = async (req: Request, res: Response) => {
         default:
           break;
       }
-
-      console.log(shapedReactions);
     });
+
+    targetVenue = {
+      __v: unfinishedVenue?.__v,
+      _id: unfinishedVenue?._id,
+      name: unfinishedVenue?.name,
+      address: unfinishedVenue?.address,
+      reactions: shapedReactions,
+      location: {
+        latitude: unfinishedVenue?.location?.latitude,
+        longitude: unfinishedVenue?.location?.longitude,
+      },
+    };
   } catch (error: any) {
+    console.log(error);
     return res.status(500).send({ message: error.message });
   } finally {
     return res
