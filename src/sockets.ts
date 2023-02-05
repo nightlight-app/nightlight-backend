@@ -1,8 +1,12 @@
 import { Server, Socket } from 'socket.io';
 
-interface Group {
-  id: string;
-  members: string[];
+interface LocationUpdateData {
+  groupId: string;
+  userId: string;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
 }
 
 export class LocationService {
@@ -29,7 +33,7 @@ export class LocationService {
       });
 
       // listen for the locationUpdate event
-      socket.on('locationUpdate', arg => {
+      socket.on('locationUpdate', (arg: LocationUpdateData) => {
         const { groupId, userId, location } = arg;
         console.log(
           `[${groupId}] [${userId}] [${location.latitude}, ${location.longitude}]`
