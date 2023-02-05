@@ -5,15 +5,15 @@ export interface Venue {
   _id?: string;
   name: string;
   address: string;
-  location: {
-    latitude: string;
-    longitude: string;
+  reactions: {
+    '🔥': number;
+    '🛡️': number;
+    '🎉': number;
+    '⚠️': number;
+    '💩': number;
   };
-  reaction: {
-    '🔥': User[];
-    '⛨': User[];
-    '🎉': User[];
-    '⚠️': User[];
-    '💩': User[];
+  location: {
+    latitude: number;
+    longitude: number;
   };
 }

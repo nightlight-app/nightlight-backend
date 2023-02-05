@@ -15,7 +15,7 @@ export interface User {
   currentGroup?: any;
   friends: any[];
   currentLocation: {
-    latitude: string;
-    longitude: string;
+    latitude: number;
+    longitude: number;
   };
 }

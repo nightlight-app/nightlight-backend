@@ -13,13 +13,6 @@ const VenueSchema = new mongoose.Schema({
     latitude: Number,
     longitude: Number,
   },
-  reactions: {
-    '🔥': [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    '⛨': [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    '🎉': [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    '⚠️': [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    '💩': [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  },
 });
 
 const Venue = mongoose.model('Venue', VenueSchema);

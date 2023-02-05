@@ -1,6 +1,8 @@
 import { ObjectId } from 'mongodb';
 import { Group } from '../interfaces/group';
+import { Reaction } from '../interfaces/reaction';
 import { User } from '../interfaces/user';
+import { Venue } from '../interfaces/venue';
 
 export const testUser = {
   firebaseUid: 'THISWORKEDOMG',
@@ -15,8 +17,8 @@ export const testUser = {
   currentGroup: undefined,
   friends: [new ObjectId(4), new ObjectId(6564)],
   currentLocation: {
-    latitude: '12.8758393',
-    longitude: '95.7584833',
+    latitude: 12.8758393,
+    longitude: 95.7584833,
   },
 } as User;
 
@@ -28,3 +30,20 @@ export const testGroup = {
   expirationDate: new Date(),
   returnTime: new Date(),
 } as Group;
+
+export const testVenue = {
+  name: 'The Last Bar',
+  address: '123 Broadway, Just Broadway',
+  location: {
+    latitude: 12.2343234,
+    longitude: 32.456543,
+  },
+} as Venue;
+
+export const createTestReaction = (userId: string, venueId: string) => {
+  return {
+    userId,
+    venueId,
+    emoji: '🔥',
+  } as Reaction;
+};
