@@ -3,7 +3,13 @@ import createServer from '../server';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import exp from 'constants';
-import { createTestReaction, testGroup, testUser, testVenue } from './testData';
+import {
+  createSecondTestReaction,
+  createTestReaction,
+  testGroup,
+  testUser,
+  testVenue,
+} from './testData';
 
 require('dotenv').config();
 
@@ -205,6 +211,19 @@ describe('testing reaction actions', () => {
 
   it('POST /reaction', done => {
     const testReaction = createTestReaction(userId, venueId);
+
+    chai
+      .request(server)
+      .post('/reaction')
+      .send(testReaction)
+      .then(res => {
+        expect(res).to.have.status(201);
+        done();
+      });
+  });
+
+  it('POST /reaction', done => {
+    const testReaction = createSecondTestReaction(userId, venueId);
 
     chai
       .request(server)

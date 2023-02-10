@@ -47,3 +47,11 @@ export const createTestReaction = (userId: string, venueId: string) => {
     emoji: '🔥',
   } as Reaction;
 };
+
+export const createSecondTestReaction = (userId: string, venueId: string) => {
+  return {
+    userId,
+    venueId,
+    emoji: '🎉',
+  } as Reaction;
+};

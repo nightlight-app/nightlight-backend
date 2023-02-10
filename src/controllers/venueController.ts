@@ -28,35 +28,44 @@ export const getVenue = async (req: Request, res: Response) => {
     // REFACTOR BELOW
     // this works but it needs to be more efficient
 
-    let shapedReactions = {
-      '🔥': 0,
-      '🛡️': 0,
-      '🎉': 0,
-      '⚠️': 0,
-      '💩': 0,
-    };
+    const possibleEmojis = ['🔥', '⚠️', '🛡', '💩', '🎉'];
+    const emojiCount = await Reaction.aggregate([
+      {
+        $match: {
+          emoji: { $in: possibleEmojis },
+        },
+      },
+      {
+        $group: {
+          _id: '$emoji',
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          emoji: '$_id',
+          count: 1,
+        },
+      },
+      {
+        $sort: {
+          emoji: 1,
+        },
+      },
+    ]);
 
-    targetReactions?.forEach(reaction => {
-      switch (reaction.emoji) {
-        case '🔥':
-          shapedReactions['🔥'] += 1;
-          break;
-        case '🛡️':
-          shapedReactions['🛡️'] += 1;
-          break;
-        case '🎉':
-          shapedReactions['🎉'] += 1;
-          break;
-        case '⚠️':
-          shapedReactions['⚠️'] += 1;
-          break;
-        case '💩':
-          shapedReactions['💩'] += 1;
-          break;
+    const emojiCountMap = new Map<string, number>();
+    emojiCount.forEach(({ emoji, count }) => {
+      emojiCountMap.set(emoji, count);
+    });
 
-        default:
-          break;
-      }
+    const result = [] as any;
+    possibleEmojis.forEach(emoji => {
+      result.push({
+        emoji,
+        count: emojiCountMap.has(emoji) ? emojiCountMap.get(emoji) : 0,
+      });
     });
 
     targetVenue = {
@@ -64,7 +73,7 @@ export const getVenue = async (req: Request, res: Response) => {
       _id: unfinishedVenue?._id,
       name: unfinishedVenue?.name,
       address: unfinishedVenue?.address,
-      reactions: shapedReactions,
+      reactions: result,
       location: {
         latitude: unfinishedVenue?.location?.latitude,
         longitude: unfinishedVenue?.location?.longitude,
