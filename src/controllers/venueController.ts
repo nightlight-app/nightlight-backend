@@ -24,9 +24,6 @@ export const getVenue = async (req: Request, res: Response) => {
 
   try {
     let unfinishedVenue = await Venue.findById(req.params.venueId);
-    let targetReactions = await Reaction.find({ venueId: req.params.venueId });
-    // REFACTOR BELOW
-    // this works but it needs to be more efficient
 
     const possibleEmojis = ['🔥', '⚠️', '🛡', '💩', '🎉'];
     const emojiCount = await Reaction.aggregate([
