@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import Reaction from '../models/Reactions';
 import User from '../models/User';
 import Venue from '../models/Venue';
+import { completeEmojiArray } from './venueController.util';
 
 export const createVenue = async (req: Request, res: Response) => {
   const newVenue = new Venue(req.body);
@@ -24,8 +25,8 @@ export const getVenue = async (req: Request, res: Response) => {
 
   try {
     let unfinishedVenue = await Venue.findById(req.params.venueId);
-
     const possibleEmojis = ['🔥', '⚠️', '🛡', '💩', '🎉'];
+
     const emojiCount = await Reaction.aggregate([
       {
         $match: {
@@ -52,29 +53,11 @@ export const getVenue = async (req: Request, res: Response) => {
       },
     ]);
 
-    const emojiCountMap = new Map<string, number>();
-    emojiCount.forEach(({ emoji, count }) => {
-      emojiCountMap.set(emoji, count);
-    });
-
-    const result = [] as any;
-    possibleEmojis.forEach(emoji => {
-      result.push({
-        emoji,
-        count: emojiCountMap.has(emoji) ? emojiCountMap.get(emoji) : 0,
-      });
-    });
+    const result = completeEmojiArray(emojiCount, possibleEmojis);
 
     targetVenue = {
-      __v: unfinishedVenue?.__v,
-      _id: unfinishedVenue?._id,
-      name: unfinishedVenue?.name,
-      address: unfinishedVenue?.address,
+      ...unfinishedVenue?.toObject(),
       reactions: result,
-      location: {
-        latitude: unfinishedVenue?.location?.latitude,
-        longitude: unfinishedVenue?.location?.longitude,
-      },
     };
   } catch (error: any) {
     console.log(error);
