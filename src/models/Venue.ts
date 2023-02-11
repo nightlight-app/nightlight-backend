@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-const VenueSchema = new mongoose.Schema({
+const venueSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -13,14 +13,7 @@ const VenueSchema = new mongoose.Schema({
     latitude: Number,
     longitude: Number,
   },
-  reactions: {
-    '🔥': [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    '⛨': [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    '🎉': [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    '⚠️': [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    '💩': [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  },
 });
 
-const Venue = mongoose.model('Venue', VenueSchema);
+const Venue = mongoose.model('Venue', venueSchema);
 export default Venue;

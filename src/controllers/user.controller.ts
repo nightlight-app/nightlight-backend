@@ -10,7 +10,7 @@ export const createUser = async (req: Request, res: Response) => {
     await newUser.save();
   } catch (error: any) {
     console.log(error);
-    return res.status(500).send({ message: error.message });
+    return res.status(500).send({ message: error?.message });
   } finally {
     return res
       .status(201)
@@ -21,10 +21,10 @@ export const createUser = async (req: Request, res: Response) => {
 export const getUser = async (req: Request, res: Response) => {
   let targetUser;
   try {
-    targetUser = await User.findById(req.params.userId);
+    targetUser = await User.findById(req.params?.userId);
   } catch (error: any) {
     console.log(error);
-    return res.status(500).send({ message: error.message });
+    return res.status(500).send({ message: error?.message });
   } finally {
     return res
       .status(200)
@@ -34,7 +34,7 @@ export const getUser = async (req: Request, res: Response) => {
 
 export const deleteUser = async (req: Request, res: Response) => {
   try {
-    await User.deleteOne({ _id: req.params.userId });
+    await User.findByIdAndDelete(req.params?.userId);
   } catch (error: any) {
     console.log(error);
     return res.status(500).send({ message: error.message });

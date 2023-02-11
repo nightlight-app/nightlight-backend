@@ -3,7 +3,17 @@ import createServer from '../server';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import exp from 'constants';
-import { testGroup, testUser } from './testData';
+import {
+  createSecondTestReaction,
+  createTestReaction,
+  GROUP_KEYS,
+  TEST_GROUP,
+  TEST_USER,
+  TEST_VENUE,
+  USER_KEYS,
+  VENUE_KEYS_GET,
+  VENUE_KEYS_POST,
+} from './testData';
 
 require('dotenv').config();
 
@@ -12,33 +22,6 @@ chai.should();
 
 const app = createServer();
 let server: any;
-
-const userKeys = [
-  '__v',
-  '_id',
-  'birthday',
-  'currentLocation',
-  'email',
-  'firebaseUid',
-  'firstName',
-  'friends',
-  'imgUrlCover',
-  'imgUrlProfileLarge',
-  'imgUrlProfileSmall',
-  'lastName',
-  'phone',
-];
-
-const groupKeys = [
-  '__v',
-  '_id',
-  'name',
-  'members',
-  'invitedMembers',
-  'creationTime',
-  'expirationDate',
-  'returnTime',
-];
 
 const connectToMongo = async (): Promise<void> => {
   try {
@@ -56,18 +39,17 @@ beforeEach(async () => {
 });
 
 /* USER TESTS */
+let userId: string;
 describe('testing user actions', () => {
-  let userId: string;
-
   it('POST /user', done => {
     chai
       .request(server)
       .post('/user')
-      .send(testUser)
+      .send(TEST_USER)
       .then(res => {
         userId = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(userKeys);
+        expect(res.body.user).to.have.keys(USER_KEYS);
         done();
       });
   });
@@ -79,7 +61,7 @@ describe('testing user actions', () => {
       .send()
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(userKeys);
+        expect(res.body.user).to.have.keys(USER_KEYS);
         done();
       });
   });
@@ -87,11 +69,10 @@ describe('testing user actions', () => {
   it('DELETE /user/{userId}', done => {
     chai
       .request(server)
-      .get('/user/' + userId)
+      .delete('/user/' + userId)
       .send()
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(userKeys);
         done();
       });
   });
@@ -105,11 +86,11 @@ describe('testing group actions', () => {
     chai
       .request(server)
       .post('/group')
-      .send(testGroup)
+      .send(TEST_GROUP)
       .then(res => {
         groupId = res.body.group._id;
         expect(res).to.have.status(201);
-        expect(res.body.group).to.have.keys(groupKeys);
+        expect(res.body.group).to.have.keys(GROUP_KEYS);
         done();
       });
   });
@@ -121,7 +102,7 @@ describe('testing group actions', () => {
       .send()
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.group).to.have.keys(groupKeys);
+        expect(res.body.group).to.have.keys(GROUP_KEYS);
         done();
       });
   });
@@ -130,6 +111,114 @@ describe('testing group actions', () => {
 /* VENUE TESTS */
 describe('testing venue actions', () => {
   let venueId: string;
+
+  it('POST /venue', done => {
+    chai
+      .request(server)
+      .post('/venue')
+      .send(TEST_VENUE)
+      .then(res => {
+        venueId = res.body.venue._id;
+        expect(res).to.have.status(201);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_POST);
+        done();
+      });
+  });
+
+  it('GET /venue/{venueId}', done => {
+    chai
+      .request(server)
+      .get('/venue/' + venueId)
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_GET);
+        done();
+      });
+  });
+
+  it('DELETE /venue/{userId}', done => {
+    chai
+      .request(server)
+      .get('/venue/' + venueId)
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+});
+
+/* REACTION TESTS */
+
+describe('testing reaction actions', () => {
+  let userId: string;
+
+  it('POST /user for reaction test', done => {
+    chai
+      .request(server)
+      .post('/user')
+      .send(TEST_USER)
+      .then(res => {
+        userId = res.body.user._id;
+        expect(res).to.have.status(201);
+        expect(res.body.user).to.have.keys(USER_KEYS);
+        done();
+      });
+  });
+
+  let venueId: string;
+
+  it('POST /venue for reaction test', done => {
+    chai
+      .request(server)
+      .post('/venue')
+      .send(TEST_VENUE)
+      .then(res => {
+        venueId = res.body.venue._id;
+        expect(res).to.have.status(201);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_POST);
+        done();
+      });
+  });
+
+  it('POST /reaction', done => {
+    const testReaction = createTestReaction(userId, venueId);
+
+    chai
+      .request(server)
+      .post('/reaction')
+      .send(testReaction)
+      .then(res => {
+        expect(res).to.have.status(201);
+        done();
+      });
+  });
+
+  it('POST /reaction', done => {
+    const testReaction = createSecondTestReaction(userId, venueId);
+
+    chai
+      .request(server)
+      .post('/reaction')
+      .send(testReaction)
+      .then(res => {
+        expect(res).to.have.status(201);
+        done();
+      });
+  });
+
+  it('GET /venue/{venueId}', done => {
+    chai
+      .request(server)
+      .get('/venue/' + venueId)
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_GET);
+        done();
+      });
+  });
 });
 
 afterEach(async () => {

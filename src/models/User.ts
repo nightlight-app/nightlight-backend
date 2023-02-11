@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-const UserSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   firebaseUid: {
     type: String,
     required: true,
@@ -47,16 +47,16 @@ const UserSchema = new mongoose.Schema({
   },
   currentLocation: {
     latitude: {
-      type: String,
+      type: Number,
       required: true,
     },
     longitude: {
-      type: String,
+      type: Number,
       required: true,
     },
   },
 });
 
-const User = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', userSchema);
 
 export default User;
