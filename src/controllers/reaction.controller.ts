@@ -4,10 +4,10 @@ import mongoose from 'mongoose';
 
 export const createReaction = async (req: Request, res: Response) => {
   const shapedReaction = {
-    userId: new mongoose.Types.ObjectId(req?.body?.userId),
-    venueId: new mongoose.Types.ObjectId(req?.body?.venueId),
-    emoji: req?.body?.emoji,
-    expireAt: new Date(req?.body?.expireAt),
+    userId: new mongoose.Types.ObjectId(req.body?.userId),
+    venueId: new mongoose.Types.ObjectId(req.body?.venueId),
+    emoji: req.body?.emoji,
+    expireAt: new Date(req.body?.expireAt),
   };
 
   const newReaction = new Reaction(shapedReaction);

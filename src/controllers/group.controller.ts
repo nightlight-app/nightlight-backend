@@ -20,7 +20,7 @@ export const getGroup = async (req: Request, res: Response) => {
   let targetGroup;
 
   try {
-    targetGroup = await Group.findById(req.params.groupId);
+    targetGroup = await Group.findById(req.params?.groupId);
   } catch (error: any) {
     console.log(error);
     return res.status(500).send({ message: error.message });

@@ -1,10 +1,10 @@
 /** source/controllers/posts.ts */
 import { Request, Response } from 'express';
-import { EMOJIS } from '../util/constants';
+import { EMOJIS } from '../utils/constants';
 import Reaction from '../models/Reaction';
 import User from '../models/User';
 import Venue from '../models/Venue';
-import { fillEmojiCount } from '../util/venue.util';
+import { fillEmojiCount } from '../utils/venue.utils';
 
 export const createVenue = async (req: Request, res: Response) => {
   const newVenue = new Venue(req.body);
@@ -25,7 +25,7 @@ export const getVenue = async (req: Request, res: Response) => {
   let targetVenue;
 
   try {
-    let partialVenue = await Venue.findById(req?.params?.venueId);
+    let partialVenue = await Venue.findById(req.params?.venueId);
 
     const emojiCount = await Reaction.aggregate([
       {
@@ -71,7 +71,7 @@ export const getVenue = async (req: Request, res: Response) => {
 
 export const deleteVenue = async (req: Request, res: Response) => {
   try {
-    await Venue.deleteOne({ _id: req.params.venueId });
+    await Venue.deleteOne({ _id: req.params?.venueId });
   } catch (error: any) {
     return res.status(500).send({ message: error.message });
   } finally {
