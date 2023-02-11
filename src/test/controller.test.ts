@@ -6,9 +6,13 @@ import exp from 'constants';
 import {
   createSecondTestReaction,
   createTestReaction,
-  testGroup,
-  testUser,
-  testVenue,
+  GROUP_KEYS,
+  TEST_GROUP,
+  TEST_USER,
+  TEST_VENUE,
+  USER_KEYS,
+  VENUE_KEYS_GET,
+  VENUE_KEYS_POST,
 } from './testData';
 
 require('dotenv').config();
@@ -18,37 +22,6 @@ chai.should();
 
 const app = createServer();
 let server: any;
-
-const userKeys = [
-  '__v',
-  '_id',
-  'birthday',
-  'currentLocation',
-  'email',
-  'firebaseUid',
-  'firstName',
-  'friends',
-  'imgUrlCover',
-  'imgUrlProfileLarge',
-  'imgUrlProfileSmall',
-  'lastName',
-  'phone',
-];
-
-const groupKeys = [
-  '__v',
-  '_id',
-  'name',
-  'members',
-  'invitedMembers',
-  'creationTime',
-  'expirationDate',
-  'returnTime',
-];
-
-const venueKeysPost = ['__v', '_id', 'name', 'address', 'location'];
-
-const venueKeysGet = ['__v', '_id', 'name', 'address', 'location', 'reactions'];
 
 const connectToMongo = async (): Promise<void> => {
   try {
@@ -72,11 +45,11 @@ describe('testing user actions', () => {
     chai
       .request(server)
       .post('/user')
-      .send(testUser)
+      .send(TEST_USER)
       .then(res => {
         userId = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(userKeys);
+        expect(res.body.user).to.have.keys(USER_KEYS);
         done();
       });
   });
@@ -88,7 +61,7 @@ describe('testing user actions', () => {
       .send()
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(userKeys);
+        expect(res.body.user).to.have.keys(USER_KEYS);
         done();
       });
   });
@@ -113,11 +86,11 @@ describe('testing group actions', () => {
     chai
       .request(server)
       .post('/group')
-      .send(testGroup)
+      .send(TEST_GROUP)
       .then(res => {
         groupId = res.body.group._id;
         expect(res).to.have.status(201);
-        expect(res.body.group).to.have.keys(groupKeys);
+        expect(res.body.group).to.have.keys(GROUP_KEYS);
         done();
       });
   });
@@ -129,7 +102,7 @@ describe('testing group actions', () => {
       .send()
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.group).to.have.keys(groupKeys);
+        expect(res.body.group).to.have.keys(GROUP_KEYS);
         done();
       });
   });
@@ -143,11 +116,11 @@ describe('testing venue actions', () => {
     chai
       .request(server)
       .post('/venue')
-      .send(testVenue)
+      .send(TEST_VENUE)
       .then(res => {
         venueId = res.body.venue._id;
         expect(res).to.have.status(201);
-        expect(res.body.venue).to.have.keys(venueKeysPost);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_POST);
         done();
       });
   });
@@ -159,7 +132,7 @@ describe('testing venue actions', () => {
       .send()
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.venue).to.have.keys(venueKeysGet);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_GET);
         done();
       });
   });
@@ -185,11 +158,11 @@ describe('testing reaction actions', () => {
     chai
       .request(server)
       .post('/user')
-      .send(testUser)
+      .send(TEST_USER)
       .then(res => {
         userId = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(userKeys);
+        expect(res.body.user).to.have.keys(USER_KEYS);
         done();
       });
   });
@@ -200,11 +173,11 @@ describe('testing reaction actions', () => {
     chai
       .request(server)
       .post('/venue')
-      .send(testVenue)
+      .send(TEST_VENUE)
       .then(res => {
         venueId = res.body.venue._id;
         expect(res).to.have.status(201);
-        expect(res.body.venue).to.have.keys(venueKeysPost);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_POST);
         done();
       });
   });
@@ -242,7 +215,7 @@ describe('testing reaction actions', () => {
       .send()
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.venue).to.have.keys(venueKeysGet);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_GET);
         done();
       });
   });

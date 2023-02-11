@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-const VenueSchema = new mongoose.Schema({
+const venueSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -15,5 +15,5 @@ const VenueSchema = new mongoose.Schema({
   },
 });
 
-const Venue = mongoose.model('Venue', VenueSchema);
+const Venue = mongoose.model('Venue', venueSchema);
 export default Venue;

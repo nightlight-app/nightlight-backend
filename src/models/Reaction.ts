@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const ReactionSchema = new mongoose.Schema({
+const reactionSchema = new mongoose.Schema({
   userId: {
     type: String,
     required: true,
@@ -15,6 +15,6 @@ const ReactionSchema = new mongoose.Schema({
   },
 });
 
-const Reaction = mongoose.model('Reaction', ReactionSchema);
+const Reaction = mongoose.model('Reaction', reactionSchema);
 
 export default Reaction;

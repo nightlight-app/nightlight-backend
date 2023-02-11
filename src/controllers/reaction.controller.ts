@@ -1,13 +1,13 @@
-import Reaction from '../models/Reactions';
+import Reaction from '../models/Reaction';
 import { Request, Response } from 'express';
-import { ObjectID } from 'bson';
+import mongoose from 'mongoose';
 
 export const createReaction = async (req: Request, res: Response) => {
   const shapedReaction = {
-    userId: new ObjectID(req.body.userId),
-    venueId: new ObjectID(req.body.venueId),
-    emoji: req.body.emoji,
-    expireAt: new Date(req.body.expireAt),
+    userId: new mongoose.Types.ObjectId(req?.body?.userId),
+    venueId: new mongoose.Types.ObjectId(req?.body?.venueId),
+    emoji: req?.body?.emoji,
+    expireAt: new Date(req?.body?.expireAt),
   };
 
   const newReaction = new Reaction(shapedReaction);

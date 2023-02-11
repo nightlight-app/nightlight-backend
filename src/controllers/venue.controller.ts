@@ -1,9 +1,10 @@
 /** source/controllers/posts.ts */
 import { Request, Response } from 'express';
-import Reaction from '../models/Reactions';
+import { EMOJIS } from '../util/constants';
+import Reaction from '../models/Reaction';
 import User from '../models/User';
 import Venue from '../models/Venue';
-import { completeEmojiArray } from './venueController.util';
+import { fillEmojiCount } from '../util/venue.util';
 
 export const createVenue = async (req: Request, res: Response) => {
   const newVenue = new Venue(req.body);
@@ -24,13 +25,12 @@ export const getVenue = async (req: Request, res: Response) => {
   let targetVenue;
 
   try {
-    let unfinishedVenue = await Venue.findById(req.params.venueId);
-    const possibleEmojis = ['🔥', '⚠️', '🛡', '💩', '🎉'];
+    let partialVenue = await Venue.findById(req?.params?.venueId);
 
     const emojiCount = await Reaction.aggregate([
       {
         $match: {
-          emoji: { $in: possibleEmojis },
+          emoji: { $in: EMOJIS },
         },
       },
       {
@@ -53,11 +53,11 @@ export const getVenue = async (req: Request, res: Response) => {
       },
     ]);
 
-    const result = completeEmojiArray(emojiCount, possibleEmojis);
+    const completedEmojiCount = fillEmojiCount(emojiCount);
 
     targetVenue = {
-      ...unfinishedVenue?.toObject(),
-      reactions: result,
+      ...partialVenue?.toObject(),
+      reactions: completedEmojiCount,
     };
   } catch (error: any) {
     console.log(error);

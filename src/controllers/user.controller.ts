@@ -4,13 +4,13 @@ import Group from '../models/Group';
 import User from '../models/User';
 
 export const createUser = async (req: Request, res: Response) => {
-  const newUser = new User(req.body);
+  const newUser = new User(req?.body);
 
   try {
     await newUser.save();
   } catch (error: any) {
     console.log(error);
-    return res.status(500).send({ message: error.message });
+    return res.status(500).send({ message: error?.message });
   } finally {
     return res
       .status(201)
@@ -21,10 +21,10 @@ export const createUser = async (req: Request, res: Response) => {
 export const getUser = async (req: Request, res: Response) => {
   let targetUser;
   try {
-    targetUser = await User.findById(req.params.userId);
+    targetUser = await User.findById(req?.params?.userId);
   } catch (error: any) {
     console.log(error);
-    return res.status(500).send({ message: error.message });
+    return res.status(500).send({ message: error?.message });
   } finally {
     return res
       .status(200)
