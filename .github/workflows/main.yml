@@ -18,9 +18,10 @@ jobs:
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
         with:
           node-version: ${{ matrix.node-version }}
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
       - run: npm ci
       - run: npm run build --if-present
       - run: npm test
