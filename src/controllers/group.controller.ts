@@ -30,3 +30,16 @@ export const getGroup = async (req: Request, res: Response) => {
       .send({ message: 'Successfully retrieved group!', group: targetGroup });
   }
 };
+
+export const deleteGroup = async (req: Request, res: Response) => {
+  let targetGroup;
+
+  try {
+    await Group.findByIdAndDelete(req.params?.groupId);
+  } catch (error: any) {
+    console.log(error);
+    return res.status(500).send({ message: error.message });
+  } finally {
+    return res.status(204).send({ message: 'Successfully deleted group!' });
+  }
+};

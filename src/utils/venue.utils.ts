@@ -5,8 +5,10 @@ export interface EmojiCount {
   count: number;
 }
 
-export const fillEmojiCount = (partialEmojiCount: EmojiCount[]) => {
-  let emojiCount = EMOJIS.reduce((acc, emoji) => ({ ...acc, [emoji]: 0 }), {});
-  emojiCount = { ...emojiCount, ...partialEmojiCount };
-  return emojiCount;
-};
+export const fillEmojiCount = (rawAggregate: EmojiCount[]) => ({
+  ...EMOJIS.reduce((acc, emoji) => ({ ...acc, [emoji]: 0 }), {}),
+  ...rawAggregate.reduce(
+    (acc, { count, emoji }) => ({ ...acc, [emoji]: count }),
+    {}
+  ),
+});

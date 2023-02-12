@@ -2,7 +2,6 @@
 import { Request, Response } from 'express';
 import { EMOJIS } from '../utils/constants';
 import Reaction from '../models/Reaction';
-import User from '../models/User';
 import Venue from '../models/Venue';
 import { fillEmojiCount } from '../utils/venue.utils';
 

@@ -24,3 +24,14 @@ export const createReaction = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const deleteReaction = async (req: Request, res: Response) => {
+  try {
+    await Reaction.findByIdAndDelete(req.params.reactionId);
+  } catch (error: any) {
+    console.log(error);
+    return res.status(500).send({ message: error.message });
+  } finally {
+    return res.status(204).send();
+  }
+};

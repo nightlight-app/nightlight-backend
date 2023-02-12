@@ -1,6 +1,3 @@
-import mongoose from 'mongoose';
-import { Group } from './group';
-
 export interface User {
   _id?: string;
   firebaseUid: string;
@@ -14,8 +11,19 @@ export interface User {
   birthday: Date;
   currentGroup?: any;
   friends: any[];
-  currentLocation: {
+  lastActive?: LastActive;
+  savedGroups: SavedGroup[];
+}
+
+export interface SavedGroup {
+  name: string;
+  users: any[];
+}
+
+export interface LastActive {
+  location: {
     latitude: number;
     longitude: number;
   };
+  time: Date;
 }

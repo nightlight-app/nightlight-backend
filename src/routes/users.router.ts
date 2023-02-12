@@ -3,6 +3,7 @@ import {
   createUser,
   getUser,
   deleteUser,
+  updateUser,
 } from '../controllers/user.controller';
 
 const usersRouter = express.Router();
@@ -11,5 +12,6 @@ const usersRouter = express.Router();
 usersRouter.post('/', createUser);
 usersRouter.get('/:userId', getUser);
 usersRouter.delete('/:userId', deleteUser);
+usersRouter.patch('/:userId', updateUser);
 
 export = usersRouter;
