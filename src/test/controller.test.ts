@@ -261,7 +261,7 @@ describe('testing reaction actions', () => {
       .delete('/reaction/' + reactionId1)
       .send()
       .then(res => {
-        expect(res).to.have.status(204);
+        expect(res).to.have.status(200);
         done();
       });
   });
@@ -285,7 +285,7 @@ describe('testing reaction actions', () => {
       .delete('/reaction/' + reactionId2)
       .send()
       .then(res => {
-        expect(res).to.have.status(204);
+        expect(res).to.have.status(200);
         done();
       });
   });
@@ -296,7 +296,7 @@ describe('testing reaction actions', () => {
       .delete('/reaction/' + reactionId3)
       .send()
       .then(res => {
-        expect(res).to.have.status(204);
+        expect(res).to.have.status(200);
         done();
       });
   });

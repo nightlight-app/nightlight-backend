@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
 import { Group } from '../interfaces/group';
+import { LastActive } from '../interfaces/lastActive';
 import { Reaction } from '../interfaces/reaction';
-import { LastActive, SavedGroup, User } from '../interfaces/user';
+import { SavedGroup } from '../interfaces/savedGroup';
+import { User } from '../interfaces/user';
 import { Venue } from '../interfaces/venue';
 import { EMOJIS } from '../utils/constants';
 import { EmojiCount } from '../utils/venue.utils';

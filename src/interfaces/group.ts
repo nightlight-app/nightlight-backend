@@ -7,7 +7,7 @@ export interface Group {
   invitedMembers: any[];
   creationTime: Date;
   expirationDate: Date;
-  expectedLocation?: {
+  expectedDestination?: {
     latitude: number;
     longitude: number;
   };

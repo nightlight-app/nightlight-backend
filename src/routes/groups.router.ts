@@ -10,6 +10,6 @@ const groupsRouter = express.Router();
 /* Group Controller */
 groupsRouter.post('/', createGroup);
 groupsRouter.get('/:groupId', getGroup);
-groupsRouter.delete('/:group', deleteGroup);
+groupsRouter.delete('/:groupID', deleteGroup);
 
 export = groupsRouter;

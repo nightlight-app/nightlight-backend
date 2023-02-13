@@ -1,3 +1,6 @@
+import { LastActive } from './lastActive';
+import { SavedGroup } from './savedGroup';
+
 export interface User {
   _id?: string;
   firebaseUid: string;
@@ -13,17 +16,4 @@ export interface User {
   friends: any[];
   lastActive?: LastActive;
   savedGroups: SavedGroup[];
-}
-
-export interface SavedGroup {
-  name: string;
-  users: any[];
-}
-
-export interface LastActive {
-  location: {
-    latitude: number;
-    longitude: number;
-  };
-  time: Date;
 }

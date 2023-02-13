@@ -32,8 +32,6 @@ export const getGroup = async (req: Request, res: Response) => {
 };
 
 export const deleteGroup = async (req: Request, res: Response) => {
-  let targetGroup;
-
   try {
     await Group.findByIdAndDelete(req.params?.groupId);
   } catch (error: any) {

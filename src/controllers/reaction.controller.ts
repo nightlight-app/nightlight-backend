@@ -32,6 +32,6 @@ export const deleteReaction = async (req: Request, res: Response) => {
     console.log(error);
     return res.status(500).send({ message: error.message });
   } finally {
-    return res.status(204).send();
+    return res.status(200).send({ message: 'Reaction successfully deleted!' });
   }
 };

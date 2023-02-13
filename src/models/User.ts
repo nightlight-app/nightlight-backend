@@ -50,22 +50,14 @@ const userSchema = new mongoose.Schema({
   },
   lastActive: {
     location: {
-      latitude: {
-        type: Number,
-      },
-      longitude: {
-        type: Number,
-      },
+      latitude: Number,
+      longitude: Number,
     },
-    time: {
-      type: Date,
-    },
+    time: Date,
   },
   savedGroups: [
     {
-      name: {
-        type: String,
-      },
+      name: String,
       users: [
         {
           type: Schema.Types.ObjectId,
