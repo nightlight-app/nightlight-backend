@@ -4,9 +4,8 @@ import { LastActive } from '../interfaces/LastActive.interface';
 import { Reaction } from '../interfaces/Reaction.interface';
 import { SavedGroup } from '../interfaces/SavedGroup.interface';
 import { User } from '../interfaces/User.interface';
-import { Venue } from '../interfaces/Venue.interface';
+import { Venue, VenueReactionQuery } from '../interfaces/Venue.interface';
 import { EMOJIS } from '../utils/constants';
-import { EmojiCount } from '../utils/venue.utils';
 
 /* User 1 */
 const TEST_LAST_ACTIVE_1: LastActive = {
@@ -132,38 +131,38 @@ export const TEST_VENUE: Venue = {
 /* Reactions */
 export const createTestReaction = (userId: string, venueId: string) => {
   return {
-    userId,
-    venueId,
+    userId: new mongoose.Types.ObjectId(userId),
+    venueId: new mongoose.Types.ObjectId(venueId),
     emoji: '🔥',
   } as Reaction;
 };
 
 export const createSecondTestReaction = (userId: string, venueId: string) => {
   return {
-    userId,
-    venueId,
+    userId: new mongoose.Types.ObjectId(userId),
+    venueId: new mongoose.Types.ObjectId(venueId),
     emoji: '🎉',
   } as Reaction;
 };
 
 /* UTIL: fillEmojiCount */
-export const PARTIAL_EMOJI_COUNT_1: EmojiCount[] = [
-  { emoji: EMOJIS[0], count: 45 },
+export const PARTIAL_EMOJI_COUNT_1: VenueReactionQuery[] = [
+  { emoji: EMOJIS[0], count: 45, didReact: false },
 ];
 
-export const PARTIAL_EMOJI_COUNT_2: EmojiCount[] = [
-  { emoji: EMOJIS[2], count: 45 },
-  { emoji: EMOJIS[4], count: 45 },
-  { emoji: EMOJIS[0], count: 45 },
-  { emoji: EMOJIS[3], count: 45 },
+export const PARTIAL_EMOJI_COUNT_2: VenueReactionQuery[] = [
+  { emoji: EMOJIS[2], count: 45, didReact: false },
+  { emoji: EMOJIS[4], count: 45, didReact: false },
+  { emoji: EMOJIS[0], count: 45, didReact: false },
+  { emoji: EMOJIS[3], count: 45, didReact: false },
 ];
 
-export const PARTIAL_EMOJI_COUNT_3: EmojiCount[] = [
-  { emoji: EMOJIS[0], count: 45 },
-  { emoji: EMOJIS[1], count: 45 },
-  { emoji: EMOJIS[3], count: 45 },
-  { emoji: EMOJIS[2], count: 45 },
-  { emoji: EMOJIS[4], count: 45 },
+export const PARTIAL_EMOJI_COUNT_3: VenueReactionQuery[] = [
+  { emoji: EMOJIS[0], count: 45, didReact: false },
+  { emoji: EMOJIS[1], count: 45, didReact: false },
+  { emoji: EMOJIS[3], count: 45, didReact: false },
+  { emoji: EMOJIS[2], count: 45, didReact: false },
+  { emoji: EMOJIS[4], count: 45, didReact: false },
 ];
 
 /* KEYS FOR TESTING */

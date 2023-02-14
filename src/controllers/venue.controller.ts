@@ -3,7 +3,8 @@ import { Request, Response } from 'express';
 import { EMOJIS } from '../utils/constants';
 import Reaction from '../models/Reaction.model';
 import Venue from '../models/Venue.model';
-import { fillEmojiCount } from '../utils/venue.utils';
+import { convertEmojiFormat } from '../utils/venue.utils';
+import mongoose from 'mongoose';
 
 export const createVenue = async (req: Request, res: Response) => {
   const newVenue = new Venue(req.body);
@@ -24,11 +25,14 @@ export const getVenue = async (req: Request, res: Response) => {
   let targetVenue;
 
   try {
-    let partialVenue = await Venue.findById(req.params?.venueId);
+    const userId = req.query?.userId;
+    const venueId = req.params?.venueId;
+    let partialVenue = await Venue.findById(venueId);
 
     const emojiCount = await Reaction.aggregate([
       {
         $match: {
+          venueId: venueId,
           emoji: { $in: EMOJIS },
         },
       },
@@ -36,6 +40,7 @@ export const getVenue = async (req: Request, res: Response) => {
         $group: {
           _id: '$emoji',
           count: { $sum: 1 },
+          users: { $push: '$userId' },
         },
       },
       {
@@ -43,6 +48,7 @@ export const getVenue = async (req: Request, res: Response) => {
           _id: 0,
           emoji: '$_id',
           count: 1,
+          didReact: { $in: [userId, '$users'] },
         },
       },
       {
@@ -52,7 +58,7 @@ export const getVenue = async (req: Request, res: Response) => {
       },
     ]);
 
-    const completedEmojiCount = fillEmojiCount(emojiCount);
+    const completedEmojiCount = convertEmojiFormat(emojiCount);
 
     targetVenue = {
       ...partialVenue?.toObject(),

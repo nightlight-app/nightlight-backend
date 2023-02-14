@@ -1,4 +1,6 @@
+import mongoose from 'mongoose';
+
 export interface SavedGroup {
   name: string;
-  users: any[];
+  users: mongoose.Types.ObjectId[];
 }

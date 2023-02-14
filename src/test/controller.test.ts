@@ -20,8 +20,8 @@ import {
   VENUE_KEYS_GET,
   VENUE_KEYS_POST,
 } from './testData';
-import { fillEmojiCount } from '../utils/venue.utils';
 import { EMOJIS } from '../utils/constants';
+import { convertEmojiFormat } from '../utils/venue.utils';
 
 require('dotenv').config();
 
@@ -157,7 +157,7 @@ describe('testing venue actions', () => {
       });
   });
 
-  it('GET /venue/{venueId}', done => {
+  it('GET /venue/{venueId}/', done => {
     chai
       .request(server)
       .get('/venue/' + venueId)
@@ -269,12 +269,12 @@ describe('testing reaction actions', () => {
   it('GET /venue/{venueId}/', done => {
     chai
       .request(server)
-      .get('/venue/' + venueId)
+      .get('/venue/' + venueId + '/?userId=' + userId)
       .send()
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.venue).to.have.keys(VENUE_KEYS_GET);
-        expect(res.body.venue.reactions['🎉']).to.equal(2);
+        expect(res.body.venue.reactions['🎉'].count).to.equal(2);
         done();
       });
   });
@@ -303,26 +303,26 @@ describe('testing reaction actions', () => {
 });
 
 describe('testing util functions', () => {
-  it('UTIL fillEmojiCount empty', done => {
-    const result = fillEmojiCount([]);
+  it('UTIL convertEmojiFormat empty', done => {
+    const result = convertEmojiFormat([]);
     assert.hasAllKeys(result, EMOJIS);
     done();
   });
 
-  it('UTIL fillEmojiCount mostly empty', done => {
-    const result = fillEmojiCount(PARTIAL_EMOJI_COUNT_1);
+  it('UTIL convertEmojiFormat mostly empty', done => {
+    const result = convertEmojiFormat(PARTIAL_EMOJI_COUNT_1);
     assert.hasAllKeys(result, EMOJIS);
     done();
   });
 
-  it('UTIL fillEmojiCount mostly full', done => {
-    const result = fillEmojiCount(PARTIAL_EMOJI_COUNT_2);
+  it('UTIL convertEmojiFormat mostly full', done => {
+    const result = convertEmojiFormat(PARTIAL_EMOJI_COUNT_2);
     assert.hasAllKeys(result, EMOJIS);
     done();
   });
 
-  it('UTIL fillEmojiCount full', done => {
-    const result = fillEmojiCount(PARTIAL_EMOJI_COUNT_3);
+  it('UTIL convertEmojiFormat full', done => {
+    const result = convertEmojiFormat(PARTIAL_EMOJI_COUNT_3);
     assert.hasAllKeys(result, EMOJIS);
     done();
   });

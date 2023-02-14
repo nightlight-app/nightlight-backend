@@ -1,5 +1,7 @@
+import mongoose from 'mongoose';
+
 export interface Reaction {
-  userId: any;
-  venueId: any;
+  userId: mongoose.Types.ObjectId;
+  venueId: mongoose.Types.ObjectId;
   emoji: string;
 }
