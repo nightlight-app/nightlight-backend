@@ -1,5 +1,5 @@
-import { LastActive } from './lastActive';
-import { SavedGroup } from './savedGroup';
+import { LastActive } from './LastActive.interface';
+import { SavedGroup } from './SavedGroup.interface';
 
 export interface User {
   _id?: string;

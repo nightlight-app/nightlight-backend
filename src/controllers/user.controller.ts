@@ -1,7 +1,7 @@
 /** source/controllers/posts.ts */
 import { Request, Response } from 'express';
-import Group from '../models/Group';
-import User from '../models/User';
+import Group from '../models/Group.model';
+import User from '../models/User.model';
 
 export const createUser = async (req: Request, res: Response) => {
   const newUser = new User(req.body);

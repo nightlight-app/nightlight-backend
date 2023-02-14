@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Group from '../models/Group';
+import Group from '../models/Group.model';
 
 export const createGroup = async (req: Request, res: Response) => {
   const newGroup = new Group(req.body);

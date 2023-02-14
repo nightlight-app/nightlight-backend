@@ -1,4 +1,4 @@
-import Reaction from '../models/Reaction';
+import Reaction from '../models/Reaction.model';
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 

@@ -1,8 +1,8 @@
 /** source/controllers/posts.ts */
 import { Request, Response } from 'express';
 import { EMOJIS } from '../utils/constants';
-import Reaction from '../models/Reaction';
-import Venue from '../models/Venue';
+import Reaction from '../models/Reaction.model';
+import Venue from '../models/Venue.model';
 import { fillEmojiCount } from '../utils/venue.utils';
 
 export const createVenue = async (req: Request, res: Response) => {

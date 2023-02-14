@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
-import { Group } from '../interfaces/group';
-import { LastActive } from '../interfaces/lastActive';
-import { Reaction } from '../interfaces/reaction';
-import { SavedGroup } from '../interfaces/savedGroup';
-import { User } from '../interfaces/user';
-import { Venue } from '../interfaces/venue';
+import { Group } from '../interfaces/Group.interface';
+import { LastActive } from '../interfaces/LastActive.interface';
+import { Reaction } from '../interfaces/Reaction.interface';
+import { SavedGroup } from '../interfaces/SavedGroup.interface';
+import { User } from '../interfaces/User.interface';
+import { Venue } from '../interfaces/Venue.interface';
 import { EMOJIS } from '../utils/constants';
 import { EmojiCount } from '../utils/venue.utils';
 
