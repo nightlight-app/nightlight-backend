@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Group from '../models/Group';
+import Group from '../models/Group.model';
 
 export const createGroup = async (req: Request, res: Response) => {
   const newGroup = new Group(req.body);
@@ -28,5 +28,16 @@ export const getGroup = async (req: Request, res: Response) => {
     return res
       .status(200)
       .send({ message: 'Successfully retrieved group!', group: targetGroup });
+  }
+};
+
+export const deleteGroup = async (req: Request, res: Response) => {
+  try {
+    await Group.findByIdAndDelete(req.params?.groupId);
+  } catch (error: any) {
+    console.log(error);
+    return res.status(500).send({ message: error.message });
+  } finally {
+    return res.status(204).send({ message: 'Successfully deleted group!' });
   }
 };

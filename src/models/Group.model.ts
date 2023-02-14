@@ -19,6 +19,10 @@ const groupSchema = new mongoose.Schema({
       required: true,
     },
   ],
+  expectedDestination: {
+    latitude: Number,
+    longitude: Number,
+  },
   creationTime: {
     type: Date,
     required: true,

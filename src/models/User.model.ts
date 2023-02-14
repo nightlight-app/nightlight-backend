@@ -37,24 +37,35 @@ const userSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  friends: {
-    type: [String],
-    required: true,
-  },
+  friends: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+  ],
   currentGroup: {
     type: Schema.Types.ObjectId,
     ref: 'Group',
   },
-  currentLocation: {
-    latitude: {
-      type: Number,
-      required: true,
+  lastActive: {
+    location: {
+      latitude: Number,
+      longitude: Number,
     },
-    longitude: {
-      type: Number,
-      required: true,
-    },
+    time: Date,
   },
+  savedGroups: [
+    {
+      name: String,
+      users: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'User',
+        },
+      ],
+    },
+  ],
 });
 
 const User = mongoose.model('User', userSchema);

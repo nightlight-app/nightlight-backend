@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import { Group } from './group';
+import { LastActive } from './LastActive.interface';
+import { SavedGroup } from './SavedGroup.interface';
 
 export interface User {
   _id?: string;
@@ -14,8 +14,6 @@ export interface User {
   birthday: Date;
   currentGroup?: any;
   friends: any[];
-  currentLocation: {
-    latitude: number;
-    longitude: number;
-  };
+  lastActive?: LastActive;
+  savedGroups: SavedGroup[];
 }

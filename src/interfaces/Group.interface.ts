@@ -1,4 +1,4 @@
-import { User } from './user';
+import { User } from './User.interface';
 
 export interface Group {
   _id?: string;
@@ -7,5 +7,9 @@ export interface Group {
   invitedMembers: any[];
   creationTime: Date;
   expirationDate: Date;
+  expectedDestination?: {
+    latitude: number;
+    longitude: number;
+  };
   returnTime: Date;
 }

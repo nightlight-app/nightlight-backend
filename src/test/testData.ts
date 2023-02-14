@@ -1,10 +1,39 @@
-import mongoose, { ObjectId } from 'mongoose';
-import { Group } from '../interfaces/group';
-import { Reaction } from '../interfaces/reaction';
-import { User } from '../interfaces/user';
-import { Venue } from '../interfaces/venue';
+import mongoose from 'mongoose';
+import { Group } from '../interfaces/Group.interface';
+import { LastActive } from '../interfaces/LastActive.interface';
+import { Reaction } from '../interfaces/Reaction.interface';
+import { SavedGroup } from '../interfaces/SavedGroup.interface';
+import { User } from '../interfaces/User.interface';
+import { Venue } from '../interfaces/Venue.interface';
+import { EMOJIS } from '../utils/constants';
+import { EmojiCount } from '../utils/venue.utils';
 
-export const TEST_USER = {
+/* User 1 */
+const TEST_LAST_ACTIVE_1: LastActive = {
+  location: {
+    latitude: 12.8758393,
+    longitude: 95.7584833,
+  },
+  time: new Date(),
+} as LastActive;
+
+const TEST_SAVED_GROUP_1: SavedGroup = {
+  name: 'My new group!',
+  users: [
+    new mongoose.Types.ObjectId(233456),
+    new mongoose.Types.ObjectId(345675),
+  ],
+};
+
+const TEST_SAVED_GROUP_2: SavedGroup = {
+  name: 'My side friend group',
+  users: [
+    new mongoose.Types.ObjectId(2456),
+    new mongoose.Types.ObjectId(34675),
+  ],
+};
+
+export const TEST_USER_1: User = {
   firebaseUid: 'THISWORKEDOMG',
   imgUrlProfileSmall: 'www.smallProfileImage.com',
   imgUrlProfileLarge: 'www.largeProfileImage.com',
@@ -19,13 +48,63 @@ export const TEST_USER = {
     new mongoose.Types.ObjectId(46432),
     new mongoose.Types.ObjectId(6564),
   ],
-  currentLocation: {
-    latitude: 12.8758393,
-    longitude: 95.7584833,
-  },
-} as User;
+  lastActive: TEST_LAST_ACTIVE_1,
+  savedGroups: [TEST_SAVED_GROUP_1, TEST_SAVED_GROUP_2],
+};
 
-export const TEST_GROUP = {
+export const UPDATE_USER_1_TO_USER_2: any = {
+  firstName: 'Tom',
+  lastName: 'Updated',
+  email: 't-dawg@gmail.com',
+  phone: '+16314959610',
+};
+
+/* User 2 */
+const TEST_LAST_ACTIVE_2: LastActive = {
+  location: {
+    latitude: 42.8758393,
+    longitude: 35.7584833,
+  },
+  time: new Date(),
+} as LastActive;
+
+const TEST_SAVED_GROUP_3: SavedGroup = {
+  name: 'A cool friend group!',
+  users: [
+    new mongoose.Types.ObjectId(2234566),
+    new mongoose.Types.ObjectId(987475),
+  ],
+};
+
+const TEST_SAVED_GROUP_4: SavedGroup = {
+  name: 'A not-so-cool friend group',
+  users: [
+    new mongoose.Types.ObjectId(2098765),
+    new mongoose.Types.ObjectId(346925),
+  ],
+};
+
+export const TEST_USER_2: User = {
+  firebaseUid: 'FAKEUSERID',
+  imgUrlProfileSmall: 'www.smallProfileImage.com',
+  imgUrlProfileLarge: 'www.largeProfileImage.com',
+  imgUrlCover: 'www.coverImage.com',
+  firstName: 'Graham',
+  lastName: 'Hemingway',
+  email: 'john.doe@gmail.com',
+  phone: '+11234567890',
+  birthday: new Date(),
+  currentGroup: undefined,
+  friends: [
+    new mongoose.Types.ObjectId(987654),
+    new mongoose.Types.ObjectId(16724),
+  ],
+  lastActive: TEST_LAST_ACTIVE_2,
+  savedGroups: [TEST_SAVED_GROUP_3, TEST_SAVED_GROUP_4],
+};
+
+/* Groups */
+export const TEST_GROUP: Group = {
   name: 'Our group',
   members: [
     new mongoose.Types.ObjectId(234),
@@ -38,17 +117,19 @@ export const TEST_GROUP = {
   creationTime: new Date(),
   expirationDate: new Date(),
   returnTime: new Date(),
-} as Group;
+};
 
-export const TEST_VENUE = {
+/* Venues */
+export const TEST_VENUE: Venue = {
   name: 'The Last Bar',
   address: '123 Broadway, Just Broadway',
   location: {
     latitude: 12.2343234,
     longitude: 32.456543,
   },
-} as Venue;
+};
 
+/* Reactions */
 export const createTestReaction = (userId: string, venueId: string) => {
   return {
     userId,
@@ -65,11 +146,31 @@ export const createSecondTestReaction = (userId: string, venueId: string) => {
   } as Reaction;
 };
 
+/* UTIL: fillEmojiCount */
+export const PARTIAL_EMOJI_COUNT_1: EmojiCount[] = [
+  { emoji: EMOJIS[0], count: 45 },
+];
+
+export const PARTIAL_EMOJI_COUNT_2: EmojiCount[] = [
+  { emoji: EMOJIS[2], count: 45 },
+  { emoji: EMOJIS[4], count: 45 },
+  { emoji: EMOJIS[0], count: 45 },
+  { emoji: EMOJIS[3], count: 45 },
+];
+
+export const PARTIAL_EMOJI_COUNT_3: EmojiCount[] = [
+  { emoji: EMOJIS[0], count: 45 },
+  { emoji: EMOJIS[1], count: 45 },
+  { emoji: EMOJIS[3], count: 45 },
+  { emoji: EMOJIS[2], count: 45 },
+  { emoji: EMOJIS[4], count: 45 },
+];
+
+/* KEYS FOR TESTING */
 export const USER_KEYS = [
   '__v',
   '_id',
   'birthday',
-  'currentLocation',
   'email',
   'firebaseUid',
   'firstName',
@@ -79,6 +180,8 @@ export const USER_KEYS = [
   'imgUrlProfileSmall',
   'lastName',
   'phone',
+  'lastActive',
+  'savedGroups',
 ];
 
 export const GROUP_KEYS = [
@@ -102,3 +205,5 @@ export const VENUE_KEYS_GET = [
   'location',
   'reactions',
 ];
+
+export const VENUE_KEYS_EMOJIS = [...EMOJIS];

@@ -1,7 +1,7 @@
 /** source/controllers/posts.ts */
 import { Request, Response } from 'express';
-import Group from '../models/Group';
-import User from '../models/User';
+import Group from '../models/Group.model';
+import User from '../models/User.model';
 
 export const createUser = async (req: Request, res: Response) => {
   const newUser = new User(req.body);
@@ -39,6 +39,21 @@ export const deleteUser = async (req: Request, res: Response) => {
     console.log(error);
     return res.status(500).send({ message: error.message });
   } finally {
-    return res.status(200).send({ message: 'Successfully delete user!' });
+    return res.status(200).send({ message: 'Successfully deleted user!' });
+  }
+};
+
+export const updateUser = async (req: Request, res: Response) => {
+  let targetUser;
+
+  try {
+    targetUser = await User.findByIdAndUpdate(req.params?.userId, req.body);
+  } catch (error: any) {
+    console.log(error);
+    return res.status(500).send({ message: error.message });
+  } finally {
+    return res
+      .status(200)
+      .send({ message: 'Successfully updated user!', user: targetUser });
   }
 };
