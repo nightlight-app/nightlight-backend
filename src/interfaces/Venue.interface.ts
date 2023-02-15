@@ -1,20 +1,23 @@
+import mongoose from 'mongoose';
+
 export interface Venue {
   _id?: string;
   name: string;
   address: string;
-  reactions?: VenueReactionMap;
+  reactions?: VenueReactionMap[];
   location: {
     latitude: number;
     longitude: number;
   };
 }
 
-export interface VenueReactionQuery {
+// Object stored in mongo nested in the Venue object
+export interface VenueReaction {
   emoji: string;
-  count: number;
-  didReact: boolean;
+  userId: mongoose.Types.ObjectId;
 }
 
+// formatted response after mongo query
 export interface VenueReactionMap {
-  [key: string]: { count: number; didReact: boolean };
+  [emoji: string]: { count: number; didReact: boolean };
 }

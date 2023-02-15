@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { User } from './User.interface';
 
 export interface Group {
   _id?: string;

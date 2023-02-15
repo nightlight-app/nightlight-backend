@@ -2,7 +2,6 @@ import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import groupsRouter from './routes/groups.router';
-import reactionsRouter from './routes/reactions.router';
 import usersRouter from './routes/users.router';
 import venuesRouter from './routes/venues.router';
 
@@ -15,7 +14,6 @@ const createServer = () => {
 
   // Routers
   app.use('/group', groupsRouter);
-  app.use('/reaction', reactionsRouter);
   app.use('/user', usersRouter);
   app.use('/venue', venuesRouter);
 

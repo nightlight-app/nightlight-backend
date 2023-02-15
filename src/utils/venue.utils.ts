@@ -1,21 +1,22 @@
-import {
-  VenueReactionMap,
-  VenueReactionQuery,
-} from '../interfaces/Venue.interface';
-import { EMOJIS } from './constants';
+const emojiMap: { [key: string]: string } = {
+  '🔥': 'FIRE',
+  '⚠️': 'CAUTION',
+  '🛡': 'SHIELD',
+  '💩': 'POOP',
+  '🎉': 'PARTY',
+};
 
-export const convertEmojiFormat = (emojiCount: VenueReactionQuery[]) => {
-  return emojiCount.reduce(
-    (result, emojiObj) => {
-      result[emojiObj.emoji] = {
-        count: emojiObj.count,
-        didReact: emojiObj.didReact,
-      };
-      return result;
-    },
-    EMOJIS.reduce((acc, emoji) => {
-      acc[emoji] = { count: 0, didReact: false };
-      return acc;
-    }, {} as VenueReactionMap)
-  );
+export const mapEmoji = (inputWord: string) => {
+  if (emojiMap.hasOwnProperty(inputWord)) {
+    return emojiMap[inputWord];
+  } else {
+    const invertedMap = Object.fromEntries(
+      Object.entries(emojiMap).map(([k, v]) => [v, k])
+    );
+    if (invertedMap.hasOwnProperty(inputWord)) {
+      return invertedMap[inputWord];
+    } else {
+      return null;
+    }
+  }
 };

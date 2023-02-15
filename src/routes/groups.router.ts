@@ -12,4 +12,6 @@ groupsRouter.post('/', createGroup);
 groupsRouter.get('/:groupId', getGroup);
 groupsRouter.delete('/:groupID', deleteGroup);
 
+/* TODO: patch */
+
 export = groupsRouter;

@@ -1,10 +1,9 @@
 import mongoose from 'mongoose';
 import { Group } from '../interfaces/Group.interface';
 import { LastActive } from '../interfaces/LastActive.interface';
-import { Reaction } from '../interfaces/Reaction.interface';
 import { SavedGroup } from '../interfaces/SavedGroup.interface';
 import { User } from '../interfaces/User.interface';
-import { Venue, VenueReactionQuery } from '../interfaces/Venue.interface';
+import { Venue, VenueReaction } from '../interfaces/Venue.interface';
 import { EMOJIS } from '../utils/constants';
 
 /* User 1 */
@@ -126,44 +125,23 @@ export const TEST_VENUE: Venue = {
     latitude: 12.2343234,
     longitude: 32.456543,
   },
+  reactions: [],
 };
 
 /* Reactions */
-export const createTestReaction = (userId: string, venueId: string) => {
+export const createTestReaction = (userId: string) => {
   return {
     userId: new mongoose.Types.ObjectId(userId),
-    venueId: new mongoose.Types.ObjectId(venueId),
     emoji: '🔥',
-  } as Reaction;
+  } as VenueReaction;
 };
 
-export const createSecondTestReaction = (userId: string, venueId: string) => {
+export const createSecondTestReaction = (userId: string) => {
   return {
     userId: new mongoose.Types.ObjectId(userId),
-    venueId: new mongoose.Types.ObjectId(venueId),
     emoji: '🎉',
-  } as Reaction;
+  } as VenueReaction;
 };
-
-/* UTIL: fillEmojiCount */
-export const PARTIAL_EMOJI_COUNT_1: VenueReactionQuery[] = [
-  { emoji: EMOJIS[0], count: 45, didReact: false },
-];
-
-export const PARTIAL_EMOJI_COUNT_2: VenueReactionQuery[] = [
-  { emoji: EMOJIS[2], count: 45, didReact: false },
-  { emoji: EMOJIS[4], count: 45, didReact: false },
-  { emoji: EMOJIS[0], count: 45, didReact: false },
-  { emoji: EMOJIS[3], count: 45, didReact: false },
-];
-
-export const PARTIAL_EMOJI_COUNT_3: VenueReactionQuery[] = [
-  { emoji: EMOJIS[0], count: 45, didReact: false },
-  { emoji: EMOJIS[1], count: 45, didReact: false },
-  { emoji: EMOJIS[3], count: 45, didReact: false },
-  { emoji: EMOJIS[2], count: 45, didReact: false },
-  { emoji: EMOJIS[4], count: 45, didReact: false },
-];
 
 /* KEYS FOR TESTING */
 export const USER_KEYS = [
@@ -194,9 +172,7 @@ export const GROUP_KEYS = [
   'returnTime',
 ];
 
-export const VENUE_KEYS_POST = ['__v', '_id', 'name', 'address', 'location'];
-
-export const VENUE_KEYS_GET = [
+export const VENUE_KEYS = [
   '__v',
   '_id',
   'name',
