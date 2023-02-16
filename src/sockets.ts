@@ -26,10 +26,30 @@ export class LocationService {
     this.#io.on('connection', (socket: Socket) => {
       console.log('A socket.io client is connected:', socket.id);
 
-      // listen for the createGroup event
-      socket.on('createGroup', (groupId: string) => {
+      // listen for the joinGroup event
+      socket.on('joinGroup', (groupId: string) => {
         socket.join(groupId);
-        console.log(`Group [${groupId}] created!`);
+        this.#io
+          .in(groupId)
+          .fetchSockets()
+          .then(socketsInRoom => {
+            console.log(
+              `${socket.id} has joined the group [${groupId}]. # of members: ${socketsInRoom.length}`
+            );
+          });
+      });
+
+      // listen for the leaveGroup event
+      socket.on('leaveGroup', (groupId: string) => {
+        socket.leave(groupId);
+        this.#io
+          .in(groupId)
+          .fetchSockets()
+          .then(socketsInRoom => {
+            console.log(
+              `${socket.id} has left the group [${groupId}]. Remaining members: ${socketsInRoom.length}`
+            );
+          });
       });
 
       // listen for the locationUpdate event
