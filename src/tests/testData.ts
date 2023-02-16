@@ -129,17 +129,10 @@ export const TEST_VENUE: Venue = {
 };
 
 /* Reactions */
-export const createTestReaction = (userId: string) => {
+export const createTestReaction = (userId: string | number, emoji: string) => {
   return {
     userId: new mongoose.Types.ObjectId(userId),
-    emoji: '🔥',
-  } as VenueReaction;
-};
-
-export const createSecondTestReaction = (userId: string) => {
-  return {
-    userId: new mongoose.Types.ObjectId(userId),
-    emoji: '🎉',
+    emoji: emoji,
   } as VenueReaction;
 };
 
@@ -180,5 +173,7 @@ export const VENUE_KEYS = [
   'location',
   'reactions',
 ];
+
+export const REACTION_KEYS = ['count', 'didReact'];
 
 export const VENUE_KEYS_EMOJIS = [...EMOJIS];

@@ -3,6 +3,7 @@ import createServer from '../server';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import { GROUP_KEYS, TEST_GROUP } from './testData';
+import { ObjectId } from 'mongodb';
 
 require('dotenv').config();
 
@@ -47,7 +48,6 @@ describe('testing group actions', () => {
     chai
       .request(server)
       .get('/group/' + groupId)
-      .send()
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.group).to.have.keys(GROUP_KEYS);
@@ -59,9 +59,62 @@ describe('testing group actions', () => {
     chai
       .request(server)
       .delete('/group/' + groupId)
-      .send()
       .then(res => {
-        expect(res).to.have.status(204);
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+});
+
+describe('testing group errors', () => {
+  it('GET /group/{groupId} Invalid ID', done => {
+    chai
+      .request(server)
+      .get('/group/' + 'FAKEID')
+      .then(res => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+
+  it('GET /group/{groupId} Incorrect ID', done => {
+    chai
+      .request(server)
+      .get('/group/' + new ObjectId(1234).toString())
+      .then(res => {
+        expect(res).to.have.status(400);
+        expect(res.body.venue).to.equal(undefined);
+        done();
+      });
+  });
+
+  it('POST /group incorrectly formatted data', done => {
+    chai
+      .request(server)
+      .post('/group')
+      .send({ data: { message: 'This is incorrect' } })
+      .then(res => {
+        expect(res).to.have.status(500);
+        done();
+      });
+  });
+
+  it('DELETE /group/{groupId} Invalid ID', done => {
+    chai
+      .request(server)
+      .delete('/group/' + 'FAKEID')
+      .then(res => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+
+  it('DELETE /group/{groupId} Incorrect ID', done => {
+    chai
+      .request(server)
+      .delete('/group/' + new ObjectId(1234).toString())
+      .then(res => {
+        expect(res).to.have.status(400);
         done();
       });
   });
