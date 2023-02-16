@@ -13,8 +13,8 @@ export interface User {
   email: string;
   phone: string;
   birthday: Date;
-  currentGroup?: mongoose.Types.ObjectId;
-  friends?: mongoose.Types.ObjectId[];
+  currentGroup: mongoose.Types.ObjectId | undefined;
+  friends: mongoose.Types.ObjectId[];
   lastActive?: LastActive;
   savedGroups: SavedGroup[];
 }

@@ -4,7 +4,7 @@ import { LastActive } from '../interfaces/LastActive.interface';
 import { SavedGroup } from '../interfaces/SavedGroup.interface';
 import { User } from '../interfaces/User.interface';
 import { Venue, VenueReaction } from '../interfaces/Venue.interface';
-import { EMOJIS } from '../utils/constants';
+import { REACTION_EMOJIS } from '../utils/constants';
 
 /* User 1 */
 const TEST_LAST_ACTIVE_1: LastActive = {
@@ -176,4 +176,4 @@ export const VENUE_KEYS = [
 
 export const REACTION_KEYS = ['count', 'didReact'];
 
-export const VENUE_KEYS_EMOJIS = [...EMOJIS];
+export const VENUE_KEYS_EMOJIS = [...REACTION_EMOJIS];

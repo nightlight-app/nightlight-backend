@@ -5,6 +5,7 @@ import { Venue as VenueInterface } from '../interfaces/Venue.interface';
 import Venue from '../models/Venue.model';
 import { mapEmoji } from '../utils/venue.utils';
 import { ObjectId } from 'mongodb';
+import { REACTION_EMOJIS } from '../utils/constants';
 
 export const createVenue = async (req: Request, res: Response) => {
   const newVenue = new Venue(req.body);
@@ -40,7 +41,7 @@ export const getVenue = async (req: Request, res: Response) => {
           reactions: {
             $arrayToObject: {
               $map: {
-                input: ['🔥', '⚠️', '🛡', '💩', '🎉'],
+                input: REACTION_EMOJIS,
                 as: 'emoji',
                 in: {
                   k: '$$emoji',
