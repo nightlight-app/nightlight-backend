@@ -34,7 +34,7 @@ describe('testing group actions', () => {
   it('POST /group', done => {
     chai
       .request(server)
-      .post('/group')
+      .post('/groups/')
       .send(TEST_GROUP)
       .then(res => {
         groupId = res.body.group._id;
@@ -47,7 +47,7 @@ describe('testing group actions', () => {
   it('GET /group/{groupId}', done => {
     chai
       .request(server)
-      .get('/group/' + groupId)
+      .get('/groups/' + groupId)
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.group).to.have.keys(GROUP_KEYS);
@@ -58,7 +58,7 @@ describe('testing group actions', () => {
   it('DELETE /group/{groupId}', done => {
     chai
       .request(server)
-      .delete('/group/' + groupId)
+      .delete('/groups/' + groupId)
       .then(res => {
         expect(res).to.have.status(200);
         done();
@@ -70,7 +70,7 @@ describe('testing group errors', () => {
   it('GET /group/{groupId} Invalid ID', done => {
     chai
       .request(server)
-      .get('/group/' + 'FAKEID')
+      .get('/groups/' + 'FAKEID')
       .then(res => {
         expect(res).to.have.status(400);
         done();
@@ -80,7 +80,7 @@ describe('testing group errors', () => {
   it('GET /group/{groupId} Incorrect ID', done => {
     chai
       .request(server)
-      .get('/group/' + new ObjectId(1234).toString())
+      .get('/groups/' + new ObjectId(1234).toString())
       .then(res => {
         expect(res).to.have.status(400);
         expect(res.body.venue).to.equal(undefined);
@@ -91,7 +91,7 @@ describe('testing group errors', () => {
   it('POST /group incorrectly formatted data', done => {
     chai
       .request(server)
-      .post('/group')
+      .post('/groups')
       .send({ data: { message: 'This is incorrect' } })
       .then(res => {
         expect(res).to.have.status(500);
@@ -102,7 +102,7 @@ describe('testing group errors', () => {
   it('DELETE /group/{groupId} Invalid ID', done => {
     chai
       .request(server)
-      .delete('/group/' + 'FAKEID')
+      .delete('/groups/' + 'FAKEID')
       .then(res => {
         expect(res).to.have.status(400);
         done();
@@ -112,7 +112,7 @@ describe('testing group errors', () => {
   it('DELETE /group/{groupId} Incorrect ID', done => {
     chai
       .request(server)
-      .delete('/group/' + new ObjectId(1234).toString())
+      .delete('/groups/' + new ObjectId(1234).toString())
       .then(res => {
         expect(res).to.have.status(400);
         done();

@@ -11,7 +11,7 @@ import {
   VENUE_KEYS,
 } from './testData';
 import { ObjectId } from 'mongodb';
-import { mapEmoji } from '../utils/venue.utils';
+import { decodeEmoji } from '../utils/venue.utils';
 
 require('dotenv').config();
 
@@ -41,7 +41,7 @@ describe('testing venue with reactions', () => {
   it('POST /user for reaction test', done => {
     chai
       .request(server)
-      .post('/user')
+      .post('/users/')
       .send(TEST_USER_1)
       .then(res => {
         userId = res.body.user._id;
@@ -55,7 +55,7 @@ describe('testing venue with reactions', () => {
   it('POST /venue for reaction test', done => {
     chai
       .request(server)
-      .post('/venue')
+      .post('/venues/')
       .send(TEST_VENUE)
       .then(res => {
         venueId = res.body.venue._id;
@@ -70,7 +70,7 @@ describe('testing venue with reactions', () => {
     const testReaction = createTestReaction(userId, '🔥');
     chai
       .request(server)
-      .post('/venue/' + venueId + '/reaction')
+      .post('/venues/' + venueId + '/reaction')
       .send(testReaction)
       .then(res => {
         emoji1 = testReaction.emoji;
@@ -84,7 +84,7 @@ describe('testing venue with reactions', () => {
     const testReaction = createTestReaction(userId, '🎉');
     chai
       .request(server)
-      .post('/venue/' + venueId + '/reaction')
+      .post('/venues/' + venueId + '/reaction')
       .send(testReaction)
       .then(res => {
         emoji2 = testReaction.emoji;
@@ -99,7 +99,7 @@ describe('testing venue with reactions', () => {
     const testReaction = createTestReaction(12345, '💩');
     chai
       .request(server)
-      .post('/venue/' + venueId + '/reaction')
+      .post('/venues/' + venueId + '/reaction')
       .send(testReaction)
       .then(res => {
         emoji3 = testReaction.emoji;
@@ -115,7 +115,7 @@ describe('testing venue with reactions', () => {
     const testReaction = createTestReaction(54321, '🛡');
     chai
       .request(server)
-      .post('/venue/' + venueId + '/reaction')
+      .post('/venues/' + venueId + '/reaction')
       .send(testReaction)
       .then(res => {
         userId4 = testReaction.userId.toString();
@@ -128,7 +128,7 @@ describe('testing venue with reactions', () => {
   it('GET /venue/{venueId}/', done => {
     chai
       .request(server)
-      .get('/venue/' + venueId + '/?userId=' + userId)
+      .get('/venues/' + venueId + '/?userId=' + userId)
       .send()
       .then(res => {
         expect(res).to.have.status(200);
@@ -156,12 +156,12 @@ describe('testing venue with reactions', () => {
     chai
       .request(server)
       .delete(
-        '/venue/' +
+        '/venues/' +
           venueId +
           '/reaction/?userId=' +
           userId +
           '&emoji=' +
-          mapEmoji(emoji1)
+          decodeEmoji(emoji1)
       )
       .send()
       .then(res => {
@@ -174,12 +174,12 @@ describe('testing venue with reactions', () => {
     chai
       .request(server)
       .delete(
-        '/venue/' +
+        '/venues/' +
           venueId +
           '/reaction/?userId=' +
           userId3 +
           '&emoji=' +
-          mapEmoji(emoji3)
+          decodeEmoji(emoji3)
       )
       .send()
       .then(res => {
@@ -191,7 +191,7 @@ describe('testing venue with reactions', () => {
   it('GET /venue/{venueId}/', done => {
     chai
       .request(server)
-      .get('/venue/' + venueId + '/?userId=' + userId)
+      .get('/venues/' + venueId + '/?userId=' + userId)
       .send()
       .then(res => {
         expect(res).to.have.status(200);
@@ -219,12 +219,12 @@ describe('testing venue with reactions', () => {
     chai
       .request(server)
       .delete(
-        '/venue/' +
+        '/venues/' +
           venueId +
           '/reaction/?userId=' +
           userId +
           '&emoji=' +
-          mapEmoji(emoji2)
+          decodeEmoji(emoji2)
       )
       .send()
       .then(res => {
@@ -237,12 +237,12 @@ describe('testing venue with reactions', () => {
     chai
       .request(server)
       .delete(
-        '/venue/' +
+        '/venues/' +
           venueId +
           '/reaction/?userId=' +
           userId4 +
           '&emoji=' +
-          mapEmoji(emoji4)
+          decodeEmoji(emoji4)
       )
       .send()
       .then(res => {
@@ -254,7 +254,7 @@ describe('testing venue with reactions', () => {
   it('GET /venue/{venueId}/', done => {
     chai
       .request(server)
-      .get('/venue/' + venueId + '/?userId=' + userId)
+      .get('/venues/' + venueId + '/?userId=' + userId)
       .send()
       .then(res => {
         expect(res).to.have.status(200);
@@ -281,7 +281,7 @@ describe('testing venue with reactions', () => {
   it('DELETE /venue/{userId}', done => {
     chai
       .request(server)
-      .get('/venue/' + venueId)
+      .get('/venues/' + venueId)
       .send()
       .then(res => {
         expect(res).to.have.status(200);
@@ -292,7 +292,7 @@ describe('testing venue with reactions', () => {
   it('DELETE /user/{userId}', done => {
     chai
       .request(server)
-      .delete('/user/' + userId)
+      .delete('/users/' + userId)
       .send()
       .then(res => {
         expect(res).to.have.status(200);
@@ -307,7 +307,7 @@ describe('testing venue without reactions', () => {
   it('POST /user for reaction test', done => {
     chai
       .request(server)
-      .post('/user')
+      .post('/users/')
       .send(TEST_USER_1)
       .then(res => {
         userId = res.body.user._id;
@@ -321,7 +321,7 @@ describe('testing venue without reactions', () => {
   it('POST /venue', done => {
     chai
       .request(server)
-      .post('/venue')
+      .post('/venues/')
       .send(TEST_VENUE)
       .then(res => {
         venueId = res.body.venue._id;
@@ -334,7 +334,7 @@ describe('testing venue without reactions', () => {
   it('GET /venue/{venueId}/', done => {
     chai
       .request(server)
-      .get('/venue/' + venueId + '/?userId=' + userId)
+      .get('/venues/' + venueId + '/?userId=' + userId)
       .send()
       .then(res => {
         expect(res).to.have.status(200);
@@ -346,7 +346,7 @@ describe('testing venue without reactions', () => {
   it('DELETE /venue/{userId}', done => {
     chai
       .request(server)
-      .get('/venue/' + venueId)
+      .get('/venues/' + venueId)
       .send()
       .then(res => {
         expect(res).to.have.status(200);
@@ -359,7 +359,7 @@ describe('testing venue errors', () => {
   it('GET /venue/{venueId} Invalid ID', done => {
     chai
       .request(server)
-      .get('/venue/' + 'FAKEID')
+      .get('/venues/' + 'FAKEID')
       .then(res => {
         expect(res).to.have.status(400);
         done();
@@ -369,7 +369,7 @@ describe('testing venue errors', () => {
   it('GET /venue/{venueId} Incorrect ID', done => {
     chai
       .request(server)
-      .get('/venue/' + new ObjectId(1234).toString())
+      .get('/venues/' + new ObjectId(1234).toString())
       .then(res => {
         expect(res).to.have.status(400);
         expect(res.body.venue).to.equal(undefined);
@@ -380,7 +380,7 @@ describe('testing venue errors', () => {
   it('POST /venue incorrectly formatted data', done => {
     chai
       .request(server)
-      .post('/venue')
+      .post('/venues/')
       .send({ data: { message: 'This is incorrect' } })
       .then(res => {
         expect(res).to.have.status(500);
@@ -391,7 +391,7 @@ describe('testing venue errors', () => {
   it('DELETE /venue/{venueId} Invalid ID', done => {
     chai
       .request(server)
-      .delete('/venue/' + 'FAKEID')
+      .delete('/venues/' + 'FAKEID')
       .then(res => {
         expect(res).to.have.status(400);
         done();
@@ -401,7 +401,7 @@ describe('testing venue errors', () => {
   it('DELETE /venue/{venueId} Incorrect ID', done => {
     chai
       .request(server)
-      .delete('/venue/' + new ObjectId(1234).toString())
+      .delete('/venues/' + new ObjectId(1234).toString())
       .then(res => {
         expect(res).to.have.status(400);
         done();

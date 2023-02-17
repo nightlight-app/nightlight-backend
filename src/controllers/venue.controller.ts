@@ -3,9 +3,9 @@ import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import { Venue as VenueInterface } from '../interfaces/Venue.interface';
 import Venue from '../models/Venue.model';
-import { mapEmoji } from '../utils/venue.utils';
 import { ObjectId } from 'mongodb';
 import { REACTION_EMOJIS } from '../utils/constants';
+import { encodeEmoji } from '../utils/venue.utils';
 
 export const createVenue = async (req: Request, res: Response) => {
   const newVenue = new Venue(req.body);
@@ -121,7 +121,7 @@ export const deleteReactionFromVenue = async (req: Request, res: Response) => {
   try {
     const venueId = req.params?.venueId;
     const userId = req.query?.userId;
-    const emoji = mapEmoji(req.query?.emoji as string);
+    const emoji = encodeEmoji(req.query?.emoji as string);
 
     if (!ObjectId.isValid(req.params?.venueId)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
@@ -136,9 +136,9 @@ export const deleteReactionFromVenue = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'Reaction not found!' });
     }
 
-    return res
-      .status(200)
-      .send({ message: 'Successfully deleted reaction from Venue!' });
+    return res.status(200).send({
+      message: 'Successfully deleted reaction from venue: ' + venueId,
+    });
   } catch (error: any) {
     return res.status(500).send({ message: error.message });
   }

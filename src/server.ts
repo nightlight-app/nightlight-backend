@@ -13,9 +13,9 @@ const createServer = () => {
   app.use(cors()); // Enable CORS
 
   // Routers
-  app.use('/group', groupsRouter);
-  app.use('/user', usersRouter);
-  app.use('/venue', venuesRouter);
+  app.use('/groups', groupsRouter);
+  app.use('/users', usersRouter);
+  app.use('/venues', venuesRouter);
 
   // Create the server
   return http.createServer(app);
