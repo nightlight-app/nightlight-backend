@@ -20,14 +20,26 @@ export const createVenue = async (req: Request, res: Response) => {
 
 export const getVenue = async (req: Request, res: Response) => {
   let targetVenue;
+  let targetVenues;
   try {
     targetVenue = await Venue.findById(req.params.venueId);
+    if (!targetVenue){
+      targetVenues = await Venue.find();
+    }
   } catch (error: any) {
     return res.status(500).send({ message: error.message });
   } finally {
-    return res
+    if (targetVenue) {
+      return res
       .status(200)
       .send({ message: 'Successfully found venue!', venue: targetVenue });
+  }
+    if (targetVenues) {
+      console.log(targetVenues);
+      return res
+      .status(200)
+      .send({ message: 'Successfully found venues!', venues: targetVenues });
+    }
   }
 };
 
@@ -40,3 +52,5 @@ export const deleteVenue = async (req: Request, res: Response) => {
     return res.status(200).send({ message: 'Successfully deleted venue!' });
   }
 };
+
+
