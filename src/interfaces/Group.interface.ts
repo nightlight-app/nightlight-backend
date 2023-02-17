@@ -1,10 +1,10 @@
-import { User } from './User.interface';
+import mongoose from 'mongoose';
 
 export interface Group {
   _id?: string;
   name: string;
-  members: any[];
-  invitedMembers: any[];
+  members: mongoose.Types.ObjectId[];
+  invitedMembers: mongoose.Types.ObjectId[];
   creationTime: Date;
   expirationDate: Date;
   expectedDestination?: {

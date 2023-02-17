@@ -1,14 +1,33 @@
-import { EMOJIS } from './constants';
+const encodeEmojiMap: { [key: string]: string } = {
+  FIRE: '🔥',
+  CAUTION: '⚠️',
+  SHIELD: '🛡',
+  POOP: '💩',
+  PARTY: '🎉',
+};
 
-export interface EmojiCount {
-  emoji: string;
-  count: number;
-}
+const decodeEmojiMap: { [key: string]: string } = {
+  '🔥': 'FIRE',
+  '⚠️': 'CAUTION',
+  '🛡': 'SHIELD',
+  '💩': 'POOP',
+  '🎉': 'PARTY',
+};
 
-export const fillEmojiCount = (rawAggregate: EmojiCount[]) => ({
-  ...EMOJIS.reduce((acc, emoji) => ({ ...acc, [emoji]: 0 }), {}),
-  ...rawAggregate.reduce(
-    (acc, { count, emoji }) => ({ ...acc, [emoji]: count }),
-    {}
-  ),
-});
+/* Convert text to emoji */
+export const encodeEmoji = (inputWord: string) => {
+  if (encodeEmojiMap.hasOwnProperty(inputWord)) {
+    return encodeEmojiMap[inputWord];
+  } else {
+    return null;
+  }
+};
+
+/* Convert emoji to text */
+export const decodeEmoji = (inputWord: string) => {
+  if (decodeEmojiMap.hasOwnProperty(inputWord)) {
+    return decodeEmojiMap[inputWord];
+  } else {
+    return null;
+  }
+};

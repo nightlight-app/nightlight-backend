@@ -1,12 +1,10 @@
 import mongoose from 'mongoose';
 import { Group } from '../interfaces/Group.interface';
 import { LastActive } from '../interfaces/LastActive.interface';
-import { Reaction } from '../interfaces/Reaction.interface';
 import { SavedGroup } from '../interfaces/SavedGroup.interface';
 import { User } from '../interfaces/User.interface';
-import { Venue } from '../interfaces/Venue.interface';
-import { EMOJIS } from '../utils/constants';
-import { EmojiCount } from '../utils/venue.utils';
+import { Venue, VenueReaction } from '../interfaces/Venue.interface';
+import { REACTION_EMOJIS } from '../utils/constants';
 
 /* User 1 */
 const TEST_LAST_ACTIVE_1: LastActive = {
@@ -127,44 +125,16 @@ export const TEST_VENUE: Venue = {
     latitude: 12.2343234,
     longitude: 32.456543,
   },
+  reactions: [],
 };
 
 /* Reactions */
-export const createTestReaction = (userId: string, venueId: string) => {
+export const createTestReaction = (userId: string | number, emoji: string) => {
   return {
-    userId,
-    venueId,
-    emoji: '🔥',
-  } as Reaction;
+    userId: new mongoose.Types.ObjectId(userId),
+    emoji: emoji,
+  } as VenueReaction;
 };
-
-export const createSecondTestReaction = (userId: string, venueId: string) => {
-  return {
-    userId,
-    venueId,
-    emoji: '🎉',
-  } as Reaction;
-};
-
-/* UTIL: fillEmojiCount */
-export const PARTIAL_EMOJI_COUNT_1: EmojiCount[] = [
-  { emoji: EMOJIS[0], count: 45 },
-];
-
-export const PARTIAL_EMOJI_COUNT_2: EmojiCount[] = [
-  { emoji: EMOJIS[2], count: 45 },
-  { emoji: EMOJIS[4], count: 45 },
-  { emoji: EMOJIS[0], count: 45 },
-  { emoji: EMOJIS[3], count: 45 },
-];
-
-export const PARTIAL_EMOJI_COUNT_3: EmojiCount[] = [
-  { emoji: EMOJIS[0], count: 45 },
-  { emoji: EMOJIS[1], count: 45 },
-  { emoji: EMOJIS[3], count: 45 },
-  { emoji: EMOJIS[2], count: 45 },
-  { emoji: EMOJIS[4], count: 45 },
-];
 
 /* KEYS FOR TESTING */
 export const USER_KEYS = [
@@ -195,9 +165,7 @@ export const GROUP_KEYS = [
   'returnTime',
 ];
 
-export const VENUE_KEYS_POST = ['__v', '_id', 'name', 'address', 'location'];
-
-export const VENUE_KEYS_GET = [
+export const VENUE_KEYS = [
   '__v',
   '_id',
   'name',
@@ -206,4 +174,6 @@ export const VENUE_KEYS_GET = [
   'reactions',
 ];
 
-export const VENUE_KEYS_EMOJIS = [...EMOJIS];
+export const REACTION_KEYS = ['count', 'didReact'];
+
+export const VENUE_KEYS_EMOJIS = [...REACTION_EMOJIS];

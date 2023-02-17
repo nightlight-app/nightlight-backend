@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { LastActive } from './LastActive.interface';
 import { SavedGroup } from './SavedGroup.interface';
 
@@ -12,8 +13,8 @@ export interface User {
   email: string;
   phone: string;
   birthday: Date;
-  currentGroup?: any;
-  friends: any[];
+  currentGroup: mongoose.Types.ObjectId | undefined;
+  friends: mongoose.Types.ObjectId[];
   lastActive?: LastActive;
   savedGroups: SavedGroup[];
 }

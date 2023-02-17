@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import { connectMongoDB } from './config/mongodb';
+import { connectMongoDB } from './config/mongodb.config';
 import { LocationService } from './sockets';
 import createServer from './server';
 
