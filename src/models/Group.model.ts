@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-const GroupSchema = new mongoose.Schema({
+const groupSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -19,6 +19,10 @@ const GroupSchema = new mongoose.Schema({
       required: true,
     },
   ],
+  expectedDestination: {
+    latitude: Number,
+    longitude: Number,
+  },
   creationTime: {
     type: Date,
     required: true,
@@ -33,6 +37,6 @@ const GroupSchema = new mongoose.Schema({
   },
 });
 
-const Group = mongoose.model('Group', GroupSchema);
+const Group = mongoose.model('Group', groupSchema);
 
 export default Group;

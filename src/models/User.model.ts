@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-const UserSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   firebaseUid: {
     type: String,
     required: true,
@@ -37,26 +37,37 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  friends: {
-    type: [String],
-    required: true,
-  },
+  friends: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+  ],
   currentGroup: {
     type: Schema.Types.ObjectId,
     ref: 'Group',
   },
-  currentLocation: {
-    latitude: {
-      type: String,
-      required: true,
+  lastActive: {
+    location: {
+      latitude: Number,
+      longitude: Number,
     },
-    longitude: {
-      type: String,
-      required: true,
-    },
+    time: Date,
   },
+  savedGroups: [
+    {
+      name: String,
+      users: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'User',
+        },
+      ],
+    },
+  ],
 });
 
-const User = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', userSchema);
 
 export default User;

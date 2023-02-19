@@ -1,7 +1,9 @@
 import express from 'express';
 import http from 'http';
 import cors from 'cors';
-import router from './routes/router';
+import groupsRouter from './routes/groups.router';
+import usersRouter from './routes/users.router';
+import venuesRouter from './routes/venues.router';
 
 const createServer = () => {
   const app = express();
@@ -11,7 +13,9 @@ const createServer = () => {
   app.use(cors()); // Enable CORS
 
   // Routers
-  app.use('/', router);
+  app.use('/groups', groupsRouter);
+  app.use('/users', usersRouter);
+  app.use('/venues', venuesRouter);
 
   // Create the server
   return http.createServer(app);

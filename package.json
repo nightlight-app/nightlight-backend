@@ -10,7 +10,11 @@
     "dev": "nodemon src/index.ts",
     "build": "rm -rf build/ && prettier --write src/ && tsc",
     "format": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
-    "test": "mocha -r ts-node/register src/**/*.test.ts"
+    "test-utils": "nyc mocha -r ts-node/register src/tests/*.utils.test.ts",
+    "test-venues": "nyc mocha -r ts-node/register src/tests/venue.controller.test.ts",
+    "test-users": "nyc mocha -r ts-node/register src/tests/user.controller.test.ts",
+    "test-groups": "nyc mocha -r ts-node/register src/tests/group.controller.test.ts",
+    "test": "nyc mocha -r ts-node/register src/tests/*.test.ts"
   },
   "dependencies": {
     "@types/axios": "^0.14.0",
@@ -36,6 +40,7 @@
     "chai": "^4.1.2",
     "chai-http": "^4.0.0",
     "mocha": "^5.2.0",
+    "nyc": "^15.1.0",
     "prettier": "^2.8.3",
     "typescript": "^4.9.5"
   }
