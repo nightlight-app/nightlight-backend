@@ -98,8 +98,57 @@ export const getVenue = async (req: Request, res: Response) => {
 
 export const getVenues = async (req: Request, res: Response) => {
   let targetVenues=[];
-  console.log('reaching this point')
-  targetVenues = await Venue.find();
+
+  const userId = req.query?.userId;
+  console.log('here')
+  targetVenues = await Venue.aggregate([
+    {
+      $addFields: {
+        reactions: {
+          $arrayToObject: {
+            $map: {
+              input: REACTION_EMOJIS,
+              as: 'emoji',
+              in: {
+                k: '$$emoji',
+                v: {
+                  count: {
+                    $size: {
+                      $filter: {
+                        input: '$reactions',
+                        cond: {
+                          $eq: ['$$this.emoji', '$$emoji'],
+                        },
+                      },
+                    },
+                  },
+                  didReact: {
+                    $anyElementTrue: {
+                      $map: {
+                        input: {
+                          $filter: {
+                            input: '$reactions',
+                            cond: {
+                              $and: [
+                                { $eq: ['$$this.emoji', '$$emoji'] },
+                                { $eq: ['$$this.userId', userId] },
+                              ],
+                            },
+                          },
+                        },
+                        as: 'reaction',
+                        in: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  ]);
 
   try {
     if (targetVenues.length == 0) {
