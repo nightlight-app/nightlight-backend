@@ -1,9 +1,9 @@
 {
   "author": "Jacob Lurie",
   "license": "ISC",
-  "name": "men-stack-boilerplate",
+  "name": "nightlight-backend",
   "version": "1.0.0",
-  "description": "A boilerplate for a REST API service that uses Express, MongoDB, Mongoose, and Node.",
+  "description": "Backend for the nightlight mobile application Express, MongoDB, Mongoose, and Node.",
   "main": "src/server.ts",
   "scripts": {
     "start": "nodemon src/index.ts",

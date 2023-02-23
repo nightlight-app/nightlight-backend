@@ -18,11 +18,11 @@ export const createUser = async (req: Request, res: Response) => {
 export const getUser = async (req: Request, res: Response) => {
   let targetUser;
   try {
-    if (!ObjectId.isValid(req.params?.userId)) {
+    if (!ObjectId.isValid(req.query?.userId!.toString())) {
       return res.status(400).send({ message: 'Invalid user ID!' });
     }
 
-    targetUser = await User.findById(req.params?.userId);
+    targetUser = await User.findById(req.query?.userId!.toString());
 
     if (targetUser == undefined) {
       return res.status(400).send({ message: 'User does not exist!' });
