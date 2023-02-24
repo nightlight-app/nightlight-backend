@@ -23,7 +23,7 @@ export const getGroup = async (req: Request, res: Response) => {
 
     targetGroup = await Group.findById(req.params?.groupId);
 
-    if (targetGroup == undefined) {
+    if (targetGroup === null) {
       return res.status(400).send({ message: 'Group does not exist!' });
     }
 
