@@ -31,7 +31,7 @@ const connectToMongo = async (): Promise<void> => {
   }
 };
 
-beforeEach(async () => {
+before(async () => {
   await connectToMongo();
   server = app.listen(6061);
 });
@@ -478,7 +478,7 @@ describe('testing venue errors', () => {
   });
 });
 
-afterEach(async () => {
+after(async () => {
   try {
     mongoose.connection.close();
   } catch (error) {
