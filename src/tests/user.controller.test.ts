@@ -47,7 +47,7 @@ describe('testing user actions', () => {
   it('GET /user/{userId}', done => {
     chai
       .request(server)
-      .get('/users/' + userId)
+      .get('/users/?userId=' + userId)
       .send()
       .then(res => {
         expect(res).to.have.status(200);
@@ -85,7 +85,7 @@ describe('testing user errors', () => {
   it('GET /user/{userId} Invalid ID', done => {
     chai
       .request(server)
-      .get('/users/' + 'FAKEID')
+      .get('/users/?userId=' + 'FAKEID')
       .then(res => {
         expect(res).to.have.status(400);
         done();
@@ -95,7 +95,7 @@ describe('testing user errors', () => {
   it('GET /user/{userId} Incorrect ID', done => {
     chai
       .request(server)
-      .get('/users/' + new ObjectId(1234).toString())
+      .get('/users/?userId=' + new ObjectId(1234).toString())
       .then(res => {
         expect(res).to.have.status(400);
         expect(res.body.venue).to.equal(undefined);

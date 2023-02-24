@@ -152,7 +152,7 @@ export const deleteVenue = async (req: Request, res: Response) => {
     const result = await Venue.deleteOne({ _id: req.params?.venueId });
 
     if (result.deletedCount === 0) {
-      return res.status(400).send({ message: 'Reaction not found!' });
+      return res.status(400).send({ message: 'Venue not found!' });
     }
 
     return res.status(200).send({ message: 'Successfully deleted venue!' });
