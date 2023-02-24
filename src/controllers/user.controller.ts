@@ -73,3 +73,26 @@ export const updateUser = async (req: Request, res: Response) => {
     return res.status(500).send({ message: error.message });
   }
 };
+
+export const saveGroup = async (req: Request, res: Response) => {
+  let targetUser;
+
+  try {
+    if (!ObjectId.isValid(req.params?.userId)) {
+      return res.status(400).send({ message: 'Invalid user ID!' });
+    }
+
+    targetUser = await User.findByIdAndUpdate(req.params?.userId, {
+      $push: { savedGroups: req.body },
+    });
+
+    if (targetUser == undefined) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+    return res
+      .status(200)
+      .send({ message: 'Successfully updated user!', user: targetUser });
+  } catch (error: any) {
+    return res.status(500).send({ message: error.message });
+  }
+};

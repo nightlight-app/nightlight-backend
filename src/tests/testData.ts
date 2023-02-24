@@ -57,6 +57,15 @@ export const UPDATE_USER_1_TO_USER_2: any = {
   phone: '+16314959610',
 };
 
+export const SAVED_GROUP: SavedGroup = {
+  name: 'Test group',
+  users: [
+    new mongoose.Types.ObjectId(2234566),
+    new mongoose.Types.ObjectId(987475),
+    new mongoose.Types.ObjectId(23456765),
+  ],
+};
+
 /* User 2 */
 const TEST_LAST_ACTIVE_2: LastActive = {
   location: {

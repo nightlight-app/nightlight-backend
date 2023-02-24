@@ -92,10 +92,10 @@ This is the backend for the nightlight app. It is a RESTful API built with Node.
 ```
 
 ## TODO
-- Delete user
-- Update venue
-- Save group post
-- Save group delete
+- Delete user DONE
+- Update venue DONE
+- Save group post CURRENT
+- Save group delete CURRENT
 - Refactor user for group invitations
 - Invite member to group post
 - Invite member group delete
