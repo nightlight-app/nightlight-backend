@@ -64,7 +64,6 @@ describe('testing user actions', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.user).to.have.keys(USER_KEYS);
-
         done();
       });
   });
@@ -82,6 +81,19 @@ describe('testing user actions', () => {
 });
 
 describe('testing user errors', () => {
+  it('POST /user', done => {
+    chai
+      .request(server)
+      .post('/users/')
+      .send(TEST_USER_1)
+      .then(res => {
+        userId = res.body.user._id;
+        expect(res).to.have.status(201);
+        expect(res.body.user).to.have.keys(USER_KEYS);
+        done();
+      });
+  });
+
   it('GET /user/{userId} Invalid ID', done => {
     chai
       .request(server)
@@ -117,10 +129,22 @@ describe('testing user errors', () => {
   it('UPDATE /user incorrectly formatted data', done => {
     chai
       .request(server)
-      .patch('/users/' + new ObjectId(1234).toString())
+      .patch('/users/' + userId)
       .send({ data: { message: 'This is incorrect' } })
       .then(res => {
-        expect(res).to.have.status(400);
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('GET /user/{userId} verify keys are still correct', done => {
+    chai
+      .request(server)
+      .get('/users/?userId=' + userId)
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.user).to.have.keys(USER_KEYS);
         done();
       });
   });

@@ -160,3 +160,23 @@ export const deleteVenue = async (req: Request, res: Response) => {
     return res.status(500).send({ message: error.message });
   }
 };
+
+export const updateVenue = async (req: Request, res: Response) => {
+  let result;
+  try {
+    if (!ObjectId.isValid(req.params?.venueId)) {
+      return res.status(400).send({ message: 'Invalid venue ID!' });
+    }
+
+    result = await Venue.findByIdAndUpdate(req.params?.venueId, req.body);
+
+    if (result == undefined) {
+      return res.status(400).send({ message: 'Venue does not exist!' });
+    }
+    return res.status(200).send({
+      message: 'Successfully added reaction to Venue!',
+    });
+  } catch (error: any) {
+    return res.status(500).send({ message: error.message });
+  }
+};
