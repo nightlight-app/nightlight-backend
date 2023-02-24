@@ -24,7 +24,7 @@ export const getUser = async (req: Request, res: Response) => {
 
     targetUser = await User.findById(req.query?.userId!.toString());
 
-    if (targetUser == undefined) {
+    if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
@@ -63,7 +63,7 @@ export const updateUser = async (req: Request, res: Response) => {
 
     targetUser = await User.findByIdAndUpdate(req.params?.userId, req.body);
 
-    if (targetUser == undefined) {
+    if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
     return res

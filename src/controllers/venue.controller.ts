@@ -106,7 +106,7 @@ export const addReactionToVenue = async (req: Request, res: Response) => {
       $push: { reactions: req.body },
     });
 
-    if (result == undefined) {
+    if (result === null) {
       return res.status(400).send({ message: 'Venue does not exist!' });
     }
     return res
@@ -169,7 +169,7 @@ export const updateVenue = async (req: Request, res: Response) => {
 
     const result = await Venue.findByIdAndUpdate(req.params?.venueId, req.body);
 
-    if (result === undefined) {
+    if (result === null) {
       return res.status(400).send({ message: 'Venue does not exist!' });
     }
     return res.status(200).send({
