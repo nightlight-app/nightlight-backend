@@ -162,15 +162,14 @@ export const deleteVenue = async (req: Request, res: Response) => {
 };
 
 export const updateVenue = async (req: Request, res: Response) => {
-  let result;
   try {
     if (!ObjectId.isValid(req.params?.venueId)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
     }
 
-    result = await Venue.findByIdAndUpdate(req.params?.venueId, req.body);
+    const result = await Venue.findByIdAndUpdate(req.params?.venueId, req.body);
 
-    if (result == undefined) {
+    if (result === undefined) {
       return res.status(400).send({ message: 'Venue does not exist!' });
     }
     return res.status(200).send({
