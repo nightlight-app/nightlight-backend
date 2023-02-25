@@ -48,6 +48,12 @@ const userSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'Group',
   },
+  invitedGroups: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Group',
+    },
+  ],
   lastActive: {
     location: {
       latitude: Number,
@@ -57,6 +63,7 @@ const userSchema = new mongoose.Schema({
   },
   savedGroups: [
     {
+      _id: Schema.Types.ObjectId,
       name: String,
       users: [
         {

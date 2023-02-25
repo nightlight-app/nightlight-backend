@@ -304,7 +304,7 @@ describe('testing venue with reactions', () => {
 /* VENUE TESTS WITH REACTION*/
 describe('testing venue without reactions', () => {
   let userId: string;
-  it('POST /user for reaction test', done => {
+  it('POST /user for group creation test', done => {
     chai
       .request(server)
       .post('/users/')
@@ -339,6 +339,75 @@ describe('testing venue without reactions', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.venue).to.have.keys(VENUE_KEYS);
+        done();
+      });
+  });
+
+  it('Update /venue/{venueId}/', done => {
+    chai
+      .request(server)
+      .patch('/venues/' + venueId)
+      .send({ name: 'New venue name' })
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('Update /venue/{venueId}/ incorrectly formatted data', done => {
+    chai
+      .request(server)
+      .patch('/venues/' + venueId)
+      .send({ badData: 'fakeStuff' })
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('GET /venue/{venueId}/ verify keys are still correct', done => {
+    chai
+      .request(server)
+      .get('/venues/' + venueId + '/?userId=' + userId)
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS);
+        done();
+      });
+  });
+
+  it('UPDATE /venues/ incorrect id', done => {
+    chai
+      .request(server)
+      .patch('/venues/' + new ObjectId(1234).toString())
+      .send({ name: 'Test' })
+      .then(res => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+
+  it('UPDATE /venues invalid id', done => {
+    chai
+      .request(server)
+      .patch('/venues/' + 'FAKEID')
+      .send({ name: 'Test' })
+      .then(res => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+
+  it('GET /venue/{venueId}/', done => {
+    chai
+      .request(server)
+      .get('/venues/' + venueId + '/?userId=' + userId)
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS);
+        expect(res.body.venue.name).to.equal('New venue name');
         done();
       });
   });

@@ -5,6 +5,8 @@ import {
   deleteUser,
   updateUser,
   saveGroup,
+  deleteSavedGroup,
+  acceptGroupInvitation,
 } from '../controllers/user.controller';
 
 const usersRouter = express.Router();
@@ -15,5 +17,7 @@ usersRouter.get('/', getUser);
 usersRouter.delete('/:userId', deleteUser);
 usersRouter.patch('/:userId', updateUser);
 usersRouter.patch('/:userId/saveGroup', saveGroup);
+usersRouter.patch('/:userId/deleteSavedGroup', deleteSavedGroup);
+usersRouter.patch('/:userId/acceptGroupInvitation', acceptGroupInvitation);
 
 export = usersRouter;

@@ -106,7 +106,7 @@ export const addReactionToVenue = async (req: Request, res: Response) => {
       $push: { reactions: req.body },
     });
 
-    if (result == undefined) {
+    if (result === null) {
       return res.status(400).send({ message: 'Venue does not exist!' });
     }
     return res
@@ -156,6 +156,25 @@ export const deleteVenue = async (req: Request, res: Response) => {
     }
 
     return res.status(200).send({ message: 'Successfully deleted venue!' });
+  } catch (error: any) {
+    return res.status(500).send({ message: error.message });
+  }
+};
+
+export const updateVenue = async (req: Request, res: Response) => {
+  try {
+    if (!ObjectId.isValid(req.params?.venueId)) {
+      return res.status(400).send({ message: 'Invalid venue ID!' });
+    }
+
+    const result = await Venue.findByIdAndUpdate(req.params?.venueId, req.body);
+
+    if (result === null) {
+      return res.status(400).send({ message: 'Venue does not exist!' });
+    }
+    return res.status(200).send({
+      message: 'Successfully added reaction to Venue!',
+    });
   } catch (error: any) {
     return res.status(500).send({ message: error.message });
   }

@@ -4,6 +4,7 @@ import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import {
   SAVED_GROUP,
+  SAVED_GROUP_KEYS,
   TEST_USER_1,
   UPDATE_USER_1_TO_USER_2,
   USER_KEYS,
@@ -69,7 +70,6 @@ describe('testing user actions', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.user).to.have.keys(USER_KEYS);
-
         done();
       });
   });
@@ -112,15 +112,41 @@ describe('testing save groups', () => {
       });
   });
 
+  let groupId: string;
   it('GET /user/{userId} for save groups', done => {
+    chai
+      .request(server)
+      .get('/users/?userId=' + userId)
+      .then(res => {
+        groupId = res.body.user.savedGroups[2]._id;
+        expect(res).to.have.status(200);
+        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user.savedGroups[2]).to.have.keys(SAVED_GROUP_KEYS);
+        expect(res.body.user.savedGroups[2].name).to.equal('Test group');
+        expect(res.body.user.savedGroups[2].users).to.have.length(3);
+        done();
+      });
+  });
+
+  it('PATCH /user/{userId}/deleteSavedGroup', done => {
+    chai
+      .request(server)
+      .patch('/users/' + userId + '/deleteSavedGroup/?savedGroupId=' + groupId)
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('GET /user/{userId} for save group deleted', done => {
     chai
       .request(server)
       .get('/users/?userId=' + userId)
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.user).to.have.keys(USER_KEYS);
-        expect(res.body.user.savedGroups[2].name).to.equal('Test group');
-        expect(res.body.user.savedGroups[2].users).to.have.length(3);
+        expect(res.body.user.savedGroups).to.have.length(2);
         done();
       });
   });
@@ -139,6 +165,19 @@ describe('testing save groups', () => {
 
 /* TEST USER ERRORS */
 describe('testing user errors', () => {
+  it('POST /user', done => {
+    chai
+      .request(server)
+      .post('/users/')
+      .send(TEST_USER_1)
+      .then(res => {
+        userId = res.body.user._id;
+        expect(res).to.have.status(201);
+        expect(res.body.user).to.have.keys(USER_KEYS);
+        done();
+      });
+  });
+
   it('GET /user/{userId} Invalid ID', done => {
     chai
       .request(server)
@@ -174,10 +213,22 @@ describe('testing user errors', () => {
   it('UPDATE /user incorrectly formatted data', done => {
     chai
       .request(server)
-      .patch('/users/' + new ObjectId(1234).toString())
+      .patch('/users/' + userId)
       .send({ data: { message: 'This is incorrect' } })
       .then(res => {
-        expect(res).to.have.status(400);
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('GET /user/{userId} verify keys are still correct', done => {
+    chai
+      .request(server)
+      .get('/users/?userId=' + userId)
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.user).to.have.keys(USER_KEYS);
         done();
       });
   });

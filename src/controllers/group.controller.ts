@@ -1,14 +1,53 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
+import mongoose from 'mongoose';
 import Group from '../models/Group.model';
+import User from '../models/User.model';
 
 export const createGroup = async (req: Request, res: Response) => {
+  const userId = req.query?.userId!.toString();
+
+  // create group
   const newGroup = new Group(req.body);
+
   try {
+    // retrieve user creating the group
+    const targetUser = await User.findById(userId);
+
+    // null check
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    // if the user already has a currentGroup, throw error
+    if (targetUser.currentGroup !== undefined) {
+      return res.status(400).send({
+        message:
+          'Group cannot be created, creating user already has current group!',
+      });
+    }
+
+    // save new group
     await newGroup.save();
-    return res
-      .status(201)
-      .send({ message: 'Successfully created group!', group: newGroup });
+
+    // add groupId to user
+    targetUser.currentGroup = newGroup._id;
+
+    // update user
+    await targetUser.save();
+
+    // invite the users in the group
+    const result = inviteUsersToGroup(newGroup._id, newGroup.invitedMembers);
+
+    // send appropriate response after members invited
+    if (result.status !== 200) {
+      return res.status(result.status).send({ message: result.message });
+    } else {
+      return res.status(result.status).send({
+        message: result.message + ' to created group',
+        group: newGroup,
+      });
+    }
   } catch (error: any) {
     return res.status(500).send({ message: error.message });
   }
@@ -23,7 +62,7 @@ export const getGroup = async (req: Request, res: Response) => {
 
     targetGroup = await Group.findById(req.params?.groupId);
 
-    if (targetGroup == undefined) {
+    if (targetGroup === null) {
       return res.status(400).send({ message: 'Group does not exist!' });
     }
 
@@ -49,5 +88,101 @@ export const deleteGroup = async (req: Request, res: Response) => {
     return res.status(200).send({ message: 'Successfully deleted group!' });
   } catch (error: any) {
     return res.status(500).send({ message: error.message });
+  }
+};
+
+export const inviteMembersToExistingGroup = async (
+  req: Request,
+  res: Response
+) => {
+  const users = req.body;
+  const groupId = req.params?.groupId;
+  try {
+    if (!ObjectId.isValid(groupId)) {
+      return res.status(400).send({ message: 'Invalid group ID!' });
+    }
+
+    const targetGroup = await Group.findByIdAndUpdate(groupId, {
+      $push: { invitedMembers: users },
+    });
+
+    if (targetGroup === null) {
+      return res.status(400).send({ message: 'Group does not exist!' });
+    }
+
+    const result = inviteUsersToGroup(groupId, users);
+
+    return res
+      .status(result.status)
+      .send({ message: result.message + ' to existing group' });
+  } catch (error: any) {
+    return res.status(500).send({ message: error.message });
+  }
+};
+
+export const removeMemberInvitation = async (req: Request, res: Response) => {
+  const userId = req.query?.userId!.toString();
+  const groupId = req.params?.groupId;
+  try {
+    if (!ObjectId.isValid(groupId)) {
+      return res.status(400).send({ message: 'Invalid group ID!' });
+    }
+
+    if (!ObjectId.isValid(userId)) {
+      return res.status(400).send({ message: 'Invalid user ID!' });
+    }
+
+    const targetUser = await User.findByIdAndUpdate(userId, {
+      $pull: { invitedGroups: groupId },
+    });
+
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    const targetGroup = await Group.findByIdAndUpdate(groupId, {
+      $pull: { invitedMembers: userId },
+    });
+
+    if (targetGroup === null) {
+      return res.status(400).send({ message: 'Group does not exist!' });
+    }
+
+    return res
+      .status(200)
+      .send({ message: 'Remove user invite to existing group' });
+  } catch (error: any) {
+    console.log(error.message);
+    return res.status(500).send({ message: error.message });
+  }
+};
+
+/**
+ * Adds the groupId to the invitedGroups array of the user document
+ * @param groupId the id of the group that the users are being invited to join
+ * @param invitedUsers array of user ids to be invited to the group of groupId
+ * @returns status: HTTP status code
+ * @returns message: HTTP response message
+ */
+const inviteUsersToGroup = (
+  groupId: mongoose.Types.ObjectId | string,
+  invitedUsers: mongoose.Types.ObjectId[] | string[]
+) => {
+  try {
+    invitedUsers.forEach(async (userId: mongoose.Types.ObjectId | string) => {
+      await User.findByIdAndUpdate(userId, {
+        $push: { invitedGroups: groupId },
+      });
+    });
+
+    return {
+      status: 200,
+      message: 'Users invited sucessfully',
+    };
+  } catch (error: any) {
+    return {
+      status: 500,
+      message: 'Error inviting users to group',
+    };
   }
 };
