@@ -100,7 +100,6 @@ export const getVenues = async (req: Request, res: Response) => {
   let targetVenues=[];
 
   const userId = req.query?.userId;
-  console.log('here')
   targetVenues = await Venue.aggregate([
     {
       $addFields: {

@@ -13,7 +13,7 @@ const venuesRouter = express.Router();
 /* Venue Controller */
 venuesRouter.post('/', createVenue);
 venuesRouter.get('/:venueId', getVenue);
-venuesRouter.get('/', getVenues);
+venuesRouter.get('/?count', getVenues);
 venuesRouter.delete('/:venueId', deleteVenue);
 venuesRouter.post('/:venueId/reaction/', addReactionToVenue);
 venuesRouter.delete('/:venueId/reaction/', deleteReactionFromVenue);
