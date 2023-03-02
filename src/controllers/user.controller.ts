@@ -178,3 +178,35 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
     return res.status(500).send({ message: error.message });
   }
 };
+
+export const getFriends = async (req: Request, res: Response) => {
+  let targetUser;
+  let targetFriends;
+
+  const userId = req.params?.userId!.toString();
+  try {
+    if (!ObjectId.isValid(userId)) {
+      return res.status(400).send({ message: 'Invalid user ID!' });
+    }
+
+    targetUser = await User.findById(userId);
+
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    targetFriends = await User.find({
+      _id: { $in: targetUser?.friends },
+    });
+
+    if (targetFriends === null) {
+      return res.status(400).send({ message: 'A friend does not exist!' });
+    }
+
+    return res
+      .status(200)
+      .send({ message: 'Successfully found friends!', friends: targetFriends });
+  } catch (error: any) {
+    return res.status(500).send({ message: error?.message });
+  }
+};

@@ -99,7 +99,7 @@ This is the backend for the nightlight app. It is a RESTful API built with Node.
 - Refactor user for group invitations DONE
 - Invite member to group post DONE
 - Invite member group delete DONE
-- Accept invitation to group patch
+- Accept invitation to group patch DONE
 - Delete user from group (leave group)
 - Get venues (with pagination - get 10 at a time)
 - Refactor for sentFriendRequests and receivedFriendRequests
