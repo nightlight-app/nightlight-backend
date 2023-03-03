@@ -22,15 +22,15 @@ export const createVenue = async (req: Request, res: Response) => {
 };
 
 export const getVenue = async (req: Request, res: Response) => {
-  let targetVenue: VenueInterface[] = [];
-
   try {
-    if (!ObjectId.isValid(req.params?.venueId)) {
+    const venueId = req.params?.venueId;
+
+    if (!ObjectId.isValid(venueId)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
     }
-    const venueId = req.params?.venueId;
+
     const userId = req.query?.userId;
-    targetVenue = await Venue.aggregate([
+    const targetVenue: VenueInterface[] = await Venue.aggregate([
       {
         $match: {
           _id: new mongoose.Types.ObjectId(venueId),
@@ -97,24 +97,22 @@ export const getVenue = async (req: Request, res: Response) => {
 };
 
 export const getVenues = async (req: Request, res: Response) => {
-  let targetVenues: VenueInterface[] = [];
+  const userId = req.query?.userId;
+  const count = Number(req.query?.count);
 
   try {
-    if (!ObjectId.isValid(req.query?.userId as string)) {
+    if (!ObjectId.isValid(userId as string)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
     }
 
-    if (Number(req.query?.count) <= 0) {
+    if (Number(count) <= 0) {
       return res.status(400).send({ message: 'Invalid page count!' });
     }
 
-    const userId = req.query?.userId;
-
-    const count = Number(req.query?.count);
     const page = Number(req.query?.page);
     const skip = (page - 1) * count;
 
-    targetVenues = await Venue.aggregate([
+    const targetVenues: VenueInterface[] = await Venue.aggregate([
       {
         $addFields: {
           reactions: {
@@ -178,12 +176,14 @@ export const getVenues = async (req: Request, res: Response) => {
 };
 
 export const addReactionToVenue = async (req: Request, res: Response) => {
+  const venueId = req.params?.venueId;
+
   try {
-    if (!ObjectId.isValid(req.params?.venueId)) {
+    if (!ObjectId.isValid(venueId)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
     }
 
-    const result = await Venue.findByIdAndUpdate(req.params?.venueId, {
+    const result = await Venue.findByIdAndUpdate(venueId, {
       $push: { reactions: req.body },
     });
 
@@ -226,11 +226,13 @@ export const deleteReactionFromVenue = async (req: Request, res: Response) => {
 };
 
 export const deleteVenue = async (req: Request, res: Response) => {
+  const venueId = req.params?.venueId;
+
   try {
-    if (!ObjectId.isValid(req.params?.venueId)) {
+    if (!ObjectId.isValid(venueId)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
     }
-    const result = await Venue.deleteOne({ _id: req.params?.venueId });
+    const result = await Venue.deleteOne({ _id: venueId });
 
     if (result.deletedCount === 0) {
       return res.status(400).send({ message: 'Venue not found!' });
@@ -243,12 +245,14 @@ export const deleteVenue = async (req: Request, res: Response) => {
 };
 
 export const updateVenue = async (req: Request, res: Response) => {
+  const venueId = req.params?.venueId;
+
   try {
-    if (!ObjectId.isValid(req.params?.venueId)) {
+    if (!ObjectId.isValid(venueId)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
     }
 
-    const result = await Venue.findByIdAndUpdate(req.params?.venueId, req.body);
+    const result = await Venue.findByIdAndUpdate(venueId, req.body);
 
     if (result === null) {
       return res.status(400).send({ message: 'Venue does not exist!' });

@@ -210,10 +210,10 @@ describe('testing save groups', () => {
       });
   });
 
-  it('GET /user/{userId}/getFriends', done => {
+  it('GET /user/{userId}/friends', done => {
     chai
       .request(server)
-      .get('/users/' + userId + '/getFriends')
+      .get('/users/' + userId + '/friends')
       .then(res => {
         console.log(res.error.message);
         expect(res).to.have.status(200);

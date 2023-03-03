@@ -48,7 +48,7 @@ describe('seed database for prod', () => {
   let venueIds = [] as mongoose.Types.ObjectId[];
 
   // loop for multiple users to be added
-  for (var i = 0; i < 5; ++i) {
+  for (let i = 0; i < 5; ++i) {
     // create user and add to array
     const user = createUser(new mongoose.Types.ObjectId(groupId!), [], []);
     it('seed data - users', done => {
@@ -101,7 +101,7 @@ describe('seed database for prod', () => {
       });
   });
 
-  for (var i = 0; i < 5; ++i) {
+  for (let i = 0; i < 5; ++i) {
     it('seed data - accept group invitation', done => {
       chai
         .request(server)
@@ -120,7 +120,7 @@ describe('seed database for prod', () => {
   }
 
   // loop for multiple venues to be  added
-  for (var i = 0; i < 10; ++i) {
+  for (let i = 0; i < 10; ++i) {
     // create venue from venues list
     const venue = createVenue(SEED_VENUES[i].name, SEED_VENUES[i].address);
     it('seed data - venues', done => {

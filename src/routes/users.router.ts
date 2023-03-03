@@ -15,7 +15,7 @@ const usersRouter = express.Router();
 /* User Controller */
 usersRouter.post('/', createUser);
 usersRouter.get('/', getUser);
-usersRouter.get('/:userId/getFriends', getFriends);
+usersRouter.get('/:userId/friends', getFriends);
 usersRouter.delete('/:userId', deleteUser);
 usersRouter.patch('/:userId', updateUser);
 usersRouter.patch('/:userId/saveGroup', saveGroup);

@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import mongoose from 'mongoose';
 import Group from '../models/Group.model';
 import User from '../models/User.model';
+import { inviteUsersToGroup } from '../utils/group.utils';
 
 export const createGroup = async (req: Request, res: Response) => {
   const userId = req.query?.userId!.toString();
@@ -23,7 +23,7 @@ export const createGroup = async (req: Request, res: Response) => {
     if (targetUser.currentGroup !== undefined) {
       return res.status(400).send({
         message:
-          'Group cannot be created, creating user already has current group!',
+          'Group cannot be created. User is already in an active group!',
       });
     }
 
@@ -54,13 +54,12 @@ export const createGroup = async (req: Request, res: Response) => {
 };
 
 export const getGroup = async (req: Request, res: Response) => {
-  let targetGroup;
   try {
     if (!ObjectId.isValid(req.params?.groupId)) {
       return res.status(400).send({ message: 'Invalid group ID!' });
     }
 
-    targetGroup = await Group.findById(req.params?.groupId);
+    const targetGroup = await Group.findById(req.params?.groupId);
 
     if (targetGroup === null) {
       return res.status(400).send({ message: 'Group does not exist!' });
@@ -79,6 +78,7 @@ export const deleteGroup = async (req: Request, res: Response) => {
     if (!ObjectId.isValid(req.params?.groupId)) {
       return res.status(400).send({ message: 'Invalid group ID!' });
     }
+
     const result = await Group.deleteOne({ _id: req.params?.groupId });
 
     if (result.deletedCount === 0) {
@@ -154,35 +154,5 @@ export const removeMemberInvitation = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.log(error.message);
     return res.status(500).send({ message: error.message });
-  }
-};
-
-/**
- * Adds the groupId to the invitedGroups array of the user document
- * @param groupId the id of the group that the users are being invited to join
- * @param invitedUsers array of user ids to be invited to the group of groupId
- * @returns status: HTTP status code
- * @returns message: HTTP response message
- */
-const inviteUsersToGroup = (
-  groupId: mongoose.Types.ObjectId | string,
-  invitedUsers: mongoose.Types.ObjectId[] | string[]
-) => {
-  try {
-    invitedUsers.forEach(async (userId: mongoose.Types.ObjectId | string) => {
-      await User.findByIdAndUpdate(userId, {
-        $push: { invitedGroups: groupId },
-      });
-    });
-
-    return {
-      status: 200,
-      message: 'Users invited sucessfully',
-    };
-  } catch (error: any) {
-    return {
-      status: 500,
-      message: 'Error inviting users to group',
-    };
   }
 };

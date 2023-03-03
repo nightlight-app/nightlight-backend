@@ -18,14 +18,13 @@ export const createUser = async (req: Request, res: Response) => {
 };
 
 export const getUser = async (req: Request, res: Response) => {
-  let targetUser;
   const userId = req.query?.userId!.toString();
   try {
     if (!ObjectId.isValid(userId)) {
       return res.status(400).send({ message: 'Invalid user ID!' });
     }
 
-    targetUser = await User.findById(userId);
+    const targetUser = await User.findById(userId);
 
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
@@ -59,7 +58,6 @@ export const deleteUser = async (req: Request, res: Response) => {
 };
 
 export const updateUser = async (req: Request, res: Response) => {
-  let targetUser;
   const userId = req.params?.userId;
 
   try {
@@ -67,7 +65,7 @@ export const updateUser = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'Invalid user ID!' });
     }
 
-    targetUser = await User.findByIdAndUpdate(userId, req.body);
+    const targetUser = await User.findByIdAndUpdate(userId, req.body);
 
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
@@ -81,7 +79,6 @@ export const updateUser = async (req: Request, res: Response) => {
 };
 
 export const saveGroup = async (req: Request, res: Response) => {
-  let targetUser;
   const userId = req.params?.userId;
 
   try {
@@ -89,7 +86,7 @@ export const saveGroup = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'Invalid user ID!' });
     }
 
-    targetUser = await User.findByIdAndUpdate(userId, {
+    const targetUser = await User.findByIdAndUpdate(userId, {
       $push: {
         savedGroups: { ...req.body, _id: new mongoose.Types.ObjectId() },
       },
@@ -107,7 +104,6 @@ export const saveGroup = async (req: Request, res: Response) => {
 };
 
 export const deleteSavedGroup = async (req: Request, res: Response) => {
-  let targetUser;
   const userId = req.params?.userId;
   const savedGroupId = req.query?.savedGroupId!.toString();
 
@@ -120,7 +116,7 @@ export const deleteSavedGroup = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'Invalid saved group ID!' });
     }
 
-    targetUser = await User.findByIdAndUpdate(userId, {
+    const targetUser = await User.findByIdAndUpdate(userId, {
       $pull: {
         savedGroups: { _id: savedGroupId },
       },
@@ -138,7 +134,6 @@ export const deleteSavedGroup = async (req: Request, res: Response) => {
 };
 
 export const acceptGroupInvitation = async (req: Request, res: Response) => {
-  let target;
   const userId = req.params?.userId;
   const groupId = req.query?.groupId!.toString();
 
@@ -152,22 +147,22 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
     }
 
     // Remove groupId from invited groups and add to currentGroup
-    target = await User.findByIdAndUpdate(userId, {
+    const targetUser = await User.findByIdAndUpdate(userId, {
       $pull: { invitedGroups: groupId },
       currentGroup: groupId,
     });
 
-    if (target === null) {
+    if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
     // Remove userId from invitedMembers in group and add to members in group
-    target = await Group.findByIdAndUpdate(groupId, {
+    const targetGroup = await Group.findByIdAndUpdate(groupId, {
       $pull: { invitedMembers: userId },
       $push: { members: userId },
     });
 
-    if (target === null) {
+    if (targetGroup === null) {
       return res.status(400).send({ message: 'Group does not exist!' });
     }
 
@@ -180,8 +175,6 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
 };
 
 export const getFriends = async (req: Request, res: Response) => {
-  let targetUser;
-  let targetFriends;
 
   const userId = req.params?.userId!.toString();
   try {
@@ -189,13 +182,13 @@ export const getFriends = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'Invalid user ID!' });
     }
 
-    targetUser = await User.findById(userId);
+    const targetUser = await User.findById(userId);
 
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
-    targetFriends = await User.find({
+    const targetFriends = await User.find({
       _id: { $in: targetUser?.friends },
     });
 
