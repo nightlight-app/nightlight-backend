@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import User from "../models/User.model";
+import mongoose from 'mongoose';
+import User from '../models/User.model';
 
 /**
  * Adds the groupId to the invitedGroups array of the user document
@@ -9,24 +9,24 @@ import User from "../models/User.model";
  * @returns message: HTTP response message
  */
 export const inviteUsersToGroup = (
-    groupId: mongoose.Types.ObjectId | string,
-    invitedUsers: mongoose.Types.ObjectId[] | string[]
-  ) => {
-    try {
-      invitedUsers.forEach(async (userId: mongoose.Types.ObjectId | string) => {
-        await User.findByIdAndUpdate(userId, {
-          $push: { invitedGroups: groupId },
-        });
+  groupId: mongoose.Types.ObjectId | string,
+  invitedUsers: mongoose.Types.ObjectId[] | string[]
+) => {
+  try {
+    invitedUsers.forEach(async (userId: mongoose.Types.ObjectId | string) => {
+      await User.findByIdAndUpdate(userId, {
+        $push: { invitedGroups: groupId },
       });
-  
-      return {
-        status: 200,
-        message: 'Users invited sucessfully',
-      };
-    } catch (error: any) {
-      return {
-        status: 500,
-        message: 'Error inviting users to group',
-      };
-    }
-  };
+    });
+
+    return {
+      status: 200,
+      message: 'Users invited sucessfully',
+    };
+  } catch (error: any) {
+    return {
+      status: 500,
+      message: 'Error inviting users to group',
+    };
+  }
+};

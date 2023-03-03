@@ -22,8 +22,7 @@ export const createGroup = async (req: Request, res: Response) => {
     // if the user already has a currentGroup, throw error
     if (targetUser.currentGroup !== undefined) {
       return res.status(400).send({
-        message:
-          'Group cannot be created. User is already in an active group!',
+        message: 'Group cannot be created. User is already in an active group!',
       });
     }
 

@@ -175,7 +175,6 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
 };
 
 export const getFriends = async (req: Request, res: Response) => {
-
   const userId = req.params?.userId!.toString();
   try {
     if (!ObjectId.isValid(userId)) {

@@ -219,6 +219,7 @@ export const createTestReaction = (userId: string | number, emoji: string) => {
 };
 
 /* KEYS FOR TESTING */
+// TODO: can these be enums?
 export const USER_KEYS = [
   '__v',
   '_id',
