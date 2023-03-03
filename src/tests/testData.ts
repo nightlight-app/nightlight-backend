@@ -16,6 +16,7 @@ const TEST_LAST_ACTIVE_1: LastActive = {
 } as LastActive;
 
 const TEST_SAVED_GROUP_1: SavedGroup = {
+  _id: new mongoose.Types.ObjectId(),
   name: 'My new group!',
   users: [
     new mongoose.Types.ObjectId(233456),
@@ -24,6 +25,7 @@ const TEST_SAVED_GROUP_1: SavedGroup = {
 };
 
 const TEST_SAVED_GROUP_2: SavedGroup = {
+  _id: new mongoose.Types.ObjectId(),
   name: 'My side friend group',
   users: [
     new mongoose.Types.ObjectId(2456),
@@ -32,20 +34,18 @@ const TEST_SAVED_GROUP_2: SavedGroup = {
 };
 
 export const TEST_USER_1: User = {
-  firebaseUid: 'THISWORKEDOMG',
-  imgUrlProfileSmall: 'www.smallProfileImage.com',
-  imgUrlProfileLarge: 'www.largeProfileImage.com',
-  imgUrlCover: 'www.coverImage.com',
-  firstName: 'John',
-  lastName: 'Doe',
-  email: 'john.doe@gmail.com',
+  firebaseUid: 'FAKEUSERID1',
+  imgUrlProfileSmall: 'www.smallProfileImage1.com',
+  imgUrlProfileLarge: 'www.largeProfileImage1.com',
+  imgUrlCover: 'www.coverImage1.com',
+  firstName: 'John1',
+  lastName: 'Doe1',
+  email: 'john.doe1@gmail.com',
   phone: '+11234567890',
   birthday: new Date(),
   currentGroup: undefined,
-  friends: [
-    new mongoose.Types.ObjectId(46432),
-    new mongoose.Types.ObjectId(6564),
-  ],
+  invitedGroups: undefined,
+  friends: [],
   lastActive: TEST_LAST_ACTIVE_1,
   savedGroups: [TEST_SAVED_GROUP_1, TEST_SAVED_GROUP_2],
 };
@@ -55,6 +55,16 @@ export const UPDATE_USER_1_TO_USER_2: any = {
   lastName: 'Updated',
   email: 't-dawg@gmail.com',
   phone: '+16314959610',
+};
+
+export const SAVED_GROUP: SavedGroup = {
+  _id: new mongoose.Types.ObjectId(),
+  name: 'Test group',
+  users: [
+    new mongoose.Types.ObjectId(2234566),
+    new mongoose.Types.ObjectId(987475),
+    new mongoose.Types.ObjectId(23456765),
+  ],
 };
 
 /* User 2 */
@@ -67,6 +77,7 @@ const TEST_LAST_ACTIVE_2: LastActive = {
 } as LastActive;
 
 const TEST_SAVED_GROUP_3: SavedGroup = {
+  _id: new mongoose.Types.ObjectId(),
   name: 'A cool friend group!',
   users: [
     new mongoose.Types.ObjectId(2234566),
@@ -75,6 +86,7 @@ const TEST_SAVED_GROUP_3: SavedGroup = {
 };
 
 const TEST_SAVED_GROUP_4: SavedGroup = {
+  _id: new mongoose.Types.ObjectId(),
   name: 'A not-so-cool friend group',
   users: [
     new mongoose.Types.ObjectId(2098765),
@@ -83,16 +95,77 @@ const TEST_SAVED_GROUP_4: SavedGroup = {
 };
 
 export const TEST_USER_2: User = {
-  firebaseUid: 'FAKEUSERID',
-  imgUrlProfileSmall: 'www.smallProfileImage.com',
-  imgUrlProfileLarge: 'www.largeProfileImage.com',
-  imgUrlCover: 'www.coverImage.com',
-  firstName: 'Graham',
-  lastName: 'Hemingway',
-  email: 'john.doe@gmail.com',
+  firebaseUid: 'FAKEUSERID2',
+  imgUrlProfileSmall: 'www.smallProfileImage2.com',
+  imgUrlProfileLarge: 'www.largeProfileImage2.com',
+  imgUrlCover: 'www.coverImage2.com',
+  firstName: 'Graham2',
+  lastName: 'Hemingway2',
+  email: 'john.doe2@gmail.com',
   phone: '+11234567890',
   birthday: new Date(),
   currentGroup: undefined,
+  invitedGroups: undefined,
+  friends: [
+    new mongoose.Types.ObjectId(987654),
+    new mongoose.Types.ObjectId(16724),
+  ],
+  lastActive: TEST_LAST_ACTIVE_2,
+  savedGroups: [TEST_SAVED_GROUP_3, TEST_SAVED_GROUP_4],
+};
+
+export const TEST_USER_3: User = {
+  firebaseUid: 'FAKEUSERID3',
+  imgUrlProfileSmall: 'www.smallProfileImage3.com',
+  imgUrlProfileLarge: 'www.largeProfileImage3.com',
+  imgUrlCover: 'www.coverImage3.com',
+  firstName: 'Graham3',
+  lastName: 'Hemingway3',
+  email: 'john3.doe@gmail.com',
+  phone: '+11234567890',
+  birthday: new Date(),
+  currentGroup: undefined,
+  invitedGroups: undefined,
+  friends: [
+    new mongoose.Types.ObjectId(987654),
+    new mongoose.Types.ObjectId(16724),
+  ],
+  lastActive: TEST_LAST_ACTIVE_2,
+  savedGroups: [TEST_SAVED_GROUP_3, TEST_SAVED_GROUP_4],
+};
+
+export const TEST_USER_4: User = {
+  firebaseUid: 'FAKEUSERID4',
+  imgUrlProfileSmall: 'www.smallProfileImage4.com',
+  imgUrlProfileLarge: 'www.largeProfileImage4.com',
+  imgUrlCover: 'www.coverImage4.com',
+  firstName: 'Graham4',
+  lastName: 'Hemingway4',
+  email: 'john4.doe@gmail.com',
+  phone: '+11234567890',
+  birthday: new Date(),
+  currentGroup: undefined,
+  invitedGroups: undefined,
+  friends: [
+    new mongoose.Types.ObjectId(987654),
+    new mongoose.Types.ObjectId(16724),
+  ],
+  lastActive: TEST_LAST_ACTIVE_2,
+  savedGroups: [TEST_SAVED_GROUP_3, TEST_SAVED_GROUP_4],
+};
+
+export const TEST_USER_5: User = {
+  firebaseUid: 'FAKEUSERID5',
+  imgUrlProfileSmall: 'www.smallProfileImage5.com',
+  imgUrlProfileLarge: 'www.largeProfileImage5.com',
+  imgUrlCover: 'www.coverImage5.com',
+  firstName: 'Graham5',
+  lastName: 'Hemingway5',
+  email: 'john5.doe@gmail.com',
+  phone: '+11234567890',
+  birthday: new Date(),
+  currentGroup: undefined,
+  invitedGroups: undefined,
   friends: [
     new mongoose.Types.ObjectId(987654),
     new mongoose.Types.ObjectId(16724),
@@ -102,7 +175,7 @@ export const TEST_USER_2: User = {
 };
 
 /* Groups */
-export const TEST_GROUP: Group = {
+export const TEST_GROUP1: Group = {
   name: 'Our group',
   members: [
     new mongoose.Types.ObjectId(234),
@@ -112,6 +185,15 @@ export const TEST_GROUP: Group = {
     new mongoose.Types.ObjectId(5),
     new mongoose.Types.ObjectId(65264),
   ],
+  creationTime: new Date(),
+  expirationDate: new Date(),
+  returnTime: new Date(),
+};
+
+export const TEST_GROUP2: Group = {
+  name: 'Second group',
+  members: [],
+  invitedMembers: [],
   creationTime: new Date(),
   expirationDate: new Date(),
   returnTime: new Date(),
@@ -137,6 +219,7 @@ export const createTestReaction = (userId: string | number, emoji: string) => {
 };
 
 /* KEYS FOR TESTING */
+// TODO: can these be enums?
 export const USER_KEYS = [
   '__v',
   '_id',
@@ -148,6 +231,7 @@ export const USER_KEYS = [
   'imgUrlCover',
   'imgUrlProfileLarge',
   'imgUrlProfileSmall',
+  'invitedGroups',
   'lastName',
   'phone',
   'lastActive',
@@ -177,3 +261,5 @@ export const VENUE_KEYS = [
 export const REACTION_KEYS = ['count', 'didReact'];
 
 export const VENUE_KEYS_EMOJIS = [...REACTION_EMOJIS];
+
+export const SAVED_GROUP_KEYS = ['_id', 'name', 'users'];

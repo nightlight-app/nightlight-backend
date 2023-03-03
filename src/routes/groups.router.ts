@@ -3,6 +3,8 @@ import {
   createGroup,
   deleteGroup,
   getGroup,
+  inviteMembersToExistingGroup,
+  removeMemberInvitation,
 } from '../controllers/group.controller';
 
 const groupsRouter = express.Router();
@@ -11,7 +13,7 @@ const groupsRouter = express.Router();
 groupsRouter.post('/', createGroup);
 groupsRouter.get('/:groupId', getGroup);
 groupsRouter.delete('/:groupId', deleteGroup);
-
-/* TODO: patch */
+groupsRouter.patch('/:groupId/inviteMembers', inviteMembersToExistingGroup);
+groupsRouter.patch('/:groupId/removeMemberInvitation', removeMemberInvitation);
 
 export = groupsRouter;

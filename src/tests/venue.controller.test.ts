@@ -12,6 +12,7 @@ import {
 } from './testData';
 import { ObjectId } from 'mongodb';
 import { decodeEmoji } from '../utils/venue.utils';
+import { response } from 'express';
 
 require('dotenv').config();
 
@@ -304,7 +305,7 @@ describe('testing venue with reactions', () => {
 /* VENUE TESTS WITH REACTION*/
 describe('testing venue without reactions', () => {
   let userId: string;
-  it('POST /user for reaction test', done => {
+  it('POST /user for group creation test', done => {
     chai
       .request(server)
       .post('/users/')
@@ -408,6 +409,42 @@ describe('testing venue without reactions', () => {
         expect(res).to.have.status(200);
         expect(res.body.venue).to.have.keys(VENUE_KEYS);
         expect(res.body.venue.name).to.equal('New venue name');
+        done();
+      });
+  });
+
+  it('GET /venues/ 10', done => {
+    chai
+      .request(server)
+      .get('/venues/?userId=' + userId + '&count=10&page=1')
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.venues[0]).to.have.keys(VENUE_KEYS);
+        expect(res.body.venues).to.have.length(10);
+        done();
+      });
+  });
+
+  it('GET /venues/ error', done => {
+    chai
+      .request(server)
+      .get('/venues/?userId=' + userId + '&count=0&page=1')
+      .send()
+      .then(res => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+
+  it('GET /venues/ 1', done => {
+    chai
+      .request(server)
+      .get('/venues/?userId=' + userId + '&count=1&page=3')
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.venues).to.have.length(1);
         done();
       });
   });
