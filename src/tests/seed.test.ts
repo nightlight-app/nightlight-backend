@@ -27,7 +27,7 @@ const connectToMongo = async (): Promise<void> => {
 
 before(async () => {
   await connectToMongo();
-  server = app.listen(6062);
+  server = app.listen(6063);
   await User.deleteMany({});
   await Group.deleteMany({});
   await Venue.deleteMany({});
