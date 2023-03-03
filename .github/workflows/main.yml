@@ -3,10 +3,32 @@ name: Backend Testing
 
 on:
   push:
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
+  format:
+    name: Format code with Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install packages
+        run: npm ci
+      - name: Run formatter
+        run: npm run format
+      - uses: stefanzweifel/git-auto-commit-action@v4.16.0
+        with:
+          commit_message: Apply Prettier formatting
   build:
     runs-on: ubuntu-latest
 
