@@ -96,6 +96,83 @@ export const getVenue = async (req: Request, res: Response) => {
   }
 };
 
+export const getVenues = async (req: Request, res: Response) => {
+  let targetVenues: VenueInterface[] = [];
+
+  try {
+    if (!ObjectId.isValid(req.query?.userId as string)) {
+      return res.status(400).send({ message: 'Invalid venue ID!' });
+    }
+
+    const userId = req.query?.userId;
+
+    const count = Number(req.query?.count) || 10;
+    const page = Number(req.query?.page) || 1;
+    const skip = (page - 1) * count;
+
+    targetVenues = await Venue.aggregate([
+      {
+        $addFields: {
+          reactions: {
+            $arrayToObject: {
+              $map: {
+                input: REACTION_EMOJIS,
+                as: 'emoji',
+                in: {
+                  k: '$$emoji',
+                  v: {
+                    count: {
+                      $size: {
+                        $filter: {
+                          input: '$reactions',
+                          cond: {
+                            $eq: ['$$this.emoji', '$$emoji'],
+                          },
+                        },
+                      },
+                    },
+                    didReact: {
+                      $anyElementTrue: {
+                        $map: {
+                          input: {
+                            $filter: {
+                              input: '$reactions',
+                              cond: {
+                                $and: [
+                                  { $eq: ['$$this.emoji', '$$emoji'] },
+                                  { $eq: ['$$this.userId', userId] },
+                                ],
+                              },
+                            },
+                          },
+                          as: 'reaction',
+                          in: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      { $skip: skip },
+      { $limit: count },
+    ]);
+
+    if (targetVenues.length == 0) {
+      return res.status(400).send({ message: 'Venues do not exist!' });
+    }
+
+    return res
+      .status(200)
+      .send({ message: 'Successfully found venue!', venues: targetVenues });
+  } catch (error: any) {
+    return res.status(500).send({ message: error.message });
+  }
+};
+
 export const addReactionToVenue = async (req: Request, res: Response) => {
   try {
     if (!ObjectId.isValid(req.params?.venueId)) {
