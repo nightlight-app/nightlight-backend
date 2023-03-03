@@ -3,7 +3,7 @@ import { LastActive } from './LastActive.interface';
 import { SavedGroup } from './SavedGroup.interface';
 
 export interface User {
-  _id?: string;
+  _id?: mongoose.Types.ObjectId;
   firebaseUid: string;
   imgUrlProfileSmall: string;
   imgUrlProfileLarge: string;
