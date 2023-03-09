@@ -222,6 +222,47 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
 };
 
 /**
+ * An async function that enables a user to leave a group they are currently in
+ * @param {Request} req - Express request object.
+ * @param {Response} res - Express response object.
+ * @returns {Response} - A JSON response indicating success or failure or error message with a 500 status code.
+ */
+export const leaveGroup = async (req: Request, res: Response) => {
+  const userId = req.params?.userId || '';
+  const groupId = req.query?.groupId?.toString() || '';
+
+  if (!ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  if (!ObjectId.isValid(groupId)) {
+    return res.status(400).send({ message: 'Invalid group ID!' });
+  }
+
+  try {
+    const targetGroup = await Group.findByIdAndUpdate(groupId, {
+      $pull: { members: userId },
+    });
+
+    const targetUser = await User.findByIdAndUpdate(userId, {
+      currentGroup: undefined,
+    });
+
+    if (targetGroup === null) {
+      return res.status(400).send({ message: 'Group does not exist!' });
+    }
+
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    return res.status(200).send({ message: 'Successfully left group!' });
+  } catch (error: any) {
+    return res.status(500).send({ message: error.message });
+  }
+};
+
+/**
  * Retrieves a user's friends based on their userId and returns them as an array of User objects.
  * @param {Request} req - Express request object containing the parameters, including the userId.
  * @param {Response} res - Express response object used to send the response back to the client.

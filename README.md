@@ -96,11 +96,11 @@ This is the backend for the nightlight app. It is a RESTful API built with Node.
 - Invite member to group post DONE
 - Invite member group delete DONE
 - Accept invitation to group patch DONE
-- Delete user from group (leave group)
-- Get venues (with pagination - get 10 at a time)
-- Refactor for sentFriendRequests and receivedFriendRequests
-- Send friend request (post)
-- Accept friend request (post)
+- Delete user from group (leave group) TODO
+- Get venues (with pagination - get 10 at a time) DONE
+- Refactor for receivedFriendRequests DONE
+- Send friend request (post) DONE
+- Accept friend request (post) DONE
 - Upload profile image (use queue)
 - Replace profile image (use queue)
 - Delete profile image (use queue)
