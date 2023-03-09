@@ -44,13 +44,6 @@ const userSchema = new mongoose.Schema({
       required: true,
     },
   ],
-  friendRequests: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-  ],
   currentGroup: {
     type: Schema.Types.ObjectId,
     ref: 'Group',

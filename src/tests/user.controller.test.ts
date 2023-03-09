@@ -7,9 +7,6 @@ import {
   SAVED_GROUP_KEYS,
   TEST_USER_1,
   TEST_USER_2,
-  TEST_USER_3,
-  TEST_USER_4,
-  TEST_USER_5,
   UPDATE_USER_1_TO_USER_2,
   USER_KEYS,
 } from './testData';
@@ -39,74 +36,9 @@ before(async () => {
 });
 
 /* USER TESTS */
-
+let userId: string;
 describe('testing user actions', () => {
-  let userId: string;
-  it('should create a new user via POST /users', done => {
-    chai
-      .request(server)
-      .post('/users/')
-      .send(TEST_USER_2)
-      .then(res => {
-        userId = res.body.user._id;
-        const user = res.body.user;
-        expect(res).to.have.status(201);
-        expect(user).to.be.an('object');
-        expect(user).to.have.property('_id');
-        expect(user.email).to.equal(TEST_USER_2.email);
-        done();
-      })
-      .catch(err => done(err));
-  });
-
-  it('should fetch a user via GET /users/?userId={userId}', done => {
-    chai
-      .request(server)
-      .get(`/users/`)
-      .query({ userId: userId })
-      .then(res => {
-        const user = res.body.user;
-        expect(res).to.have.status(200);
-        expect(user._id).to.equal(userId);
-        expect(user.email).to.equal(TEST_USER_2.email);
-        done();
-      })
-      .catch(err => done(err));
-  });
-
-  it('should update a user via PATCH /users/{userId}', done => {
-    chai
-      .request(server)
-      .patch(`/users/${userId}`)
-      .send(UPDATE_USER_1_TO_USER_2)
-      .then(res => {
-        const user = res.body.user;
-        expect(res).to.have.status(200);
-        expect(user).to.be.an('object');
-        expect(user).to.have.property('_id');
-        expect(user.email).to.equal(TEST_USER_2.email);
-        done();
-      })
-      .catch(err => done(err));
-  });
-
-  it('should delete a user via DELETE /users/{userId}', done => {
-    chai
-      .request(server)
-      .delete(`/users/${userId}`)
-      .then(res => {
-        expect(res).to.have.status(200);
-        done();
-      })
-      .catch(err => done(err));
-  });
-});
-
-/* TEST SAVE GROUPS */
-describe('testing save groups', () => {
-  let userId: string, groupId: string;
-
-  it('should save user via POST /users', done => {
+  it('POST /user', done => {
     chai
       .request(server)
       .post('/users/')
@@ -119,10 +51,61 @@ describe('testing save groups', () => {
       });
   });
 
-  it('should add a savedGroup via PATCH /users/:userId/saveGroup', done => {
+  it('GET /user/{userId}', done => {
     chai
       .request(server)
-      .patch(`/users/${userId}/saveGroup`)
+      .get('/users/?userId=' + userId)
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.user).to.have.keys(USER_KEYS);
+        done();
+      });
+  });
+
+  it('UPDATE /user/{userId}', done => {
+    chai
+      .request(server)
+      .patch('/users/' + userId)
+      .send(UPDATE_USER_1_TO_USER_2)
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.user).to.have.keys(USER_KEYS);
+        done();
+      });
+  });
+
+  it('DELETE /user/{userId}', done => {
+    chai
+      .request(server)
+      .delete('/users/' + userId)
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+});
+
+/* TEST SAVE GROUPS */
+describe('testing save groups', () => {
+  it('POST /user for save groups', done => {
+    chai
+      .request(server)
+      .post('/users/')
+      .send(TEST_USER_1)
+      .then(res => {
+        userId = res.body.user._id;
+        expect(res).to.have.status(201);
+        expect(res.body.user).to.have.keys(USER_KEYS);
+        done();
+      });
+  });
+
+  it('PATCH /user/{userId}/saveGroup', done => {
+    chai
+      .request(server)
+      .patch('/users/' + userId + '/saveGroup')
       .send(SAVED_GROUP)
       .then(res => {
         expect(res).to.have.status(200);
@@ -130,11 +113,11 @@ describe('testing save groups', () => {
       });
   });
 
-  it('should fetch the savedGroups of the user via GET /users/:userId', done => {
+  let groupId: string;
+  it('GET /user/{userId} for save groups', done => {
     chai
       .request(server)
-      .get('/users/')
-      .query({ userId: userId })
+      .get('/users/?userId=' + userId)
       .then(res => {
         groupId = res.body.user.savedGroups[2]._id;
         expect(res).to.have.status(200);
@@ -146,11 +129,10 @@ describe('testing save groups', () => {
       });
   });
 
-  it('should delete a specific savedGroup via PATCH /users/:userId/deleteSavedGroup', done => {
+  it('PATCH /user/{userId}/deleteSavedGroup', done => {
     chai
       .request(server)
-      .patch(`/users/${userId}/deleteSavedGroup`)
-      .query({ savedGroupId: groupId })
+      .patch('/users/' + userId + '/deleteSavedGroup/?savedGroupId=' + groupId)
       .send()
       .then(res => {
         expect(res).to.have.status(200);
@@ -158,11 +140,10 @@ describe('testing save groups', () => {
       });
   });
 
-  it('should show the updated user data after deleting the savedGroup via GET /users/:userId', done => {
+  it('GET /user/{userId} for save group deleted', done => {
     chai
       .request(server)
-      .get('/users/')
-      .query({ userId: userId })
+      .get('/users/?userId=' + userId)
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.user).to.have.keys(USER_KEYS);
@@ -171,10 +152,10 @@ describe('testing save groups', () => {
       });
   });
 
-  it('should delete a user via DELETE /users/:userId', done => {
+  it('DELETE /user/{userId}', done => {
     chai
       .request(server)
-      .delete(`/users/${userId}`)
+      .delete('/users/' + userId)
       .send()
       .then(res => {
         expect(res).to.have.status(200);
@@ -187,7 +168,7 @@ describe('testing save groups', () => {
 describe('testing save groups', () => {
   const testData = { ...TEST_USER_1 };
   let userId2: string;
-  it('should create a new user via POST /users/ (user2)', done => {
+  it('POST /user2 for save groups', done => {
     chai
       .request(server)
       .post('/users/')
@@ -202,7 +183,7 @@ describe('testing save groups', () => {
   });
 
   let userId3: string;
-  it('should create a new user via POST /users/ (user3)', done => {
+  it('POST /user3 for save groups', done => {
     chai
       .request(server)
       .post('/users/')
@@ -216,25 +197,25 @@ describe('testing save groups', () => {
       });
   });
 
-  let userId1: string;
-  it('should create a new user via POST /users/ (user1)', done => {
+  it('POST /user1 for save groups', done => {
     chai
       .request(server)
       .post('/users/')
       .send(testData)
       .then(res => {
-        userId1 = res.body.user._id;
+        userId = res.body.user._id;
         expect(res).to.have.status(201);
         expect(res.body.user).to.have.keys(USER_KEYS);
         done();
       });
   });
 
-  it('should get a list of friends by user id via GET /users/:userId/friends', done => {
+  it('GET /user/{userId}/friends', done => {
     chai
       .request(server)
-      .get(`/users/${userId1}/friends`)
+      .get('/users/' + userId + '/friends')
       .then(res => {
+        console.log(res.error.message);
         expect(res).to.have.status(200);
         expect(res.body.friends).to.have.length(2);
         done();
@@ -242,206 +223,48 @@ describe('testing save groups', () => {
   });
 });
 
-describe('testing friend requests', () => {
-  let userId1: string;
-  it('should create a new user via POST /users/ (user1)', done => {
-    chai
-      .request(server)
-      .post('/users/')
-      .send(TEST_USER_4)
-      .then(res => {
-        userId1 = res.body.user._id;
-        expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
-        done();
-      });
-  });
-
-  let userId2: string;
-  it('should create a new user via POST /users/ (user2)', done => {
-    chai
-      .request(server)
-      .post('/users/')
-      .send(TEST_USER_5)
-      .then(res => {
-        userId2 = res.body.user._id;
-        expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
-        done();
-      });
-  });
-
-  let userId3: string;
-  it('should create a new user via POST /users/ (user3)', done => {
-    chai
-      .request(server)
-      .post('/users/')
-      .send(TEST_USER_3)
-      .then(res => {
-        userId3 = res.body.user._id;
-        expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
-        done();
-      });
-  });
-
-  it('should send a friend request via PATCH /users/:userId/requestFriend', done => {
-    chai
-      .request(server)
-      .patch(`/users/${userId1}/requestFriend`)
-      .query({ friendId: userId2 })
-      .then(res => {
-        expect(res).to.have.status(200);
-        done();
-      });
-  });
-
-  it('should send a friend request via PATCH /users/:userId/requestFriend', done => {
-    chai
-      .request(server)
-      .patch(`/users/${userId3}/requestFriend`)
-      .query({ friendId: userId2 })
-      .then(res => {
-        expect(res).to.have.status(200);
-        done();
-      });
-  });
-
-  it('should fetch a user via GET to check friend requests /users/?userId={userId}', done => {
-    chai
-      .request(server)
-      .get(`/users/`)
-      .query({ userId: userId2 })
-      .then(res => {
-        const user = res.body.user;
-        expect(res).to.have.status(200);
-        expect(user._id).to.equal(userId2);
-        expect(user.friendRequests).to.have.length(2);
-        done();
-      })
-      .catch(err => done(err));
-  });
-
-  it('should accept a friend request via PATCH /users/:userId/acceptFriendRequest', done => {
-    chai
-      .request(server)
-      .patch(`/users/${userId2}/acceptFriendRequest`)
-      .query({ friendId: userId1 })
-      .then(res => {
-        expect(res).to.have.status(200);
-        done();
-      });
-  });
-
-  it('should fetch a user via GET to check friend requests after accept /users/?userId={userId}', done => {
-    chai
-      .request(server)
-      .get(`/users/`)
-      .query({ userId: userId2 })
-      .then(res => {
-        const user = res.body.user;
-        expect(res).to.have.status(200);
-        expect(user._id).to.equal(userId2);
-        expect(user.friendRequests).to.have.length(1);
-        done();
-      })
-      .catch(err => done(err));
-  });
-
-  it('should decline a friend request via PATCH /users/:userId/acceptFriendRequest', done => {
-    chai
-      .request(server)
-      .patch(`/users/${userId2}/declineFriendRequest`)
-      .query({ friendId: userId3 })
-      .then(res => {
-        expect(res).to.have.status(200);
-        done();
-      });
-  });
-
-  it('should fetch a user via GET to check friend requests after decline /users/?userId={userId}', done => {
-    chai
-      .request(server)
-      .get(`/users/`)
-      .query({ userId: userId2 })
-      .then(res => {
-        const user = res.body.user;
-        expect(res).to.have.status(200);
-        expect(user._id).to.equal(userId2);
-        expect(user.friendRequests).to.have.length(0);
-        done();
-      })
-      .catch(err => done(err));
-  });
-
-  it('should get a list of friends by user id via GET /users/:userId/friends', done => {
-    chai
-      .request(server)
-      .get(`/users/${userId1}/friends`)
-      .then(res => {
-        expect(res).to.have.status(200);
-        expect(res.body.friends).to.have.length(1);
-        done();
-      });
-  });
-
-  it('should get a list of friends by user id via GET /users/:userId/friends', done => {
-    chai
-      .request(server)
-      .get(`/users/${userId2}/friends`)
-      .then(res => {
-        expect(res).to.have.status(200);
-        expect(res.body.friends).to.have.length(1);
-        done();
-      });
-  });
-});
-
 /* TEST USER ERRORS */
-describe('testing User Error', () => {
-  let userId1: string;
-  it('should create a new user with a POST request', done => {
+describe('testing user errors', () => {
+  it('POST /user', done => {
     chai
       .request(server)
       .post('/users/')
       .send(TEST_USER_1)
       .then(res => {
-        userId1 = res.body.user._id;
+        userId = res.body.user._id;
         expect(res).to.have.status(201);
         expect(res.body.user).to.have.keys(USER_KEYS);
         done();
       });
   });
 
-  it('should return a 400 status code for GET request with an invalid user ID', done => {
+  it('GET /user/{userId} Invalid ID', done => {
     chai
       .request(server)
-      .get('/users/')
-      .query({ userId: 'FAKEID' })
+      .get('/users/?userId=' + 'FAKEID')
       .then(res => {
         expect(res).to.have.status(400);
         done();
       });
   });
 
-  it('should create a new user and save groups with a POST request for save groups', done => {
+  it('POST /user for save groups', done => {
     chai
       .request(server)
       .post('/users/')
       .send(TEST_USER_1)
       .then(res => {
-        userId1 = res.body.user._id;
+        userId = res.body.user._id;
         expect(res).to.have.status(201);
         expect(res.body.user).to.have.keys(USER_KEYS);
         done();
       });
   });
 
-  it('should return a 400 status code for GET request with an incorrect user ID', done => {
+  it('GET /user/{userId} Incorrect ID', done => {
     chai
       .request(server)
-      .get('/users/')
-      .query({ userId: new ObjectId(1234) })
+      .get('/users/?userId=' + new ObjectId(1234))
       .then(res => {
         expect(res).to.have.status(400);
         expect(res.body.venue).to.equal(undefined);
@@ -449,7 +272,7 @@ describe('testing User Error', () => {
       });
   });
 
-  it('should return a 500 status code for POST request with incorrectly formatted data', done => {
+  it('POST /user incorrectly formatted data', done => {
     chai
       .request(server)
       .post('/users/')
@@ -460,22 +283,22 @@ describe('testing User Error', () => {
       });
   });
 
-  it('should not update incorrectly formatted data with PATCH request', done => {
+  it('UPDATE /user incorrectly formatted data', done => {
     chai
       .request(server)
-      .patch(`/users/${userId1}`)
-      .send({ firstNameNotRight: 'Test' })
+      .patch('/users/' + userId)
+      .send({ data: { message: 'This is incorrect' } })
       .then(res => {
         expect(res).to.have.status(200);
         done();
       });
   });
 
-  it('should return correct user keys for GET request with valid user ID', done => {
+  it('GET /user/{userId} verify keys are still correct', done => {
     chai
       .request(server)
-      .get('/users/')
-      .query({ userId: userId1 })
+      .get('/users/?userId=' + userId)
+      .send()
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.user).to.have.keys(USER_KEYS);
@@ -483,7 +306,7 @@ describe('testing User Error', () => {
       });
   });
 
-  it('should return a 400 status code for PATCH request with an incorrect user ID', done => {
+  it('UPDATE /user incorrect id', done => {
     chai
       .request(server)
       .patch('/users/' + new ObjectId(1234))
@@ -494,7 +317,7 @@ describe('testing User Error', () => {
       });
   });
 
-  it('should return a 400 status code for PATCH request with an invalid user ID', done => {
+  it('UPDATE /user invalid id', done => {
     chai
       .request(server)
       .patch('/users/' + 'FAKEID')
@@ -505,7 +328,7 @@ describe('testing User Error', () => {
       });
   });
 
-  it('should return a 400 status code for DELETE request with invalid user ID', done => {
+  it('DELETE /user/{userId} Invalid ID', done => {
     chai
       .request(server)
       .delete('/users/' + 'FAKEID')
@@ -515,7 +338,7 @@ describe('testing User Error', () => {
       });
   });
 
-  it('should return a 400 status code for DELETE request with incorrect user ID', done => {
+  it('DELETE /user/{userId} Incorrect ID', done => {
     chai
       .request(server)
       .delete('/users/' + new ObjectId(1234))

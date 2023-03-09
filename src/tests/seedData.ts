@@ -31,7 +31,6 @@ export const createUser = (
     currentGroup: currentGroup,
     invitedGroups: invitedGroups,
     friends: friends || ([] as mongoose.Types.ObjectId[]),
-    friendRequests: [] as mongoose.Types.ObjectId[],
     lastActive: {
       location: {
         latitude: Number(faker.address.latitude()),
@@ -85,9 +84,10 @@ export const createVenue = (name?: string, address?: string) => {
   } as Venue;
 };
 
-/**
- * Seed values for testing the venues
+/*
+ * CONSTANTS
  */
+
 export const SEED_VENUES = [
   {
     name: 'Play',

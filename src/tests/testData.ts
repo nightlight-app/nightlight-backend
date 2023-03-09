@@ -46,7 +46,6 @@ export const TEST_USER_1: User = {
   currentGroup: undefined,
   invitedGroups: undefined,
   friends: [],
-  friendRequests: [],
   lastActive: TEST_LAST_ACTIVE_1,
   savedGroups: [TEST_SAVED_GROUP_1, TEST_SAVED_GROUP_2],
 };
@@ -111,7 +110,6 @@ export const TEST_USER_2: User = {
     new mongoose.Types.ObjectId(987654),
     new mongoose.Types.ObjectId(16724),
   ],
-  friendRequests: [],
   lastActive: TEST_LAST_ACTIVE_2,
   savedGroups: [TEST_SAVED_GROUP_3, TEST_SAVED_GROUP_4],
 };
@@ -132,7 +130,6 @@ export const TEST_USER_3: User = {
     new mongoose.Types.ObjectId(987654),
     new mongoose.Types.ObjectId(16724),
   ],
-  friendRequests: [],
   lastActive: TEST_LAST_ACTIVE_2,
   savedGroups: [TEST_SAVED_GROUP_3, TEST_SAVED_GROUP_4],
 };
@@ -149,8 +146,10 @@ export const TEST_USER_4: User = {
   birthday: new Date(),
   currentGroup: undefined,
   invitedGroups: undefined,
-  friends: [],
-  friendRequests: [],
+  friends: [
+    new mongoose.Types.ObjectId(987654),
+    new mongoose.Types.ObjectId(16724),
+  ],
   lastActive: TEST_LAST_ACTIVE_2,
   savedGroups: [TEST_SAVED_GROUP_3, TEST_SAVED_GROUP_4],
 };
@@ -167,8 +166,10 @@ export const TEST_USER_5: User = {
   birthday: new Date(),
   currentGroup: undefined,
   invitedGroups: undefined,
-  friends: [],
-  friendRequests: [],
+  friends: [
+    new mongoose.Types.ObjectId(987654),
+    new mongoose.Types.ObjectId(16724),
+  ],
   lastActive: TEST_LAST_ACTIVE_2,
   savedGroups: [TEST_SAVED_GROUP_3, TEST_SAVED_GROUP_4],
 };
@@ -227,7 +228,6 @@ export const USER_KEYS = [
   'firebaseUid',
   'firstName',
   'friends',
-  'friendRequests',
   'imgUrlCover',
   'imgUrlProfileLarge',
   'imgUrlProfileSmall',

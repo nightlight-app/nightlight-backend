@@ -16,7 +16,6 @@ export interface User {
   currentGroup?: mongoose.Types.ObjectId;
   invitedGroups?: mongoose.Types.ObjectId[];
   friends: mongoose.Types.ObjectId[];
-  friendRequests: mongoose.Types.ObjectId[];
   lastActive?: LastActive;
   savedGroups: SavedGroup[];
 }

@@ -38,7 +38,7 @@ before(async () => {
  *
  * 6 total users, 4 friends with eachother and 2 seperate with some relations
  * 4 users in group
- * 10 venues (written by @sophia)
+ * 10 venues (written by @Sophia)
  *
  */
 describe('seed database for prod', () => {
