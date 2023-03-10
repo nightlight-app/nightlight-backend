@@ -62,7 +62,7 @@ jobs:
       - name: Start Worker
         run: npm run worker &
         env:
-        SERVER_PID: $!
+          SERVER_PID: $!
 
       - name: Run Server and Test
         run: npm test
