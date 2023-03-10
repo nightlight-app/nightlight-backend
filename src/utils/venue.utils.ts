@@ -1,3 +1,6 @@
+/**
+ * Array of emoji reactions {text: emoji}
+ */
 const encodeEmojiMap: { [key: string]: string } = {
   FIRE: '🔥',
   CAUTION: '⚠️',
@@ -6,6 +9,9 @@ const encodeEmojiMap: { [key: string]: string } = {
   PARTY: '🎉',
 };
 
+/**
+ * Inverse of the array of emoji reactions {emoji: text}
+ */
 const decodeEmojiMap: { [key: string]: string } = {
   '🔥': 'FIRE',
   '⚠️': 'CAUTION',
@@ -14,7 +20,11 @@ const decodeEmojiMap: { [key: string]: string } = {
   '🎉': 'PARTY',
 };
 
-/* Convert text to emoji */
+/**
+ * Convert text to emoji
+ * @param inputWord the text to convert
+ * @returns emoji as a string or null if the inputWord is not in the map
+ */
 export const encodeEmoji = (inputWord: string) => {
   if (encodeEmojiMap.hasOwnProperty(inputWord)) {
     return encodeEmojiMap[inputWord];
@@ -23,10 +33,14 @@ export const encodeEmoji = (inputWord: string) => {
   }
 };
 
-/* Convert emoji to text */
-export const decodeEmoji = (inputWord: string) => {
-  if (decodeEmojiMap.hasOwnProperty(inputWord)) {
-    return decodeEmojiMap[inputWord];
+/**
+ * Convert string emoji to text
+ * @param inputEmoji the emoji to convert
+ * @returns text as a string or null if the inputEmoji is not in the map
+ */
+export const decodeEmoji = (inputEmoji: string) => {
+  if (decodeEmojiMap.hasOwnProperty(inputEmoji)) {
+    return decodeEmojiMap[inputEmoji];
   } else {
     return null;
   }

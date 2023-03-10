@@ -2,6 +2,9 @@ import mongoose, { ConnectOptions } from 'mongoose';
 import dotenv from 'dotenv';
 dotenv.config();
 
+/**
+ * Connects the application to MongoDB
+ */
 export const connectMongoDB = async () => {
   try {
     console.log('Connecting to MongoDB...');

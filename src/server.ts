@@ -4,7 +4,7 @@ import cors from 'cors';
 import groupsRouter from './routes/groups.router';
 import usersRouter from './routes/users.router';
 import venuesRouter from './routes/venues.router';
-import { startQueueAdapter } from './queue/setup/queue.setup';
+import { createBullBoardAdapter } from './queue/setup/bullboard.setup';
 
 const createServer = () => {
   const app = express();
@@ -14,7 +14,7 @@ const createServer = () => {
   app.use(cors()); // Enable CORS
 
   // Retrieve the bull board adapter
-  const adapter = startQueueAdapter();
+  const adapter = createBullBoardAdapter();
 
   // Set up the bull board for development use
   app.use('/bull-board', adapter.getRouter());
