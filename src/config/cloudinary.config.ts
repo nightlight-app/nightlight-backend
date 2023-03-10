@@ -26,4 +26,4 @@ export const upload = multer({
     // callback with no error to accept the file
     cb(null, true);
   },
-}).single('image'); // name of the input field in the form
+}).single('image'); // this allows us to access the image file in the request object as req.file
