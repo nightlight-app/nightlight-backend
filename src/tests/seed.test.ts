@@ -7,13 +7,14 @@ import { GROUP_KEYS, USER_KEYS, VENUE_KEYS } from './testData';
 import User from '../models/User.model';
 import Group from '../models/Group.model';
 import Venue from '../models/Venue.model';
+import { Server } from 'http';
 require('dotenv').config();
 
 chai.use(chaiHttp);
 chai.should();
 
 const app = createServer();
-let server: any;
+let server: Server;
 
 const connectToMongo = async (): Promise<void> => {
   try {

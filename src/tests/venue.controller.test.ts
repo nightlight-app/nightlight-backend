@@ -12,7 +12,7 @@ import {
 } from './testData';
 import { ObjectId } from 'mongodb';
 import { decodeEmoji } from '../utils/venue.utils';
-import { response } from 'express';
+import { Server } from 'http';
 
 require('dotenv').config();
 
@@ -20,7 +20,7 @@ chai.use(chaiHttp);
 chai.should();
 
 const app = createServer();
-let server: any;
+let server: Server;
 
 const connectToMongo = async (): Promise<void> => {
   try {
