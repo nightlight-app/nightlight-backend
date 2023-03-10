@@ -1,9 +1,6 @@
 # This workflow will run the Jest tests
 name: Backend Testing
 
-permissions:
-  actions: read|write
-
 on:
   push:
   pull_request:
