@@ -7,15 +7,12 @@ const userSchema = new mongoose.Schema({
   },
   imgUrlProfileSmall: {
     type: String,
-    required: true,
   },
   imgUrlProfileLarge: {
     type: String,
-    required: true,
   },
   imgUrlCover: {
     type: String,
-    required: true,
   },
   firstName: {
     type: String,
@@ -41,7 +38,12 @@ const userSchema = new mongoose.Schema({
     {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+    },
+  ],
+  friendRequests: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
     },
   ],
   currentGroup: {

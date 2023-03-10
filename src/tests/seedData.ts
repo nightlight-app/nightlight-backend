@@ -31,6 +31,7 @@ export const createUser = (
     currentGroup: currentGroup,
     invitedGroups: invitedGroups,
     friends: friends || ([] as mongoose.Types.ObjectId[]),
+    friendRequests: [] as mongoose.Types.ObjectId[],
     lastActive: {
       location: {
         latitude: Number(faker.address.latitude()),
