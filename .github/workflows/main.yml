@@ -6,12 +6,10 @@ on:
   pull_request:
     branches:
       - main
-
 jobs:
   format:
     name: Format code with Prettier
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
       - name: Cache dependencies
