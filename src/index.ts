@@ -3,8 +3,6 @@ import { connectMongoDB } from './config/mongodb.config';
 import { LocationService } from './sockets';
 import createServer from './server';
 
-const PORT = 6060;
-
 // Connect to MongoDB
 connectMongoDB();
 
@@ -19,8 +17,10 @@ const locationService = new LocationService(io);
 locationService.initialize();
 
 // Start the server
-httpServer.listen(PORT, () => {
-  console.log(`Express server is listening on port ${PORT}!`);
+httpServer.listen(process.env.SERVER_PORT, () => {
+  console.log(
+    `Express server is listening on port ${process.env.SERVER_PORT}!`
+  );
 });
 
 // Export the server instance to allow use elsewhere

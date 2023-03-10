@@ -1,7 +1,9 @@
+import { Queue } from 'bullmq';
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import Group from '../models/Group.model';
 import User from '../models/User.model';
+import { addGroupExpireJob } from '../queue/jobs/group.expiration.jobs';
 import { inviteUsersToGroup } from '../utils/group.utils';
 
 export const createGroup = async (req: Request, res: Response) => {
@@ -37,6 +39,8 @@ export const createGroup = async (req: Request, res: Response) => {
 
     // invite the users in the group
     const result = inviteUsersToGroup(newGroup._id, newGroup.invitedMembers);
+
+    await addGroupExpireJob(newGroup._id.toString(), 1000);
 
     // send appropriate response after members invited
     if (result.status !== 200) {

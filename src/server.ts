@@ -4,6 +4,7 @@ import cors from 'cors';
 import groupsRouter from './routes/groups.router';
 import usersRouter from './routes/users.router';
 import venuesRouter from './routes/venues.router';
+import { startQueue } from './queue/setup/queue.setup';
 
 const createServer = () => {
   const app = express();
@@ -11,6 +12,19 @@ const createServer = () => {
   // Middleware
   app.use(express.json()); // Parse JSON bodies
   app.use(cors()); // Enable CORS
+
+  // start the queue (adapter is for bull board)
+  const adapter = startQueue();
+
+  /* Server set up */
+  app.use('/bull-board', adapter.getRouter());
+
+  app.listen(process.env.QUEUE_PORT, () => {
+    console.log(`Example app listening on port ${process.env.QUEUE_PORT}`);
+    console.log(
+      `Bull-board is available at: http://localhost:${process.env.QUEUE_PORT}/bull-board`
+    );
+  });
 
   // Routers
   app.use('/groups', groupsRouter);

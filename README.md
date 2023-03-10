@@ -2,6 +2,23 @@
 
 This is the backend for the nightlight app. It is a RESTful API built with Node.js and Express.js. It uses MongoDB as its database.
 
+## To run the app:
+
+In one terminal
+```zsh 
+docker compose up
+```
+
+In a different terminal
+```zsh
+npm start
+```
+
+In a different terminal
+```zsh
+npm run worker
+```
+
 # API Endpoints
 
 | HTTP Method                                               | Name                                                           | Description                                                                                                                                                                     | Parameters                                                                                                                                                                                                                                                                                               | Responses                                                                                                                                                                                                                                                    |
@@ -94,6 +111,10 @@ This is the backend for the nightlight app. It is a RESTful API built with Node.
     }]
 }
 ```
+
+# Worker
+
+Let's talk about how the queue and worker are used within the app.
 
 ## TODO
 
