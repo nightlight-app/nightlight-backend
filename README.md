@@ -49,6 +49,7 @@ This is the backend for the nightlight app. It is a RESTful API built with Node.
     "birthday": Date,
     "currentGroup": mongoose.Types.ObjectId | undefined,
     "friends": mongoose.Types.ObjectId[],
+    "friendRequests": mongoose.Types.ObjectId[],
     "lastActive?": {
         "location": {
         "latitude": Number,
