@@ -68,10 +68,6 @@ jobs:
         run: npm test
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
-          SERVER_PID: $!
 
       - name: Stop Worker
         run: kill $WORKER_PID || true
-
-      - name: Stop Server
-        run: kill $SERVER_PID || true
