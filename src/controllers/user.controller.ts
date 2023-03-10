@@ -31,7 +31,7 @@ export const createUser = async (req: Request, res: Response) => {
  * Otherwise, returns an error status with an appropriate message.
  */
 export const getUser = async (req: Request, res: Response) => {
-  const userId = req.query?.userId?.toString() || '';
+  const userId = req.query?.userId as string;
 
   if (!ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -59,7 +59,7 @@ export const getUser = async (req: Request, res: Response) => {
  * @returns {Object} Returns status code 200 and a success message if the user was deleted successfully. Otherwise, returns an error status with an appropriate message.
  */
 export const deleteUser = async (req: Request, res: Response) => {
-  const userId = req.params?.userId || '';
+  const userId = req.params?.userId;
 
   if (!ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -86,7 +86,7 @@ export const deleteUser = async (req: Request, res: Response) => {
  * Otherwise, returns an error status with an appropriate message.
  */
 export const updateUser = async (req: Request, res: Response) => {
-  const userId = req.params?.userId || '';
+  const userId = req.params?.userId;
 
   if (!ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -113,7 +113,7 @@ export const updateUser = async (req: Request, res: Response) => {
  * @returns {User} Returns status code 200 and an object containing a success message and updated details of the user, otherwise returns an error status with appropriate message.
  */
 export const saveGroup = async (req: Request, res: Response) => {
-  const userId = req.params?.userId || '';
+  const userId = req.params?.userId;
 
   if (!ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -145,8 +145,8 @@ export const saveGroup = async (req: Request, res: Response) => {
  * indicating whether the saved group was successfully deleted or the error that occurred
  */
 export const deleteSavedGroup = async (req: Request, res: Response) => {
-  const userId = req.params?.userId || '';
-  const savedGroupId = req.query?.savedGroupId?.toString() || '';
+  const userId = req.params?.userId;
+  const savedGroupId = req.query?.savedGroupId as string;
 
   if (!ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -181,8 +181,8 @@ export const deleteSavedGroup = async (req: Request, res: Response) => {
  * @returns {Promise} Returns a Promise containing the response after updating the database.
  */
 export const acceptGroupInvitation = async (req: Request, res: Response) => {
-  const userId = req.params?.userId || '';
-  const groupId = req.query?.groupId?.toString() || '';
+  const userId = req.params?.userId;
+  const groupId = req.query?.groupId as string;
 
   if (!ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -228,8 +228,8 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
  * @returns {Response} - A JSON response indicating success or failure or error message with a 500 status code.
  */
 export const leaveGroup = async (req: Request, res: Response) => {
-  const userId = req.params?.userId || '';
-  const groupId = req.query?.groupId?.toString() || '';
+  const userId = req.params?.userId;
+  const groupId = req.query?.groupId as string;
 
   if (!ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -244,13 +244,13 @@ export const leaveGroup = async (req: Request, res: Response) => {
       $pull: { members: userId },
     });
 
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      currentGroup: undefined,
-    });
-
     if (targetGroup === null) {
       return res.status(400).send({ message: 'Group does not exist!' });
     }
+
+    const targetUser = await User.findByIdAndUpdate(userId, {
+      currentGroup: undefined,
+    });
 
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
@@ -269,7 +269,7 @@ export const leaveGroup = async (req: Request, res: Response) => {
  * @returns {User[]} Returns status code 200 and an object containing a success message and an array of friendUser objects if successful. Otherwise, returns an error status with an appropriate message.
  */
 export const getFriends = async (req: Request, res: Response) => {
-  const userId = req.params?.userId?.toString() || '';
+  const userId = req.params?.userId as string;
 
   if (!ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -305,8 +305,8 @@ export const getFriends = async (req: Request, res: Response) => {
  * @returns {Promise} Returns status code 200. Otherwise, returns an error status with an appropriate message.
  */
 export const requestFriend = async (req: Request, res: Response) => {
-  const userId = req.params?.userId || '';
-  const friendId = req.query?.friendId?.toString() || '';
+  const userId = req.params?.userId;
+  const friendId = req.query?.friendId?.toString() as string;
 
   if (!ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -317,12 +317,20 @@ export const requestFriend = async (req: Request, res: Response) => {
   }
 
   try {
-    const targetUser = await User.findByIdAndUpdate(friendId, {
-      $push: { friendRequests: userId },
-    });
+    const targetUser = await User.findById(userId);
 
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    const targetFriend = await User.findByIdAndUpdate(friendId, {
+      $push: { friendRequests: userId },
+    });
+
+    if (targetFriend === null) {
+      return res
+        .status(400)
+        .send({ message: 'User being requested does not exist!' });
     }
 
     return res
@@ -342,8 +350,8 @@ export const requestFriend = async (req: Request, res: Response) => {
  * with corresponding status code.
  */
 export const acceptFriendRequest = async (req: Request, res: Response) => {
-  const userId = req.params?.userId || '';
-  const friendId = req.query?.friendId?.toString() || '';
+  const userId = req.params?.userId;
+  const friendId = req.query?.friendId as string;
 
   if (!ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -359,12 +367,16 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
       $pull: { friendRequests: friendId },
     });
 
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
     const targetFriendUser = await User.findByIdAndUpdate(friendId, {
       $push: { friends: userId },
     });
 
-    if (targetUser === null || targetFriendUser === null) {
-      return res.status(400).send({ message: 'User does not exist!' });
+    if (targetFriendUser === null) {
+      return res.status(400).send({ message: 'Friend does not exist!' });
     }
 
     return res
@@ -383,8 +395,8 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
  * or a success response with a 200 status code and a message
  */
 export const declineFriendRequest = async (req: Request, res: Response) => {
-  const userId = req.params?.userId || '';
-  const friendId = req.query?.friendId?.toString() || '';
+  const userId = req.params?.userId;
+  const friendId = req.query?.friendId as string;
 
   if (!ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -395,6 +407,14 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
   }
 
   try {
+    const targetFriend = User.findById(friendId);
+
+    if (targetFriend === null) {
+      return res
+        .status(400)
+        .send({ message: 'User requesting does not exist!' });
+    }
+
     const targetUser = await User.findByIdAndUpdate(userId, {
       $pull: { friendRequests: friendId },
     });
