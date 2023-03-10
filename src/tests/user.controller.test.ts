@@ -196,7 +196,7 @@ describe('testing save groups', () => {
         userId2 = res.body.user._id;
         expect(res).to.have.status(201);
         expect(res.body.user).to.have.keys(USER_KEYS);
-        testData.friends.push(new mongoose.Types.ObjectId(userId2!));
+        testData.friends?.push(new mongoose.Types.ObjectId(userId2!));
         done();
       });
   });
@@ -209,7 +209,7 @@ describe('testing save groups', () => {
       .send(TEST_USER_2)
       .then(res => {
         userId3 = res.body.user._id;
-        testData.friends.push(new mongoose.Types.ObjectId(userId3!));
+        testData.friends?.push(new mongoose.Types.ObjectId(userId3!));
         expect(res).to.have.status(201);
         expect(res.body.user).to.have.keys(USER_KEYS);
         done();
