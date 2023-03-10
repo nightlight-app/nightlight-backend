@@ -15,6 +15,7 @@ import {
 } from './testData';
 import { ObjectId } from 'mongodb';
 import { Server } from 'http';
+import { nightlightQueue } from '../queue/setup/queue.setup';
 
 require('dotenv').config();
 

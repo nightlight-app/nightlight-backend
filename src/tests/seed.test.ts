@@ -8,6 +8,7 @@ import User from '../models/User.model';
 import Group from '../models/Group.model';
 import Venue from '../models/Venue.model';
 import { Server } from 'http';
+import { nightlightQueue } from '../queue/setup/queue.setup';
 require('dotenv').config();
 
 chai.use(chaiHttp);

@@ -62,12 +62,14 @@ jobs:
       - name: Start Worker
         run: npm run worker &
         env:
-          SERVER_PID: $!
+          WORKER_PID: $!
 
       - name: Run Server and Test
         run: npm test
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          SERVER_PID: $!
 
-      - name: Stop Server
+      - name: Stop Server and Worker
+        run: kill $WORKER_PID || true
         run: kill $SERVER_PID || true

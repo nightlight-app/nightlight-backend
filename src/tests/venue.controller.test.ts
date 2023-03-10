@@ -13,6 +13,7 @@ import {
 import { ObjectId } from 'mongodb';
 import { decodeEmoji } from '../utils/venue.utils';
 import { Server } from 'http';
+import { nightlightQueue } from '../queue/setup/queue.setup';
 
 require('dotenv').config();
 
