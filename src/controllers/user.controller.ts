@@ -126,7 +126,7 @@ export const saveGroup = async (req: Request, res: Response) => {
       },
     });
 
-    if (targetUser == undefined) {
+    if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
     return res
@@ -163,7 +163,7 @@ export const deleteSavedGroup = async (req: Request, res: Response) => {
       },
     });
 
-    if (targetUser == undefined) {
+    if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
     return res
@@ -306,7 +306,7 @@ export const getFriends = async (req: Request, res: Response) => {
  */
 export const requestFriend = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
-  const friendId = req.query?.friendId?.toString() as string;
+  const friendId = req.query?.friendId as string;
 
   if (!ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
