@@ -34,7 +34,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Start Worker
-        run: npm run worker &
+        run: npm run worker
         env:
           WORKER_PID: $!
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
