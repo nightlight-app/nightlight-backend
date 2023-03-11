@@ -3,11 +3,13 @@ name: Backend Testing
 
 on:
   push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
 jobs:
-  start-worker:
+  build:
     runs-on: ubuntu-latest
 
     services:
@@ -32,46 +34,22 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install PM2
-        run: npm install -g pm2
-
-      - name: Install dependencies
+      - name: Run CI
         run: npm ci
 
       - name: Run Build
         run: npm run build --if-present
 
-      - name: Start worker with PM2
-        run: pm2 start npm --name "worker" -- run worker
+      - name: Start Worker
+        run: npm run worker &
         env:
+          WORKER_PID: $!
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
-      - name: Save PM2 process list
-        run: pm2 save
-
-  run-tests:
-    needs: start-worker
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [19.x]
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Start PM2
-        run: pm2 resurrect --no-autorestart
-
-      - name: Run tests
+      - name: Run Server and Test
         run: npm test
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
-      - name: Stop PM2
-        run: pm2 delete all || true
+
+      - name: Stop Worker
+        run: kill $WORKER_PID || true
