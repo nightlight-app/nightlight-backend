@@ -41,7 +41,7 @@ before(async () => {
 
 describe('testing group actions', () => {
   let userIdFriend1: string;
-  it('POST /user1 for group test', done => {
+  it('should create user1 via POST /users/ (friend1)', done => {
     chai
       .request(server)
       .post('/users/')
@@ -55,7 +55,7 @@ describe('testing group actions', () => {
   });
 
   let userIdFriend2: string;
-  it('POST /user1 for group test', done => {
+  it('should create user2 via POST /users/ (friend2)', done => {
     chai
       .request(server)
       .post('/users/')
@@ -69,7 +69,7 @@ describe('testing group actions', () => {
   });
 
   let userIdFriend3: string;
-  it('POST /user1 for group test', done => {
+  it('should create user3 via POST /users/ (friend3)', done => {
     chai
       .request(server)
       .post('/users/')
@@ -83,7 +83,7 @@ describe('testing group actions', () => {
   });
 
   let userIdFriend4: string;
-  it('POST /user1 for group test', done => {
+  it('should create user4 via POST /users/ (friend4)', done => {
     chai
       .request(server)
       .post('/users/')
@@ -97,7 +97,7 @@ describe('testing group actions', () => {
   });
 
   let userIdFriend5: string;
-  it('POST /user1 for group test', done => {
+  it('should create user5 via POST /users/ (friend5)', done => {
     chai
       .request(server)
       .post('/users/')
@@ -111,12 +111,12 @@ describe('testing group actions', () => {
   });
 
   let userIdMain: string;
-  it('POST /user1 for group test', done => {
+  it('should create main user with 5 friends via POST /users/', done => {
     chai
       .request(server)
       .post('/users/')
-      .send({
-        ...TEST_USER_3,
+      .send(TEST_USER_3)
+      .query({
         friends: [
           userIdFriend1,
           userIdFriend2,
@@ -134,10 +134,11 @@ describe('testing group actions', () => {
   });
 
   let groupId: string;
-  it('POST /group', done => {
+  it('should create a new group via POST /groups/ (group2)', done => {
     chai
       .request(server)
-      .post('/groups/?userId=' + userIdMain)
+      .post('/groups/')
+      .query({ userId: userIdMain })
       .send({
         ...TEST_GROUP2,
         invitedMembers: [userIdFriend1, userIdFriend2, userIdFriend5],
@@ -151,10 +152,11 @@ describe('testing group actions', () => {
       });
   });
 
-  it('GET /group/{groupId}', done => {
+  it('should get the created group via GET /groups/{groupId}', done => {
     chai
       .request(server)
-      .get('/groups/' + groupId)
+      .get('/groups/')
+      .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.group).to.have.keys(GROUP_KEYS);
@@ -166,11 +168,11 @@ describe('testing group actions', () => {
       });
   });
 
-  it('GET /user/{userId} for first friend invited', done => {
+  it('should get the first invited friend user object via GET /users/{userId}', done => {
     chai
       .request(server)
-      .get('/users/?userId=' + userIdFriend1)
-      .send()
+      .get('/users/')
+      .query({ userId: userIdFriend1 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.user).to.have.keys(USER_KEYS);
@@ -179,11 +181,11 @@ describe('testing group actions', () => {
       });
   });
 
-  it('GET /user/{userId} for second friend invited', done => {
+  it('should get the second invited friend user object via GET /users/{userId}', done => {
     chai
       .request(server)
-      .get('/users/?userId=' + userIdFriend2)
-      .send()
+      .get('/users/')
+      .query({ userId: userIdFriend2 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.user).to.have.keys(USER_KEYS);
@@ -192,11 +194,11 @@ describe('testing group actions', () => {
       });
   });
 
-  it('GET /user/{userId} for third friend invited (friend5)', done => {
+  it('should get the third invited friend user object via GET /users/{userId} (friend5)', done => {
     chai
       .request(server)
-      .get('/users/?userId=' + userIdFriend5)
-      .send()
+      .get('/users/')
+      .query({ userId: userIdFriend5 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.user).to.have.keys(USER_KEYS);
@@ -205,10 +207,11 @@ describe('testing group actions', () => {
       });
   });
 
-  it('PATCH /group/{groupId}/inviteMembers', done => {
+  // MARK
+  it('should invite a new member to a group via PATCH /group/{groupId}/inviteMembers', done => {
     chai
       .request(server)
-      .patch('/groups/' + groupId + '/inviteMembers')
+      .patch(`/groups/${groupId}/inviteMembers`)
       .send([userIdFriend3])
       .then(res => {
         expect(res).to.have.status(200);
@@ -216,10 +219,11 @@ describe('testing group actions', () => {
       });
   });
 
-  it('GET /group/{groupId}', done => {
+  it('should get a group by id via GET /group/{groupId}', done => {
     chai
       .request(server)
-      .get('/groups/' + groupId)
+      .get('/groups/')
+      .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.group).to.have.keys(GROUP_KEYS);
@@ -233,15 +237,11 @@ describe('testing group actions', () => {
       });
   });
 
-  it('PATCH /group/{groupId}/removeMemberInvitation', done => {
+  it('should remove a member invitation via PATCH /group/{groupId}/removeMemberInvitation', done => {
     chai
       .request(server)
-      .patch(
-        '/groups/' +
-          groupId +
-          '/removeMemberInvitation/?userId=' +
-          userIdFriend3
-      )
+      .patch(`/groups/${groupId}/removeMemberInvitation`)
+      .query({ userId: userIdFriend3 })
       .send()
       .then(res => {
         expect(res).to.have.status(200);
@@ -249,26 +249,29 @@ describe('testing group actions', () => {
       });
   });
 
-  it('GET /group/{groupId} after invitation removed', done => {
+  it('should get a group by id after member invitation removed via GET /group/{groupId}', done => {
     chai
       .request(server)
-      .get('/groups/' + groupId)
+      .get('/groups/')
+      .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.group).to.have.keys(GROUP_KEYS);
         expect(res.body.group.members).to.include(userIdMain);
         expect(res.body.group.invitedMembers).to.include(userIdFriend1);
         expect(res.body.group.invitedMembers).to.include(userIdFriend2);
+        expect(res.body.group.invitedMembers).to.not.include(userIdFriend3);
+        expect(res.body.group.invitedMembers).to.not.include(userIdFriend4);
+        expect(res.body.group.invitedMembers).to.include(userIdFriend5);
         done();
       });
   });
 
-  it('PATCH /group/{groupId}/acceptGroupInvitation', done => {
+  it('should accept a group invitation via PATCH /users/{userId}/acceptGroupInvitation', done => {
     chai
       .request(server)
-      .patch(
-        '/users/' + userIdFriend2 + '/acceptGroupInvitation/?groupId=' + groupId
-      )
+      .patch(`/users/${userIdFriend2}/acceptGroupInvitation`)
+      .query({ groupId: groupId })
       .send()
       .then(res => {
         expect(res).to.have.status(200);
@@ -276,23 +279,22 @@ describe('testing group actions', () => {
       });
   });
 
-  it('PATCH /group/{groupId}/acceptGroupInvitation', done => {
+  it('should accept group invitation and add member to group (userIdFriend5)', done => {
     chai
       .request(server)
-      .patch(
-        '/users/' + userIdFriend5 + '/acceptGroupInvitation/?groupId=' + groupId
-      )
-      .send()
+      .patch(`/users/${userIdFriend5}/acceptGroupInvitation`)
+      .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
         done();
       });
   });
 
-  it('GET /group/{groupId} after invitation accepted', done => {
+  it('should return group information after invitation accepted', done => {
     chai
       .request(server)
-      .get('/groups/' + groupId)
+      .get('/groups/')
+      .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.group).to.have.keys(GROUP_KEYS);
@@ -304,11 +306,11 @@ describe('testing group actions', () => {
       });
   });
 
-  it('GET /user/{userId} before left group', done => {
+  it('should return user information before leaving group (userIdFriend5)', done => {
     chai
       .request(server)
-      .get('/users/?userId=' + userIdFriend5)
-      .send()
+      .get(`/users/`)
+      .query({ userId: userIdFriend5 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.user).to.have.keys([...USER_KEYS, 'currentGroup']);
@@ -318,22 +320,22 @@ describe('testing group actions', () => {
       });
   });
 
-  it('PATCH /users/{userId}/leaveGroup', done => {
+  it('should allow user to leave group (userIdFriend5)', done => {
     chai
       .request(server)
-      .patch(`/users/${userIdFriend5}/leaveGroup/?groupId=${groupId}`)
-      .send()
+      .patch(`/users/${userIdFriend5}/leaveGroup`)
+      .query({ groupId })
       .then(res => {
         expect(res).to.have.status(200);
         done();
       });
   });
 
-  it('GET /user/{userId} after member left', done => {
+  it('should return user information after leaving group (userIdFriend5)', done => {
     chai
       .request(server)
-      .get('/users/?userId=' + userIdFriend5)
-      .send()
+      .get(`/users/`)
+      .query({ userId: userIdFriend5 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.user).to.have.keys([...USER_KEYS]);
@@ -343,10 +345,12 @@ describe('testing group actions', () => {
       });
   });
 
-  it('GET /group/{groupId} after member left', done => {
+  it('should return group information after user leaves group', done => {
     chai
       .request(server)
-      .get('/groups/' + groupId)
+      .get('/groups/')
+      .query({ groupId: groupId })
+      .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.group).to.have.keys(GROUP_KEYS);
@@ -358,26 +362,39 @@ describe('testing group actions', () => {
       });
   });
 
-  it('GET /user/{userId} after invitation accepted', done => {
+  it('should return user information after invitation accepted (userIdFriend2)', done => {
     chai
       .request(server)
-      .get('/users/?userId=' + userIdFriend2)
-      .send()
+      .get(`/users/`)
+      .query({ userId: userIdFriend2 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.user).to.have.keys([...USER_KEYS, 'currentGroup']);
         expect(res.body.user.invitedGroups).to.have.length(0);
         expect(res.body.user.currentGroup).to.equal(groupId);
-        setTimeout(function () {
-          done();
-        }, 5000);
+        done();
       });
   });
 
-  it('GET /group/{groupId}', done => {
+  it('should return group information before group expires', done => {
     chai
       .request(server)
-      .get('/groups/' + groupId)
+      .get('/groups/')
+      .query({ groupId: groupId })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.group).to.have.keys(GROUP_KEYS);
+        setTimeout(function () {
+          done();
+        }, 6000);
+      });
+  });
+
+  it('should return group information after group expires', done => {
+    chai
+      .request(server)
+      .get('/groups/')
+      .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(400);
         done();
@@ -387,7 +404,7 @@ describe('testing group actions', () => {
 
 describe('testing group errors', () => {
   let userId: string;
-  it('POST /user for group error test', done => {
+  it('should create a new user via POST /users/ (user1)', done => {
     chai
       .request(server)
       .post('/users/')
@@ -400,20 +417,22 @@ describe('testing group errors', () => {
       });
   });
 
-  it('GET /group/{groupId} Invalid ID', done => {
+  it('should return a 400 status for GET /groups/:groupId with an invalid ID', done => {
     chai
       .request(server)
-      .get('/groups/' + 'FAKEID')
+      .get('/groups/')
+      .query({ groupId: 'FAKEID' })
       .then(res => {
         expect(res).to.have.status(400);
         done();
       });
   });
 
-  it('GET /group/{groupId} Incorrect ID', done => {
+  it('should return a 400 status for GET /groups/:groupId with an incorrect ID', done => {
     chai
       .request(server)
-      .get('/groups/' + new ObjectId(1234).toString())
+      .get('/groups/')
+      .query({ groupId: new ObjectId(1234).toString() })
       .then(res => {
         expect(res).to.have.status(400);
         expect(res.body.venue).to.equal(undefined);
@@ -421,10 +440,11 @@ describe('testing group errors', () => {
       });
   });
 
-  it('POST /group incorrectly formatted data', done => {
+  it('should return a 500 status for POST /groups/ with incorrectly formatted data', done => {
     chai
       .request(server)
-      .post('/groups/?userId=' + userId)
+      .post('/groups/')
+      .query({ userId: userId })
       .send({ data: { message: 'This is incorrect' } })
       .then(res => {
         expect(res).to.have.status(500);
@@ -432,17 +452,17 @@ describe('testing group errors', () => {
       });
   });
 
-  it('DELETE /group/{groupId} Invalid ID', done => {
+  it('should return a 400 status for DELETE /groups/:groupId with an invalid ID', done => {
     chai
       .request(server)
-      .delete('/groups/' + 'FAKEID')
+      .delete('/groups/FAKEID')
       .then(res => {
         expect(res).to.have.status(400);
         done();
       });
   });
 
-  it('DELETE /group/{groupId} Incorrect ID', done => {
+  it('should return a 400 status for DELETE /groups/:groupId with an incorrect ID', done => {
     chai
       .request(server)
       .delete('/groups/' + new ObjectId(1234).toString())

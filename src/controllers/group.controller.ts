@@ -1,4 +1,3 @@
-import { Queue } from 'bullmq';
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import Group from '../models/Group.model';
@@ -57,12 +56,14 @@ export const createGroup = async (req: Request, res: Response) => {
 };
 
 export const getGroup = async (req: Request, res: Response) => {
+  const groupId = req.query?.groupId!.toString();
+
   try {
-    if (!ObjectId.isValid(req.params?.groupId)) {
+    if (!ObjectId.isValid(groupId)) {
       return res.status(400).send({ message: 'Invalid group ID!' });
     }
 
-    const targetGroup = await Group.findById(req.params?.groupId);
+    const targetGroup = await Group.findById(groupId);
 
     if (targetGroup === null) {
       return res.status(400).send({ message: 'Group does not exist!' });
@@ -77,12 +78,14 @@ export const getGroup = async (req: Request, res: Response) => {
 };
 
 export const deleteGroup = async (req: Request, res: Response) => {
+  const groupId = req.params?.groupId;
+
   try {
-    if (!ObjectId.isValid(req.params?.groupId)) {
+    if (!ObjectId.isValid(groupId)) {
       return res.status(400).send({ message: 'Invalid group ID!' });
     }
 
-    const result = await Group.deleteOne({ _id: req.params?.groupId });
+    const result = await Group.deleteOne({ _id: groupId });
 
     if (result.deletedCount === 0) {
       return res.status(400).send({ message: 'Group not found!' });
