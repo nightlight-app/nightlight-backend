@@ -42,6 +42,7 @@ jobs:
         run: npm run worker &
         env:
           WORKER_PID: $!
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
       - name: Run Server and Test
         run: npm test
