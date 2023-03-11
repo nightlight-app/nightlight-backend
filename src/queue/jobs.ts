@@ -1,4 +1,4 @@
-import { nightlightQueue } from '../setup/queue.setup';
+import { nightlightQueue } from './setup/queue.setup';
 
 /**
  * Add group expire job to the nightlightQueue.
@@ -6,15 +6,16 @@ import { nightlightQueue } from '../setup/queue.setup';
  * @param {number} delay - Optional delay (in ms) before the job gets processed by the worker
  * @returns {Promise} - A promise that resolves when the job has been added to the queue.
  */
-export const addGroupExpireJob = async (groupId: string, delay: number) => {
+export const addGroupExpireJob = async (
+  groupId: string,
+  delay: number = 10000
+) => {
   try {
-    console.log('EVENT: Group job added');
-
     nightlightQueue.add(
       'groupExpire',
       {
         type: 'groupExpire',
-        data: { groupId: groupId },
+        groupId: groupId,
       },
       { delay: delay }
     );
@@ -30,5 +31,5 @@ export const addGroupExpireJob = async (groupId: string, delay: number) => {
  */
 export interface GroupExpireJob {
   type: 'groupExpire';
-  data: { groupId: string };
+  groupId: string;
 }

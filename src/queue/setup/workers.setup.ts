@@ -1,5 +1,7 @@
 import { Job, Worker, WorkerOptions } from 'bullmq';
-import { GroupExpireJob } from '../jobs/group.expiration.jobs';
+import { connectMongoDB } from '../../config/mongodb.config';
+import { GroupExpireJob } from '../jobs';
+import { expireGroup } from '../workers';
 
 // Define the connection options for the worker
 const workerOptions: WorkerOptions = {
@@ -16,12 +18,13 @@ const workerOptions: WorkerOptions = {
 const workerHandler = async (job: Job<GroupExpireJob>) => {
   switch (job.data.type) {
     case 'groupExpire': {
-      // Will export functionality to workers/group.expiration.worker.ts
-      console.log(`Hello world!`, job.data);
+      await expireGroup(job.data.groupId);
       return;
     }
   }
 };
+
+connectMongoDB();
 
 // Create a new worker that will process the queue
 const worker = new Worker('nightlight-queue', workerHandler, workerOptions);

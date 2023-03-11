@@ -11,12 +11,12 @@
     "dev": "nodemon src/index.ts",
     "build": "rm -rf build/ && prettier --write src/ && tsc",
     "format": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
-    "seed": "nyc mocha --exit -r ts-node/register src/tests/seed.test.ts",
+    "seed": "nyc mocha --exit --timeout 5000 -r ts-node/register src/tests/seed.test.ts",
     "test-utils": "nyc mocha --exit -r ts-node/register src/tests/*.utils.test.ts",
     "test-venues": "nyc mocha --exit -r ts-node/register src/tests/venue.controller.test.ts",
     "test-users": "nyc mocha --exit -r ts-node/register src/tests/user.controller.test.ts",
-    "test-groups": "nyc mocha --exit -r ts-node/register src/tests/group.controller.test.ts",
-    "test": "nyc mocha --exit -r ts-node/register src/tests/*.test.ts"
+    "test-groups": "nyc mocha --timeout 5000 --exit -r ts-node/register src/tests/group.controller.test.ts",
+    "test": "nyc mocha --timeout 5000 --exit -r ts-node/register src/tests/*.test.ts"
   },
   "dependencies": {
     "@bull-board/express": "^5.0.0",

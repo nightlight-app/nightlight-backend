@@ -518,10 +518,11 @@ describe('testing venue errors', () => {
 
 after(async () => {
   try {
-    mongoose.connection.close();
+    await mongoose.connection.close();
   } catch (error) {
     console.error(error);
   } finally {
-    server.close();
+    await server.close();
+    await app.closeAllConnections();
   }
 });

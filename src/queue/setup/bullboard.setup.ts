@@ -5,6 +5,7 @@ import { nightlightQueue } from './queue.setup';
 
 /**
  * Creates a new BullBoard adapter to be used for development
+ * Useless for mocha tests, is therefore only uncommented for development use in src/server.ts
  * @returns {ExpressAdapter} bullboard adapter
  */
 export const createBullBoardAdapter = () => {

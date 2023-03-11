@@ -1,7 +1,5 @@
-import { ExpressAdapter } from '@bull-board/express';
 import { Queue } from 'bullmq';
 import Redis from 'ioredis';
-import { createBullBoardAdapter } from './bullboard.setup';
 
 // Define the connection options for the queue
 const queueOptions = {

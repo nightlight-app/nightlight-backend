@@ -13,19 +13,15 @@ const createServer = () => {
   app.use(express.json()); // Parse JSON bodies
   app.use(cors()); // Enable CORS
 
-  // Retrieve the bull board adapter
-  const adapter = createBullBoardAdapter();
-
-  // Set up the bull board for development use
-  app.use('/bull-board', adapter.getRouter());
-
-  // Start the server for bull board
-  app.listen(process.env.QUEUE_PORT, () => {
-    console.log(`Example app listening on port ${process.env.QUEUE_PORT}`);
-    console.log(
-      `Bull-board is available at: http://localhost:${process.env.QUEUE_PORT}/bull-board`
-    );
-  });
+  //// Set up bull board (only can be uncommented when running the server locally)
+  // const adapter = createBullBoardAdapter();
+  // app.use('/bull-board', adapter.getRouter());
+  // app.listen(process.env.QUEUE_PORT, () => {
+  //   console.log(`Example app listening on port ${process.env.QUEUE_PORT}`);
+  //   console.log(
+  //     `Bull-board is available at: http://localhost:${process.env.QUEUE_PORT}/bull-board`
+  //   );
+  // });
 
   // Routers
   app.use('/groups', groupsRouter);

@@ -368,16 +368,19 @@ describe('testing group actions', () => {
         expect(res.body.user).to.have.keys([...USER_KEYS, 'currentGroup']);
         expect(res.body.user.invitedGroups).to.have.length(0);
         expect(res.body.user.currentGroup).to.equal(groupId);
-        done();
+        setTimeout(function () {
+          done();
+        }, 3100);
       });
   });
 
-  it('DELETE /group/{groupId}', done => {
+  it('GET /group/{groupId}', done => {
     chai
       .request(server)
-      .delete('/groups/' + groupId)
+      .get('/groups/' + groupId)
       .then(res => {
-        expect(res).to.have.status(200);
+        console.log(res.error.message);
+        expect(res).to.have.status(400);
         done();
       });
   });
@@ -453,10 +456,11 @@ describe('testing group errors', () => {
 
 after(async () => {
   try {
-    mongoose.connection.close();
+    await mongoose.connection.close();
   } catch (error) {
     console.error(error);
   } finally {
-    server.close();
+    await server.close();
+    await app.closeAllConnections();
   }
 });
