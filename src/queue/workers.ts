@@ -5,10 +5,8 @@ import Group from '../models/Group.model';
  * @param groupId the ID of the group to be expired
  */
 export const expireGroup = async (groupId: string) => {
-  console.log('WORKER FUNCTION IS RUNNING');
   try {
-    console.log('WORKER TRY IS RUNNING');
-    Group.findByIdAndDelete(groupId);
+    await Group.findByIdAndDelete(groupId);
   } catch (error: any) {
     console.log(error);
   }

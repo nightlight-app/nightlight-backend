@@ -18,7 +18,7 @@ const workerOptions: WorkerOptions = {
 const workerHandler = async (job: Job<GroupExpireJob>) => {
   switch (job.data.type) {
     case 'groupExpire': {
-      await expireGroup(job.data.groupId);
+      expireGroup(job.data.groupId);
       return;
     }
   }
@@ -28,5 +28,3 @@ connectMongoDB();
 
 // Create a new worker that will process the queue
 const worker = new Worker('nightlight-queue', workerHandler, workerOptions);
-
-console.log('WORKER IS RUNNING');
