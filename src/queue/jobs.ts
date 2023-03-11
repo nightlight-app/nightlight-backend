@@ -20,13 +20,3 @@ export const addGroupExpireJob = async (groupId: string, delay: number) => {
     console.log(error);
   }
 };
-
-/**
- * Interface for the group expire job.
- * This is not completely necessary, but it helps with type checking.
- * Used as the type for the Job template object in the worker.
- */
-export interface GroupExpireJob {
-  type: 'groupExpire';
-  groupId: string;
-}

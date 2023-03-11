@@ -1,6 +1,7 @@
 import { Job, Worker, WorkerOptions } from 'bullmq';
 import { connectMongoDB } from '../../config/mongodb.config';
-import { GroupExpireJob } from '../jobs';
+import { NIGHTLIGHT_QUEUE } from '../../utils/constants';
+import { GroupExpireJob } from '../jobs.interface';
 import { expireGroup } from '../workers';
 
 // Define the connection options for the worker
@@ -27,4 +28,4 @@ const workerHandler = async (job: Job<GroupExpireJob>) => {
 connectMongoDB();
 
 // Create a new worker that will process the queue
-const worker = new Worker('nightlight-queue', workerHandler, workerOptions);
+new Worker(NIGHTLIGHT_QUEUE, workerHandler, workerOptions);
