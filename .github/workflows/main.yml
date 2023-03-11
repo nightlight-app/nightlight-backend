@@ -7,7 +7,7 @@ on:
     branches:
       - main
 jobs:
-  build:
+  start-worker:
     runs-on: ubuntu-latest
 
     services:
@@ -32,22 +32,36 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Run CI
+      - name: Install dependencies
         run: npm ci
 
-      - name: Run Build
-        run: npm run build --if-present
-
-      - name: Start Worker
-        run: npm run worker > /dev/null 2>&1 &
+      - name: Start worker with PM2
+        run: pm2 start npm --name "worker" -- run worker
         env:
-          WORKER_PID: $!
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
-      - name: Run Server and Test
+      - name: Save PM2 process list
+        run: pm2 save
+
+  run-tests:
+    needs: start-worker
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start PM2
+        run: pm2 resurrect
+
+      - name: Run tests
         run: npm test
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
-
-      - name: Stop Worker
-        run: kill $WORKER_PID || true
