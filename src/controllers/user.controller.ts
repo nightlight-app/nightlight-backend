@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import User from '../models/User.model';
-import { ObjectId } from 'mongodb';
 import mongoose from 'mongoose';
 import Group from '../models/Group.model';
 import { v2 as cloudinary } from 'cloudinary';
@@ -37,7 +36,7 @@ export const createUser = async (req: Request, res: Response) => {
 export const getUser = async (req: Request, res: Response) => {
   const userId = req.query?.userId as string;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
@@ -65,7 +64,7 @@ export const getUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
@@ -92,7 +91,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
@@ -119,7 +118,7 @@ export const updateUser = async (req: Request, res: Response) => {
 export const saveGroup = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
@@ -152,11 +151,11 @@ export const deleteSavedGroup = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
   const savedGroupId = req.query?.savedGroupId as string;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
-  if (!ObjectId.isValid(savedGroupId)) {
+  if (!mongoose.Types.ObjectId.isValid(savedGroupId)) {
     return res.status(400).send({ message: 'Invalid saved group ID!' });
   }
 
@@ -188,11 +187,11 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
   const groupId = req.query?.groupId as string;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
-  if (!ObjectId.isValid(groupId)) {
+  if (!mongoose.Types.ObjectId.isValid(groupId)) {
     return res.status(400).send({ message: 'Invalid group ID!' });
   }
 
@@ -235,11 +234,11 @@ export const leaveGroup = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
   const groupId = req.query?.groupId as string;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
-  if (!ObjectId.isValid(groupId)) {
+  if (!mongoose.Types.ObjectId.isValid(groupId)) {
     return res.status(400).send({ message: 'Invalid group ID!' });
   }
 
@@ -275,7 +274,7 @@ export const leaveGroup = async (req: Request, res: Response) => {
 export const getFriends = async (req: Request, res: Response) => {
   const userId = req.params?.userId as string;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
@@ -312,11 +311,11 @@ export const requestFriend = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
   const friendId = req.query?.friendId as string;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
-  if (!ObjectId.isValid(friendId)) {
+  if (!mongoose.Types.ObjectId.isValid(friendId)) {
     return res.status(400).send({ message: 'Invalid friend ID!' });
   }
 
@@ -357,11 +356,11 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
   const friendId = req.query?.friendId as string;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
-  if (!ObjectId.isValid(friendId)) {
+  if (!mongoose.Types.ObjectId.isValid(friendId)) {
     return res.status(400).send({ message: 'Invalid friend ID!' });
   }
 
@@ -402,11 +401,11 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
   const friendId = req.query?.friendId as string;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
-  if (!ObjectId.isValid(friendId)) {
+  if (!mongoose.Types.ObjectId.isValid(friendId)) {
     return res.status(400).send({ message: 'Invalid friend ID!' });
   }
 
@@ -463,7 +462,7 @@ export const uploadProfileImg = async (req: Request, res: Response) => {
     const userId = req.params?.userId;
     const image = req.file;
 
-    if (!ObjectId.isValid(userId)) {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).send({ message: 'Invalid user ID!' });
     }
 
