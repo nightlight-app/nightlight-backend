@@ -17,8 +17,8 @@ jobs:
           - 6379:6379
         options: >-
           --health-cmd "redis-cli ping"
-          --health-interval 5s
-          --health-timeout 3s
+          --health-interval 6s
+          --health-timeout 5s
           --health-retries 5
           --name redis
 
@@ -46,7 +46,9 @@ jobs:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
       - name: Run Server and Test
-        run: npm test
+        run: |
+          sleep 8
+          npm test
         env:
           REDIS_HOST: redis
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
