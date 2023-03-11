@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
 import multer from 'multer';
+import { MAX_FILE_SIZE } from '../utils/constants';
 
 dotenv.config();
 
@@ -17,7 +18,7 @@ export const upload = multer({
   // store files in memory instead of on disk because we don't need to save the file
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 5 * 1024 * 1024, // no larger than 5mb, you can change as needed.
+    fileSize: MAX_FILE_SIZE,
   },
   fileFilter: (req, file, cb) => {
     // accept image only. throw error in callback if not an image
