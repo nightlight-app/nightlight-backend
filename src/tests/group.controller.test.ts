@@ -370,7 +370,7 @@ describe('testing group actions', () => {
         expect(res.body.user.currentGroup).to.equal(groupId);
         setTimeout(function () {
           done();
-        }, 3100);
+        }, 5000);
       });
   });
 
@@ -379,7 +379,7 @@ describe('testing group actions', () => {
       .request(server)
       .get('/groups/' + groupId)
       .then(res => {
-        console.log(res.error.message);
+        console.log(res.body.group);
         expect(res).to.have.status(400);
         done();
       });
