@@ -7,7 +7,7 @@ on:
     branches:
       - main
 jobs:
-  start-redis:
+  start-worker:
     runs-on: ubuntu-latest
 
     services:
@@ -21,9 +21,6 @@ jobs:
           --health-timeout 5s
           --health-retries 5
           --name redis
-
-  start-worker:
-    runs-on: ubuntu-latest
 
     strategy:
       matrix:
