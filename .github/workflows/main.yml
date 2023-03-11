@@ -54,23 +54,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install PM2
-        run: npm install -g pm2
-
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Start PM2
-        run: pm2 resurrect
+        run: pm2 resurrect --no-autorestart
 
       - name: Run tests
         run: npm test
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      - name: Stop PM2
+        run: pm2 delete all || true
