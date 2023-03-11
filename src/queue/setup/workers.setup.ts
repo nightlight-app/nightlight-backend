@@ -16,6 +16,7 @@ const workerOptions: WorkerOptions = {
  * @param job Job to be handled by the worker
  */
 const workerHandler = async (job: Job<GroupExpireJob>) => {
+  console.log('WORKER HANDLER IS RUNNING');
   switch (job.data.type) {
     case 'groupExpire': {
       await expireGroup(job.data.groupId);

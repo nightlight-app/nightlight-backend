@@ -6,10 +6,7 @@ import { nightlightQueue } from './setup/queue.setup';
  * @param {number} delay - Optional delay (in ms) before the job gets processed by the worker
  * @returns {Promise} - A promise that resolves when the job has been added to the queue.
  */
-export const addGroupExpireJob = async (
-  groupId: string,
-  delay: number = 10000
-) => {
+export const addGroupExpireJob = async (groupId: string, delay: number) => {
   try {
     nightlightQueue.add(
       'groupExpire',
