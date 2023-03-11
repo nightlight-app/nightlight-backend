@@ -5,7 +5,7 @@ import Redis from 'ioredis';
 const queueOptions = {
   connection: new Redis({
     host: 'localhost',
-    port: 6379,
+    port: parseInt(process.env.REDIS_PORT || '6379'),
   }),
 };
 

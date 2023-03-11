@@ -7,7 +7,7 @@ on:
     branches:
       - main
 jobs:
-  build:
+  test-backend:
     runs-on: ubuntu-latest
 
     services:
@@ -20,6 +20,7 @@ jobs:
           --health-interval 5s
           --health-timeout 3s
           --health-retries 5
+          --name redis
 
     strategy:
       matrix:
@@ -47,6 +48,7 @@ jobs:
       - name: Run Server and Test
         run: npm test
         env:
+          REDIS_HOST: redis
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
       - name: Stop Worker
