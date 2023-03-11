@@ -40,6 +40,7 @@ jobs:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
   test-backend:
+    needs: start-worker
     runs-on: ubuntu-latest
 
     strategy:
