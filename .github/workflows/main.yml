@@ -61,6 +61,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Install PM2
+        run: npm install -g pm2
+
       - name: Install dependencies
         run: npm ci
 
