@@ -45,9 +45,15 @@ jobs:
           WORKER_PID: $!
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
+      - name: Wait for Redis
+        run: |
+          echo "Waiting for Redis to become healthy..."
+          while [[ "$(docker inspect -f '{{.State.Health.Status}}' redis)" != "healthy" ]]; do sleep 1; done
+          echo "Redis is now healthy."
+
       - name: Run Server and Test
         run: |
-          sleep 8
+          sleep 3
           npm test
         env:
           REDIS_HOST: redis
