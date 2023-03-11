@@ -40,7 +40,6 @@ jobs:
 
       - name: Start Worker
         run: npm run worker > /dev/null 2>&1 &
-        background: true
         env:
           WORKER_PID: $!
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
