@@ -535,6 +535,5 @@ after(async () => {
     console.error(error);
   } finally {
     await server.close();
-    await app.closeAllConnections();
   }
 });
