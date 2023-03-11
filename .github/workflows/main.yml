@@ -39,7 +39,7 @@ jobs:
         run: npm run build --if-present
 
       - name: Start Worker
-        run: npm run worker &
+        run: npm run worker > /dev/null 2>&1 &
         background: true
         env:
           WORKER_PID: $!
