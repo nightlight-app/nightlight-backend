@@ -43,18 +43,6 @@ jobs:
     needs: start-worker
     runs-on: ubuntu-latest
 
-    services:
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 6s
-          --health-timeout 5s
-          --health-retries 5
-          --name redis
-
     strategy:
       matrix:
         node-version: [19.x]
