@@ -20,7 +20,6 @@ jobs:
           --health-interval 6s
           --health-timeout 5s
           --health-retries 5
-          --name redis
 
     strategy:
       matrix:
@@ -56,7 +55,6 @@ jobs:
           sleep 3
           npm test
         env:
-          REDIS_HOST: redis
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
       - name: Stop Worker
