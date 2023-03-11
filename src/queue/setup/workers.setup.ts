@@ -6,7 +6,7 @@ import { expireGroup } from '../workers';
 // Define the connection options for the worker
 const workerOptions: WorkerOptions = {
   connection: {
-    host: 'localhost',
+    host: process.env.REDIS_HOST || 'localhost',
     port: parseInt(process.env.REDIS_PORT || '6379'),
   },
 };
