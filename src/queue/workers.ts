@@ -6,6 +6,7 @@ import Group from '../models/Group.model';
  */
 export const expireGroup = async (groupId: string) => {
   try {
+    console.log('TESTING TESTING TESTING!!!!!!');
     Group.findByIdAndDelete(groupId);
   } catch (error: any) {
     console.log(error);
