@@ -9,6 +9,12 @@ import { addReactionExpireJob } from '../queue/jobs';
 import { Emoji } from '../utils/types';
 import { nightlightQueue } from '../queue/setup/queue.setup';
 
+/**
+ * Create a new venue
+ * @param {Request} req - The request object containing the body with the venue data
+ * @param {Response} res - The response object used to send the result of the action
+ * @return {Promise} - A promise that resolves when the venue is successfully created or failed to create
+ */
 export const createVenue = async (req: Request, res: Response) => {
   const newVenue = new Venue(req.body);
 
@@ -98,6 +104,15 @@ export const getVenue = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Retrieves a venue with its ID and finds its associated reactions for the user,
+ * given a userID query parameter. If an invalid venueID is provided or the venue
+ * does not exist, an error message is sent instead.
+ * @param {Request} req - The request object containing the suggested request parameters.
+ * @param {Response} res - The response object holding the returned venue and messages.
+ * @return {Promise} - A promise that resolves when the venue is successfully retrieve or failed to create
+ * @return {Venue} - The venue with its associated reactions for the user.
+ */
 export const getVenues = async (req: Request, res: Response) => {
   const userId = req.query?.userId;
   const count = Number(req.query?.count);
@@ -177,6 +192,12 @@ export const getVenues = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Adds a reaction to a venue with specified ID
+ * @param {Request} req - The request object containing the suggested request parameters.
+ * @param {Response} res - The response object holding the returned venue and messages.
+ * @return {Promise} - A promise that resolves when the reaction is successfully added or failed to add
+ */
 export const addReactionToVenue = async (req: Request, res: Response) => {
   try {
     const venueId = req.params?.venueId;
@@ -221,6 +242,12 @@ export const addReactionToVenue = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Remove a reaction to a venue with specified ID
+ * @param {Request} req - The request object containing the suggested request parameters.
+ * @param {Response} res - The response object holding the returned venue and messages.
+ * @return {Promise} - A promise that resolves when the reaction is successfully removed or failed to remove
+ */
 export const deleteReactionFromVenue = async (req: Request, res: Response) => {
   try {
     const venueId = req.params?.venueId;
@@ -258,6 +285,12 @@ export const deleteReactionFromVenue = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Deletes a venue with specified ID
+ * @param {Request} req - The request object containing the suggested request parameters.
+ * @param {Response} res - The response object holding the returned venue and messages.
+ * @return {Promise} - A promise that resolves when the venue is successfully deleted or failed to delete
+ */
 export const deleteVenue = async (req: Request, res: Response) => {
   const venueId = req.params?.venueId;
 
@@ -277,6 +310,12 @@ export const deleteVenue = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Deletes a venue with specified ID
+ * @param {Request} req - The request object containing the suggested request parameters.
+ * @param {Response} res - The response object holding the returned venue and messages.
+ * @return {Promise} - A promise that resolves when the venue is successfully deleted or failed to delete
+ */
 export const updateVenue = async (req: Request, res: Response) => {
   const venueId = req.params?.venueId;
 
