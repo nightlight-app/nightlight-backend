@@ -13,7 +13,7 @@ require('dotenv').config();
 chai.use(chaiHttp);
 chai.should();
 
-const app = createServer();
+const app = createServer({ shouldRunBullBoard: false });
 let server: Server;
 
 const connectToMongo = async (): Promise<void> => {
