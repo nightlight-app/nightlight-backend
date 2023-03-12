@@ -1,4 +1,4 @@
-import { Queue } from 'bullmq';
+import { Queue, QueueEvents } from 'bullmq';
 import Redis from 'ioredis';
 import { NIGHTLIGHT_QUEUE } from '../../utils/constants';
 import { JobsList, NightlightQueueJob } from '../jobs.interface';
@@ -20,3 +20,18 @@ export const nightlightQueue = new Queue<NightlightQueueJob, any, JobsList>(
   NIGHTLIGHT_QUEUE,
   queueOptions
 );
+
+/**
+ * Create a new queue events listener that will be used to listen to events
+ */
+//const queueEvents = new QueueEvents(NIGHTLIGHT_QUEUE);
+
+/**
+ * Listen to the queue events and log them to the console for development.
+ */
+// queueEvents.on('failed', (args: any, id: string) => {
+//   console.log('Job failed: ' + args?.failedReason);
+// });
+// queueEvents.on('completed', (args: any, id: string) => {
+//   console.log(`Job # ${id} completed.`);
+// });

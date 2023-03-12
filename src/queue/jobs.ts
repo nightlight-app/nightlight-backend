@@ -9,16 +9,16 @@ import { nightlightQueue } from './setup/queue.setup';
  */
 export const addGroupExpireJob = async (groupId: string, delay: number) => {
   try {
-    nightlightQueue.add(
+    await nightlightQueue.add(
       'groupExpire',
       {
         type: 'groupExpire',
         groupId: groupId,
       },
-      { delay: delay }
+      { delay: delay, removeOnComplete: true, removeOnFail: true }
     );
   } catch (error: any) {
-    console.log(error);
+    console.log(error.message);
   }
 };
 
@@ -35,7 +35,7 @@ export const addReactionExpireJob = async (
   delay: number
 ) => {
   try {
-    nightlightQueue.add(
+    const job = await nightlightQueue.add(
       'reactionExpire',
       {
         type: 'reactionExpire',
@@ -43,9 +43,11 @@ export const addReactionExpireJob = async (
         venueId: venueId,
         emoji: emoji,
       },
-      { delay: delay }
+      { delay: delay, removeOnComplete: true, removeOnFail: true }
     );
+
+    return job;
   } catch (error: any) {
-    console.log(error);
+    console.log(error.message);
   }
 };

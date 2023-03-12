@@ -9,7 +9,7 @@ export const connectMongoDB = async () => {
   try {
     console.log('Connecting to MongoDB...');
     // TODO: Ensure that you have your MongoDB URI in your .env file, then uncomment the line below
-    mongoose.connect(process.env.MONGODB_URI!, {
+    await mongoose.connect(process.env.MONGODB_URI!, {
       useUnifiedTopology: true,
       useNewUrlParser: true,
     } as ConnectOptions);

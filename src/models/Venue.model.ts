@@ -23,8 +23,8 @@ const venueSchema = new mongoose.Schema({
         type: String,
         required: true,
       },
-      date: {
-        type: Date,
+      queueId: {
+        type: String,
         required: true,
       },
     },

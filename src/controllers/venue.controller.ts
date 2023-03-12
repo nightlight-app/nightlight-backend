@@ -7,6 +7,7 @@ import { REACTION_EMOJIS } from '../utils/constants';
 import { encodeEmoji } from '../utils/venue.utils';
 import { addReactionExpireJob } from '../queue/jobs';
 import { Emoji } from '../utils/types';
+import { nightlightQueue } from '../queue/setup/queue.setup';
 
 export const createVenue = async (req: Request, res: Response) => {
   const newVenue = new Venue(req.body);
@@ -190,18 +191,26 @@ export const addReactionToVenue = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'Invalid user ID!' });
     }
 
+    const job = await addReactionExpireJob(userId, venueId, emoji, 3000);
+
+    if (job === null || job?.id === undefined) {
+      return res
+        .status(400)
+        .send({ message: 'Failed to react to venue, queue error!' });
+    }
+
     const result = await Venue.findByIdAndUpdate(venueId, {
       $push: {
         reactions: {
           userId: userId,
           emoji: emoji,
+          queueId: job?.id,
         },
       },
     });
 
-    addReactionExpireJob(userId, venueId, emoji, 5000);
-
     if (result === null) {
+      nightlightQueue.remove(job.id);
       return res.status(400).send({ message: 'Venue does not exist!' });
     }
     return res
@@ -222,19 +231,29 @@ export const deleteReactionFromVenue = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'Invalid venue ID!' });
     }
 
-    const result = await Venue.updateOne(
-      { _id: venueId },
-      { $pull: { reactions: { userId: userId, emoji: emoji } } }
+    const result = await Venue.findOne({ _id: venueId });
+
+    if (result === null) {
+      return res.status(400).send({ message: 'Venue does not exist!' });
+    }
+
+    const reactionIndex = result.reactions.findIndex(
+      r => r.userId === userId && r.emoji === emoji
     );
 
-    if (result.modifiedCount === 0) {
-      return res.status(400).send({ message: 'Reaction not found!' });
-    }
+    const removedReaction = result.reactions.splice(reactionIndex, 1)[0];
+
+    const queueId = removedReaction.queueId;
+
+    await result.updateOne({ $set: { reactions: result.reactions } });
+
+    nightlightQueue.remove(queueId);
 
     return res.status(200).send({
       message: 'Successfully deleted reaction from venue: ' + venueId,
     });
   } catch (error: any) {
+    console.log(error.message);
     return res.status(500).send({ message: error.message });
   }
 };

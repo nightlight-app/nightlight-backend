@@ -13,7 +13,7 @@ const createServer = () => {
   app.use(express.json()); // Parse JSON bodies
   app.use(cors()); // Enable CORS
 
-  //// Set up bull board (only can be uncommented when running the server locally)
+  // // Set up bull board (only can be uncommented when running the server locally)
   // const adapter = createBullBoardAdapter();
   // app.use('/bull-board', adapter.getRouter());
   // app.listen(process.env.QUEUE_PORT, () => {

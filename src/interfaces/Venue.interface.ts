@@ -16,6 +16,7 @@ export interface Venue {
 export interface VenueReaction {
   emoji: Emoji;
   userId: mongoose.Types.ObjectId;
+  queueId: string;
 }
 
 // formatted response after mongo query

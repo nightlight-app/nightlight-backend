@@ -36,6 +36,7 @@ const connectToMongo = async (): Promise<void> => {
 before(async () => {
   await connectToMongo();
   server = app.listen(6061);
+  await nightlightQueue.drain();
 });
 
 describe('testing venue with reactions', () => {
@@ -234,6 +235,78 @@ describe('testing venue with reactions', () => {
       .request(server)
       .get(`/venues/${venueId}/`)
       .query({ userId: userId })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS);
+        expect(res.body.venue.reactions['🔥']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['🔥'].count).to.equal(0);
+        expect(res.body.venue.reactions['🔥'].didReact).to.equal(false);
+        expect(res.body.venue.reactions['🎉']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['🎉'].count).to.equal(0);
+        expect(res.body.venue.reactions['🎉'].didReact).to.equal(false);
+        expect(res.body.venue.reactions['🛡']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['🛡'].count).to.equal(0);
+        expect(res.body.venue.reactions['🛡'].didReact).to.equal(false);
+        expect(res.body.venue.reactions['💩']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['💩'].count).to.equal(0);
+        expect(res.body.venue.reactions['💩'].didReact).to.equal(false);
+        expect(res.body.venue.reactions['⚠️']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['⚠️'].count).to.equal(0);
+        expect(res.body.venue.reactions['⚠️'].didReact).to.equal(false);
+        done();
+      });
+  });
+
+  const emoji6 = '💩';
+  const userId6 = new ObjectId(12354).toString();
+  it('should add a reaction for expiration tests via POST /venues/:venueId/reaction (💩)', done => {
+    chai
+      .request(server)
+      .post(`/venues/${venueId}/reaction`)
+      .query({
+        userId: userId6,
+        emoji: emoji6,
+      })
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('should retrieve venue reactions with correct counts for expiration tests before expiration via GET /venues/{venueId}/ (venue1)', done => {
+    chai
+      .request(server)
+      .get(`/venues/${venueId}/`)
+      .query({ userId: userId6 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS);
+        expect(res.body.venue.reactions['🔥']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['🔥'].count).to.equal(0);
+        expect(res.body.venue.reactions['🔥'].didReact).to.equal(false);
+        expect(res.body.venue.reactions['🎉']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['🎉'].count).to.equal(0);
+        expect(res.body.venue.reactions['🎉'].didReact).to.equal(false);
+        expect(res.body.venue.reactions['🛡']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['🛡'].count).to.equal(0);
+        expect(res.body.venue.reactions['🛡'].didReact).to.equal(false);
+        expect(res.body.venue.reactions['💩']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['💩'].count).to.equal(1);
+        expect(res.body.venue.reactions['💩'].didReact).to.equal(true);
+        expect(res.body.venue.reactions['⚠️']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['⚠️'].count).to.equal(0);
+        expect(res.body.venue.reactions['⚠️'].didReact).to.equal(false);
+        setTimeout(() => {
+          done();
+        }, 9000);
+      });
+  });
+
+  it('should retrieve venue reactions with correct counts for expiration tests after expiration via GET /venues/{venueId}/ (venue1)', done => {
+    chai
+      .request(server)
+      .get(`/venues/${venueId}/`)
+      .query({ userId: userId6 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.venue).to.have.keys(VENUE_KEYS);

@@ -37,6 +37,7 @@ const connectToMongo = async (): Promise<void> => {
 before(async () => {
   await connectToMongo();
   server = app.listen(6060);
+  await nightlightQueue.drain();
 });
 
 describe('testing group actions', () => {

@@ -9,7 +9,7 @@ export const expireGroup = async (groupId: string) => {
   try {
     await Group.findByIdAndDelete(groupId);
   } catch (error: any) {
-    console.log(error);
+    console.log(error.message);
   }
 };
 
@@ -25,11 +25,11 @@ export const expireReaction = async (
   emoji: string
 ) => {
   try {
-    await Venue.updateOne(
+    await Venue.findOneAndUpdate(
       { _id: venueId },
       { $pull: { reactions: { userId: userId, emoji: emoji } } }
     );
   } catch (error: any) {
-    console.log(error);
+    console.log(error.message);
   }
 };
