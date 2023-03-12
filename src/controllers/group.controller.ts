@@ -12,6 +12,10 @@ export const createGroup = async (req: Request, res: Response) => {
   const newGroup = new Group(req.body);
 
   try {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).send({ message: 'Invalid user ID!' });
+    }
+
     // retrieve user creating the group
     const targetUser = await User.findById(userId);
 
