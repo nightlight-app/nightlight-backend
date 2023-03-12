@@ -15,8 +15,6 @@ export interface GroupExpireJob {
 
 /**
  * Interface for the emoji expire job.
- *
- * TODO: Implement this job in the future.
  */
 export interface ReactionExpireJob {
   type: 'reactionExpire';
