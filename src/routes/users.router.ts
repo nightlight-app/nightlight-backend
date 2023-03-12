@@ -12,6 +12,7 @@ import {
   acceptFriendRequest,
   declineFriendRequest,
   leaveGroup,
+  uploadProfileImg,
 } from '../controllers/user.controller';
 
 const usersRouter = express.Router();
@@ -29,5 +30,6 @@ usersRouter.patch('/:userId/leaveGroup', leaveGroup);
 usersRouter.patch('/:userId/requestFriend', requestFriend);
 usersRouter.patch('/:userId/acceptFriendRequest', acceptFriendRequest);
 usersRouter.patch('/:userId/declineFriendRequest', declineFriendRequest);
+usersRouter.patch('/:userId/uploadProfileImg', uploadProfileImg);
 
 export = usersRouter;
