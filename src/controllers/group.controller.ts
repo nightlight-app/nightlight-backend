@@ -39,7 +39,7 @@ export const createGroup = async (req: Request, res: Response) => {
     // invite the users in the group
     const result = inviteUsersToGroup(newGroup._id, newGroup.invitedMembers);
 
-    await addGroupExpireJob(newGroup._id.toString(), 3000);
+    addGroupExpireJob(newGroup._id.toString(), 3000);
 
     // send appropriate response after members invited
     if (result.status !== 200) {
@@ -59,7 +59,7 @@ export const getGroup = async (req: Request, res: Response) => {
   const groupId = req.query?.groupId!.toString();
 
   try {
-    if (!mongoose.Types.ObjectId.isValid(req.params?.groupId)) {
+    if (!mongoose.Types.ObjectId.isValid(groupId)) {
       return res.status(400).send({ message: 'Invalid group ID!' });
     }
 
