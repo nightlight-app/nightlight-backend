@@ -11,5 +11,4 @@ export interface Group {
     latitude: number;
     longitude: number;
   };
-  returnTime: Date;
 }

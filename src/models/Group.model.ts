@@ -31,10 +31,6 @@ const groupSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  returnTime: {
-    type: Date,
-    required: true,
-  },
 });
 
 const Group = mongoose.model('Group', groupSchema);
