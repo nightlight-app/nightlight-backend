@@ -11,7 +11,7 @@ connectMongoDB();
 configureCloudinary();
 
 // Create the server
-const httpServer = createServer();
+const httpServer = createServer({ shouldRunBullBoard: true });
 
 // Create the socket.io server
 const io = new Server(httpServer);

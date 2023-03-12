@@ -6,22 +6,29 @@ import usersRouter from './routes/users.router';
 import venuesRouter from './routes/venues.router';
 import { createBullBoardAdapter } from './queue/setup/bullboard.setup';
 
-const createServer = () => {
+const createServer = ({
+  shouldRunBullBoard = true,
+}: {
+  shouldRunBullBoard: boolean;
+}) => {
   const app = express();
 
   // Middleware
   app.use(express.json()); // Parse JSON bodies
   app.use(cors()); // Enable CORS
 
-  // // Set up bull board (only can be uncommented when running the server locally)
-  // const adapter = createBullBoardAdapter();
-  // app.use('/bull-board', adapter.getRouter());
-  // app.listen(process.env.QUEUE_PORT, () => {
-  //   console.log(`Example app listening on port ${process.env.QUEUE_PORT}`);
-  //   console.log(
-  //     `Bull-board is available at: http://localhost:${process.env.QUEUE_PORT}/bull-board`
-  //   );
-  // });
+  // Set up bull board
+  if (shouldRunBullBoard) {
+    console.log('SETTING UP BULL BOARD', process.env.ENVIRONMENT);
+    const adapter = createBullBoardAdapter();
+    app.use('/bull-board', adapter.getRouter());
+    app.listen(process.env.QUEUE_PORT, () => {
+      console.log(`Example app listening on port ${process.env.QUEUE_PORT}`);
+      console.log(
+        `Bull-board is available at: http://localhost:${process.env.QUEUE_PORT}/bull-board`
+      );
+    });
+  }
 
   // Routers
   app.use('/groups', groupsRouter);
