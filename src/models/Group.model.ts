@@ -23,11 +23,11 @@ const groupSchema = new mongoose.Schema({
     latitude: Number,
     longitude: Number,
   },
-  creationTime: {
+  creationDatetime: {
     type: Date,
     required: true,
   },
-  expirationDate: {
+  expirationDatetime: {
     type: Date,
     required: true,
   },

@@ -243,8 +243,8 @@ export const GROUP_KEYS = [
   'name',
   'members',
   'invitedMembers',
-  'creationTime',
-  'expirationDate',
+  'creationDatetime',
+  'expirationDatetime',
 ];
 
 export const VENUE_KEYS = [
