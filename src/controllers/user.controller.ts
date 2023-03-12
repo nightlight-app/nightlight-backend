@@ -445,9 +445,6 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
  * or a success response with a 200 status code and a message
  */
 export const uploadProfileImg = async (req: Request, res: Response) => {
-  const DIMENSIONS = [128, 256];
-  const USER_FIELDS = ['imgUrlProfileSmall', 'imgUrlProfileLarge'];
-
   // pass everything to multer upload so we can retrieve the image from req.file
   upload(req, res, async err => {
     if (err instanceof MulterError || err) {
