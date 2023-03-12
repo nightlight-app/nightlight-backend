@@ -1,7 +1,9 @@
+import { Emoji } from '../utils/types';
+
 /**
- * The list of jobs that the queue can handle.
+ * The list of jobs that the queue can handle./v2
  */
-export type JobsList = 'groupExpire' | 'emojiExpire';
+export type JobsList = 'groupExpire' | 'reactionExpire';
 
 /**
  * Interface for the group expire job.
@@ -16,8 +18,11 @@ export interface GroupExpireJob {
  *
  * TODO: Implement this job in the future.
  */
-export interface EmojiExpireJob {
-  type: 'emojiExpire';
+export interface ReactionExpireJob {
+  type: 'reactionExpire';
+  userId: string;
+  venueId: string;
+  emoji: Emoji;
 }
 
 /**
@@ -25,4 +30,4 @@ export interface EmojiExpireJob {
  *
  * This is the union of all the jobs that the queue can handle.
  */
-export type NightlightQueueJob = GroupExpireJob | EmojiExpireJob;
+export type NightlightQueueJob = GroupExpireJob | ReactionExpireJob;

@@ -6,6 +6,8 @@ import Venue from '../models/Venue.model';
 import { ObjectId } from 'mongodb';
 import { REACTION_EMOJIS } from '../utils/constants';
 import { encodeEmoji } from '../utils/venue.utils';
+import { addReactionExpireJob } from '../queue/jobs';
+import { Emoji } from '../utils/types';
 
 export const createVenue = async (req: Request, res: Response) => {
   const newVenue = new Venue(req.body);
@@ -176,16 +178,29 @@ export const getVenues = async (req: Request, res: Response) => {
 };
 
 export const addReactionToVenue = async (req: Request, res: Response) => {
-  const venueId = req.params?.venueId;
-
   try {
+    const venueId = req.params?.venueId;
+    const userId = req.query?.userId!.toString();
+    const emoji = req.query?.emoji as Emoji;
+
     if (!ObjectId.isValid(venueId)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
     }
 
+    if (!ObjectId.isValid(userId)) {
+      return res.status(400).send({ message: 'Invalid user ID!' });
+    }
+
     const result = await Venue.findByIdAndUpdate(venueId, {
-      $push: { reactions: req.body },
+      $push: {
+        reactions: {
+          userId: userId,
+          emoji: emoji,
+        },
+      },
     });
+
+    addReactionExpireJob(userId, venueId, emoji, 5000);
 
     if (result === null) {
       return res.status(400).send({ message: 'Venue does not exist!' });
@@ -202,7 +217,7 @@ export const deleteReactionFromVenue = async (req: Request, res: Response) => {
   try {
     const venueId = req.params?.venueId;
     const userId = req.query?.userId;
-    const emoji = encodeEmoji(req.query?.emoji as string);
+    const emoji = req.query?.emoji as Emoji;
 
     if (!ObjectId.isValid(req.params?.venueId)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });

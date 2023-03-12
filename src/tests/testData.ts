@@ -5,6 +5,7 @@ import { SavedGroup } from '../interfaces/SavedGroup.interface';
 import { User } from '../interfaces/User.interface';
 import { Venue, VenueReaction } from '../interfaces/Venue.interface';
 import { REACTION_EMOJIS } from '../utils/constants';
+import { Emoji } from '../utils/types';
 
 /* User 1 */
 const TEST_LAST_ACTIVE_1: LastActive = {
@@ -210,7 +211,7 @@ export const TEST_VENUE: Venue = {
 };
 
 /* Reactions */
-export const createTestReaction = (userId: string | number, emoji: string) => {
+export const createTestReaction = (userId: string | number, emoji: Emoji) => {
   return {
     userId: new mongoose.Types.ObjectId(userId),
     emoji: emoji,

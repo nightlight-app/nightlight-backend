@@ -1,3 +1,5 @@
+import { Emoji } from './types';
+
 /**
  * Array of emoji reactions {text: emoji}
  */
@@ -27,7 +29,7 @@ const decodeEmojiMap: { [key: string]: string } = {
  */
 export const encodeEmoji = (inputWord: string) => {
   if (encodeEmojiMap.hasOwnProperty(inputWord)) {
-    return encodeEmojiMap[inputWord];
+    return encodeEmojiMap[inputWord] as Emoji;
   } else {
     return null;
   }
@@ -40,7 +42,7 @@ export const encodeEmoji = (inputWord: string) => {
  */
 export const decodeEmoji = (inputEmoji: string) => {
   if (decodeEmojiMap.hasOwnProperty(inputEmoji)) {
-    return decodeEmojiMap[inputEmoji];
+    return decodeEmojiMap[inputEmoji] as Emoji;
   } else {
     return null;
   }
