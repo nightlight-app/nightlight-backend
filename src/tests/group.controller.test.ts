@@ -208,7 +208,6 @@ describe('testing group actions', () => {
       });
   });
 
-  // MARK
   it('should invite a new member to a group via PATCH /group/{groupId}/inviteMembers', done => {
     chai
       .request(server)

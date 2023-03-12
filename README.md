@@ -137,6 +137,6 @@ Let's talk about how the queue and worker are used within the app.
 - Upload cover image (use queue)
 - Replace cover image (use queue)
 - Delete cover image (use queue)
-- Reaction expire (use queue)
-- Group expire (use queue)
+- Reaction expire (use queue) DONE
+- Group expire (use queue) DONE
 - Notifications 💀 (use queue)
