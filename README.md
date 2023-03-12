@@ -5,16 +5,19 @@ This is the backend for the nightlight app. It is a RESTful API built with Node.
 ## To run the app:
 
 In one terminal
-```zsh 
+
+```zsh
 docker compose up
 ```
 
 In a different terminal
+
 ```zsh
 npm start
 ```
 
 In a different terminal
+
 ```zsh
 npm run worker
 ```
@@ -114,29 +117,37 @@ npm run worker
 
 # Worker
 
-Let's talk about how the queue and worker are used within the app.
+**Queue setup:** When the REST server is started it also creates the queue using the queue.setup.ts file with a specific name (nightlight-queue). The queue assumes the presence of a redis container running on port 6379. To add to the queue we use jobs.
+
+**Jobs:** Jobs are how the REST server adds to the queue. In jobs.ts we have a function called addGroupExpireJob which takes in the groupId to be added to the queue and a specified delay in milliseconds. We add the job to the queue with a job name (string), the job data (a type and the groupId) and the delay. There is an interface for the Job for extra type checking.
+
+**Worker Setup:** The worker is a seperate node process in the same codebase that is run in parallel to the REST server, also assuming the presence of a redis container at port 6379. The worker's only function is to intently stare at the redis queue (which was marked by the name setup in the queue.setup.ts) and to emit actions when the queue items pop out of the queue. When setting up the worker in workers.setup.ts, we have to connect to mongo again since this is a seperate process. The worker handler function takes the job and decides what to do with that job based off of the type (string) in the job.
+
+**Workers:** The worker functions in worker.ts do the actions based on the jobs popped off the queue. In this case we are deleting the group from mongo. Since the mongo model exists within the same codebase as both the worker and the REST server, we do not have to duplicate the code despite the worker being a seperate node process.
+
+**Tests:** In group.controller.test.ts at the end of the first describe block you can see that we get the group (which should be successful) and delay the tests for 5000 milliseconds. When we get the group again it should not exist since the delay in the queue was set to 3000 milliseconds in the createGroup function in group.controller.ts. We'll have to modify this in the future to do the actual delay.
 
 ## TODO
 
-- Delete user DONE
-- Update venue DONE
-- Save group post DONE
-- Save group delete DONE
-- Refactor user for group invitations DONE
-- Invite member to group post DONE
-- Invite member group delete DONE
-- Accept invitation to group patch DONE
+- Delete user ✅
+- Update venue ✅
+- Save group post ✅
+- Save group delete ✅
+- Refactor user for group invitations ✅
+- Invite member to group post ✅
+- Invite member group delete ✅
+- Accept invitation to group patch ✅
 - Delete user from group (leave group) TODO
-- Get venues (with pagination - get 10 at a time) DONE
-- Refactor for receivedFriendRequests DONE
-- Send friend request (post) DONE
-- Accept friend request (post) DONE
+- Get venues (with pagination - get 10 at a time) ✅
+- Refactor for receivedFriendRequests ✅
+- Send friend request (post) ✅
+- Accept friend request (post) ✅
 - Upload profile image (use queue)
 - Replace profile image (use queue)
 - Delete profile image (use queue)
 - Upload cover image (use queue)
 - Replace cover image (use queue)
 - Delete cover image (use queue)
-- Reaction expire (use queue)
-- Group expire (use queue)
+- Reaction expire ✅
+- Group expire ✅
 - Notifications 💀 (use queue)
