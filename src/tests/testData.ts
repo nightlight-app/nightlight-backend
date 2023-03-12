@@ -185,18 +185,16 @@ export const TEST_GROUP1: Group = {
     new mongoose.Types.ObjectId(5),
     new mongoose.Types.ObjectId(65264),
   ],
-  creationTime: new Date(),
-  expirationDate: new Date(),
-  returnTime: new Date(),
+  creationDatetime: new Date(),
+  expirationDatetime: new Date(),
 };
 
 export const TEST_GROUP2: Group = {
   name: 'Second group',
   members: [],
   invitedMembers: [],
-  creationTime: new Date(),
-  expirationDate: new Date(),
-  returnTime: new Date(),
+  creationDatetime: new Date(),
+  expirationDatetime: new Date(),
 };
 
 /* Venues */
@@ -247,7 +245,6 @@ export const GROUP_KEYS = [
   'invitedMembers',
   'creationTime',
   'expirationDate',
-  'returnTime',
 ];
 
 export const VENUE_KEYS = [

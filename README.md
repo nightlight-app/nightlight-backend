@@ -96,7 +96,6 @@ npm run worker
     },
     "creationTime": Date,
     "expirationDate": Date,
-    "returnTime": Date,
 }
 ```
 

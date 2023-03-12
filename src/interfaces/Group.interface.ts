@@ -5,8 +5,8 @@ export interface Group {
   name: string;
   members: mongoose.Types.ObjectId[];
   invitedMembers: mongoose.Types.ObjectId[];
-  creationTime: Date;
-  expirationDate: Date;
+  creationDatetime: Date;
+  expirationDatetime: Date;
   expectedDestination?: {
     latitude: number;
     longitude: number;

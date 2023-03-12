@@ -57,13 +57,12 @@ export const createGroup = () => {
     name: faker.word.adjective(),
     members: [] as mongoose.Types.ObjectId[],
     invitedMembers: [] as mongoose.Types.ObjectId[],
-    creationTime: new Date(),
-    expirationDate: new Date(),
+    creationDatetime: new Date(),
+    expirationDatetime: new Date(),
     expectedDestination: {
       latitude: Number(faker.address.latitude()),
       longitude: Number(faker.address.longitude()),
     },
-    returnTime: new Date(),
   } as Group;
 };
 
