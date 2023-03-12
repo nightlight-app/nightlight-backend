@@ -35,7 +35,7 @@ export const createUser = async (req: Request, res: Response) => {
  * Otherwise, returns an error status with an appropriate message.
  */
 export const getUser = async (req: Request, res: Response) => {
-  const userId = req.query?.userId as string;
+  const userId = req.query.userId as string;
 
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -149,8 +149,8 @@ export const saveGroup = async (req: Request, res: Response) => {
  * indicating whether the saved group was successfully deleted or the error that occurred
  */
 export const deleteSavedGroup = async (req: Request, res: Response) => {
-  const userId = req.params?.userId;
-  const savedGroupId = req.query?.savedGroupId as string;
+  const userId = req.params.userId as string;
+  const savedGroupId = req.query.savedGroupId as string;
 
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -185,8 +185,8 @@ export const deleteSavedGroup = async (req: Request, res: Response) => {
  * @returns {Promise} Returns a Promise containing the response after updating the database.
  */
 export const acceptGroupInvitation = async (req: Request, res: Response) => {
-  const userId = req.params?.userId;
-  const groupId = req.query?.groupId as string;
+  const userId = req.params.userId as string;
+  const groupId = req.query.groupId as string;
 
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -232,8 +232,8 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
  * @returns {Response} - A JSON response indicating success or failure or error message with a 500 status code.
  */
 export const leaveGroup = async (req: Request, res: Response) => {
-  const userId = req.params?.userId;
-  const groupId = req.query?.groupId as string;
+  const userId = req.params.userId as string;
+  const groupId = req.query.groupId as string;
 
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -309,8 +309,8 @@ export const getFriends = async (req: Request, res: Response) => {
  * @returns {Promise} Returns status code 200. Otherwise, returns an error status with an appropriate message.
  */
 export const requestFriend = async (req: Request, res: Response) => {
-  const userId = req.params?.userId;
-  const friendId = req.query?.friendId as string;
+  const userId = req.params.userId as string;
+  const friendId = req.query.friendId as string;
 
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -354,8 +354,8 @@ export const requestFriend = async (req: Request, res: Response) => {
  * with corresponding status code.
  */
 export const acceptFriendRequest = async (req: Request, res: Response) => {
-  const userId = req.params?.userId;
-  const friendId = req.query?.friendId as string;
+  const userId = req.params.userId as string;
+  const friendId = req.query.friendId as string;
 
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -399,8 +399,8 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
  * or a success response with a 200 status code and a message
  */
 export const declineFriendRequest = async (req: Request, res: Response) => {
-  const userId = req.params?.userId;
-  const friendId = req.query?.friendId as string;
+  const userId = req.params.userId as string;
+  const friendId = req.query.friendId as string;
 
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
