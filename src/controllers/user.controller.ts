@@ -28,21 +28,31 @@ export const createUser = async (req: Request, res: Response) => {
 };
 
 /**
- * Retrieves a user's data based on their userId and returns it as an object.
- * @param {Request} req - Express request object containing the query parameters, including the userId.
+ * Retrieves a user's data based on their userId or firebaseUid and returns it as an object.
+ * @param {Request} req - Express request object containing the query parameters, including the userId or firebaseUid.
  * @param {Response} res - Express response object used to send the response back to the client.
  * @returns {Object} Returns status code 200 and an object containing a success message and the targetUser object if successful.
  * Otherwise, returns an error status with an appropriate message.
  */
 export const getUser = async (req: Request, res: Response) => {
   const userId = req.query.userId as string;
+  const firebaseUid = req.query.firebaseUid as string;
 
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
+  // Determine which query parameter was provided (prefer userId over firebaseUid)
+  const queryType = userId ? '_id' : 'firebaseUid';
+
+  if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  if (firebaseUid && firebaseUid.length !== 28) {
+    return res.status(400).send({ message: 'Invalid firebase UID!' });
+  }
+
   try {
-    const targetUser = await User.findById(userId);
+    const targetUser = await User.findOne({
+      [queryType]: queryType === '_id' ? userId : firebaseUid,
+    });
 
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
