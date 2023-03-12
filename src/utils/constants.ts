@@ -1,5 +1,7 @@
 export const REACTION_EMOJIS = ['🔥', '⚠️', '🛡', '💩', '🎉'];
 
+// the name of the queue
+export const NIGHTLIGHT_QUEUE = 'nightlight-queue';
 // maximum file size for image upload in bytes
 export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 

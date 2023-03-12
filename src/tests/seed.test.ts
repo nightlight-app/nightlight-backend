@@ -13,7 +13,7 @@ require('dotenv').config();
 chai.use(chaiHttp);
 chai.should();
 
-const app = createServer();
+const app = createServer({ shouldRunBullBoard: false });
 let server: Server;
 
 const connectToMongo = async (): Promise<void> => {
@@ -141,10 +141,10 @@ describe('seed database for prod', () => {
 
 after(async () => {
   try {
-    mongoose.connection.close();
+    await mongoose.connection.close();
   } catch (error) {
     console.error(error);
   } finally {
-    server.close();
+    await server.close();
   }
 });

@@ -4,8 +4,6 @@ import { LocationService } from './sockets';
 import { configureCloudinary } from './config/cloudinary.config';
 import createServer from './server';
 
-const PORT = 6060;
-
 // Connect to MongoDB
 connectMongoDB();
 
@@ -13,7 +11,7 @@ connectMongoDB();
 configureCloudinary();
 
 // Create the server
-const httpServer = createServer();
+const httpServer = createServer({ shouldRunBullBoard: true });
 
 // Create the socket.io server
 const io = new Server(httpServer);
@@ -23,8 +21,10 @@ const locationService = new LocationService(io);
 locationService.initialize();
 
 // Start the server
-httpServer.listen(PORT, () => {
-  console.log(`Express server is listening on port ${PORT}!`);
+httpServer.listen(process.env.SERVER_PORT, () => {
+  console.log(
+    `Express server is listening on port ${process.env.SERVER_PORT}!`
+  );
 });
 
 // Export the server instance to allow use elsewhere

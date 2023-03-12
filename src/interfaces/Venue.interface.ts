@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { Emoji } from '../utils/types';
 
 export interface Venue {
   _id?: string;
@@ -13,8 +14,9 @@ export interface Venue {
 
 // Object stored in mongo nested in the Venue object
 export interface VenueReaction {
-  emoji: string;
+  emoji: Emoji;
   userId: mongoose.Types.ObjectId;
+  queueId: string;
 }
 
 // formatted response after mongo query

@@ -15,13 +15,14 @@ import {
 } from './testData';
 import { ObjectId } from 'mongodb';
 import { Server } from 'http';
+import { nightlightQueue } from '../queue/setup/queue.setup';
 
 require('dotenv').config();
 
 chai.use(chaiHttp);
 chai.should();
 
-const app = createServer();
+const app = createServer({ shouldRunBullBoard: false });
 let server: Server;
 
 const connectToMongo = async (): Promise<void> => {
@@ -529,10 +530,10 @@ describe('testing User Error', () => {
 
 after(async () => {
   try {
-    mongoose.connection.close();
+    await mongoose.connection.close();
   } catch (error) {
     console.error(error);
   } finally {
-    server.close();
+    await server.close();
   }
 });

@@ -2,43 +2,48 @@ import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Group from '../models/Group.model';
 import User from '../models/User.model';
+import { addGroupExpireJob } from '../queue/jobs';
 import { inviteUsersToGroup } from '../utils/group.utils';
 
+/**
+ * Creates a new group and adds it to the database.
+ * @param {Request} req - The request object containing the suggested request parameters.
+ * @param {Response} res - The response object holding a status and message.
+ * @return {Promise} - A promise that resolves when the group has been created or failed to create
+ */
 export const createGroup = async (req: Request, res: Response) => {
   const userId = req.query?.userId!.toString();
 
-  // create group
   const newGroup = new Group(req.body);
 
   try {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).send({ message: 'Invalid user ID!' });
+    }
+
     // retrieve user creating the group
     const targetUser = await User.findById(userId);
 
-    // null check
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
-    // if the user already has a currentGroup, throw error
     if (targetUser.currentGroup !== undefined) {
       return res.status(400).send({
         message: 'Group cannot be created. User is already in an active group!',
       });
     }
 
-    // save new group
     await newGroup.save();
 
-    // add groupId to user
     targetUser.currentGroup = newGroup._id;
 
-    // update user
     await targetUser.save();
 
-    // invite the users in the group
     const result = inviteUsersToGroup(newGroup._id, newGroup.invitedMembers);
 
-    // send appropriate response after members invited
+    addGroupExpireJob(newGroup._id.toString(), 3000);
+
     if (result.status !== 200) {
       return res.status(result.status).send({ message: result.message });
     } else {
@@ -52,13 +57,22 @@ export const createGroup = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Retrieves a group from the database.
+ * @param {Request} req - The request object containing the suggested request parameters.
+ * @param {Response} res - The response object holding the returned group and message.
+ * @return {Promise} - A promise that resolves when the group has been created or failed to create
+ * @return {Group} - The group that was retrieved
+ */
 export const getGroup = async (req: Request, res: Response) => {
+  const groupId = req.query?.groupId!.toString();
+
   try {
-    if (!mongoose.Types.ObjectId.isValid(req.params?.groupId)) {
+    if (!mongoose.Types.ObjectId.isValid(groupId)) {
       return res.status(400).send({ message: 'Invalid group ID!' });
     }
 
-    const targetGroup = await Group.findById(req.params?.groupId);
+    const targetGroup = await Group.findById(groupId);
 
     if (targetGroup === null) {
       return res.status(400).send({ message: 'Group does not exist!' });
@@ -72,13 +86,21 @@ export const getGroup = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Removes a group from the database.
+ * @param {Request} req - The request object containing the suggested request parameters.
+ * @param {Response} res - The response object holding a status and message.
+ * @return {Promise} - A promise that resolves when the group has been deleted or failed to delete
+ */
 export const deleteGroup = async (req: Request, res: Response) => {
+  const groupId = req.params?.groupId;
+
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params?.groupId)) {
       return res.status(400).send({ message: 'Invalid group ID!' });
     }
 
-    const result = await Group.deleteOne({ _id: req.params?.groupId });
+    const result = await Group.deleteOne({ _id: groupId });
 
     if (result.deletedCount === 0) {
       return res.status(400).send({ message: 'Group not found!' });
@@ -90,6 +112,12 @@ export const deleteGroup = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Invites one or more members to an existing group by its ID, and sends a response.
+ * @param {Request} req - The request object containing the suggested request parameters.
+ * @param {Response} res - The response object holding a status and message.
+ * @return {Promise} - A promise that resolves when the the members have been invited or failed to invite
+ */
 export const inviteMembersToExistingGroup = async (
   req: Request,
   res: Response
@@ -119,6 +147,12 @@ export const inviteMembersToExistingGroup = async (
   }
 };
 
+/**
+ * Remove a member to an existing group by its ID, and sends a response.
+ * @param {Request} req - The request object containing the suggested request parameters.
+ * @param {Response} res - The response object holding a status and message.
+ * @return {Promise} - A promise that resolves when the the members have been remove or failed to remove
+ */
 export const removeMemberInvitation = async (req: Request, res: Response) => {
   const userId = req.query?.userId!.toString();
   const groupId = req.params?.groupId;

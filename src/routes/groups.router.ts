@@ -11,7 +11,7 @@ const groupsRouter = express.Router();
 
 /* Group Controller */
 groupsRouter.post('/', createGroup);
-groupsRouter.get('/:groupId', getGroup);
+groupsRouter.get('/', getGroup);
 groupsRouter.delete('/:groupId', deleteGroup);
 groupsRouter.patch('/:groupId/inviteMembers', inviteMembersToExistingGroup);
 groupsRouter.patch('/:groupId/removeMemberInvitation', removeMemberInvitation);
