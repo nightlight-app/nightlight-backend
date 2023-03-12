@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ObjectId } from 'mongodb';
+import mongoose from 'mongoose';
 import Group from '../models/Group.model';
 import User from '../models/User.model';
 import { addGroupExpireJob } from '../queue/jobs';
@@ -59,7 +59,7 @@ export const getGroup = async (req: Request, res: Response) => {
   const groupId = req.query?.groupId!.toString();
 
   try {
-    if (!ObjectId.isValid(groupId)) {
+    if (!mongoose.Types.ObjectId.isValid(req.params?.groupId)) {
       return res.status(400).send({ message: 'Invalid group ID!' });
     }
 
@@ -81,7 +81,7 @@ export const deleteGroup = async (req: Request, res: Response) => {
   const groupId = req.params?.groupId;
 
   try {
-    if (!ObjectId.isValid(groupId)) {
+    if (!mongoose.Types.ObjectId.isValid(req.params?.groupId)) {
       return res.status(400).send({ message: 'Invalid group ID!' });
     }
 
@@ -104,7 +104,7 @@ export const inviteMembersToExistingGroup = async (
   const users = req.body;
   const groupId = req.params?.groupId;
   try {
-    if (!ObjectId.isValid(groupId)) {
+    if (!mongoose.Types.ObjectId.isValid(groupId)) {
       return res.status(400).send({ message: 'Invalid group ID!' });
     }
 
@@ -130,11 +130,11 @@ export const removeMemberInvitation = async (req: Request, res: Response) => {
   const userId = req.query?.userId!.toString();
   const groupId = req.params?.groupId;
   try {
-    if (!ObjectId.isValid(groupId)) {
+    if (!mongoose.Types.ObjectId.isValid(groupId)) {
       return res.status(400).send({ message: 'Invalid group ID!' });
     }
 
-    if (!ObjectId.isValid(userId)) {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).send({ message: 'Invalid user ID!' });
     }
 

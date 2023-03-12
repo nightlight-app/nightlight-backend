@@ -1,10 +1,14 @@
 import { Server } from 'socket.io';
 import { connectMongoDB } from './config/mongodb.config';
 import { LocationService } from './sockets';
+import { configureCloudinary } from './config/cloudinary.config';
 import createServer from './server';
 
 // Connect to MongoDB
 connectMongoDB();
+
+// Configure Cloudinary
+configureCloudinary();
 
 // Create the server
 const httpServer = createServer();

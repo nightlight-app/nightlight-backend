@@ -1,8 +1,12 @@
 import { Request, Response } from 'express';
 import User from '../models/User.model';
-import { ObjectId } from 'mongodb';
 import mongoose from 'mongoose';
 import Group from '../models/Group.model';
+import { v2 as cloudinary } from 'cloudinary';
+import { upload } from '../config/cloudinary.config';
+import { MulterError } from 'multer';
+import streamifier from 'streamifier';
+import { IMAGE_UPLOAD_OPTIONS } from '../utils/constants';
 
 /**
  * Creates a new user in the database based on the information provided in the request body.
@@ -33,7 +37,7 @@ export const createUser = async (req: Request, res: Response) => {
 export const getUser = async (req: Request, res: Response) => {
   const userId = req.query?.userId as string;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
@@ -61,7 +65,7 @@ export const getUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
@@ -88,7 +92,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
@@ -115,7 +119,7 @@ export const updateUser = async (req: Request, res: Response) => {
 export const saveGroup = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
@@ -148,11 +152,11 @@ export const deleteSavedGroup = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
   const savedGroupId = req.query?.savedGroupId as string;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
-  if (!ObjectId.isValid(savedGroupId)) {
+  if (!mongoose.Types.ObjectId.isValid(savedGroupId)) {
     return res.status(400).send({ message: 'Invalid saved group ID!' });
   }
 
@@ -184,11 +188,11 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
   const groupId = req.query?.groupId as string;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
-  if (!ObjectId.isValid(groupId)) {
+  if (!mongoose.Types.ObjectId.isValid(groupId)) {
     return res.status(400).send({ message: 'Invalid group ID!' });
   }
 
@@ -231,11 +235,11 @@ export const leaveGroup = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
   const groupId = req.query?.groupId as string;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
-  if (!ObjectId.isValid(groupId)) {
+  if (!mongoose.Types.ObjectId.isValid(groupId)) {
     return res.status(400).send({ message: 'Invalid group ID!' });
   }
 
@@ -271,7 +275,7 @@ export const leaveGroup = async (req: Request, res: Response) => {
 export const getFriends = async (req: Request, res: Response) => {
   const userId = req.params?.userId as string;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
@@ -308,11 +312,11 @@ export const requestFriend = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
   const friendId = req.query?.friendId as string;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
-  if (!ObjectId.isValid(friendId)) {
+  if (!mongoose.Types.ObjectId.isValid(friendId)) {
     return res.status(400).send({ message: 'Invalid friend ID!' });
   }
 
@@ -353,11 +357,11 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
   const friendId = req.query?.friendId as string;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
-  if (!ObjectId.isValid(friendId)) {
+  if (!mongoose.Types.ObjectId.isValid(friendId)) {
     return res.status(400).send({ message: 'Invalid friend ID!' });
   }
 
@@ -398,16 +402,16 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
   const friendId = req.query?.friendId as string;
 
-  if (!ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
-  if (!ObjectId.isValid(friendId)) {
+  if (!mongoose.Types.ObjectId.isValid(friendId)) {
     return res.status(400).send({ message: 'Invalid friend ID!' });
   }
 
   try {
-    const targetFriend = User.findById(friendId);
+    const targetFriend = await User.findById(friendId);
 
     if (targetFriend === null) {
       return res
@@ -429,4 +433,78 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }
+};
+
+/**
+ * Uploads a profile image for the user with the specified userId to cloudinary
+ * and updates the user's field to point to the new image.
+ *
+ * @param req - the Request object containing the userId in the params and the image in the body
+ * @param res - the Response object sent back to the client
+ * @returns Returns either an error response with a 400 or 500 status code and a message,
+ * or a success response with a 200 status code and a message
+ */
+export const uploadProfileImg = async (req: Request, res: Response) => {
+  // pass everything to multer upload so we can retrieve the image from req.file
+  upload(req, res, async err => {
+    if (err instanceof MulterError || err) {
+      return res.status(500).send({ message: err?.message });
+    }
+
+    const userId = req.params?.userId;
+    const image = req.file;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).send({ message: 'Invalid user ID!' });
+    }
+
+    if (!image) {
+      return res.status(400).send({ message: 'No image provided!' });
+    }
+
+    try {
+      const targetUser = await User.findById(userId);
+
+      if (targetUser === null) {
+        return res.status(400).send({ message: 'User does not exist!' });
+      }
+
+      // transform image to 128x128 and 256x256 and upload to cloudinary
+      IMAGE_UPLOAD_OPTIONS.forEach(option => {
+        // use streamifier to convert buffer to stream
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            // the public id of the image
+            public_id: `${userId}-${option.dimension}`,
+            // the folder in cloudinary to upload to
+            folder: 'profile-images',
+            // overwrite the image if it already exists
+            overwrite: true,
+            // the transformation to apply to the image
+            transformation: [
+              {
+                width: option.width,
+                height: option.height,
+              },
+            ],
+          },
+          async (err, result) => {
+            if (err) console.log(err);
+            if (result) {
+              // save the image url to the user's profile
+              await User.findByIdAndUpdate(userId, {
+                [option.userField]: result.url,
+              });
+            }
+          }
+        );
+        // pipe the buffer to the upload stream and send the response
+        streamifier.createReadStream(image.buffer).pipe(uploadStream);
+      });
+
+      return res.status(200).send({ message: 'Successfully uploaded image!' });
+    } catch (error: any) {
+      return res.status(500).send({ message: error?.message });
+    }
+  });
 };

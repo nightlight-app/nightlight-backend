@@ -3,7 +3,6 @@ import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import { Venue as VenueInterface } from '../interfaces/Venue.interface';
 import Venue from '../models/Venue.model';
-import { ObjectId } from 'mongodb';
 import { REACTION_EMOJIS } from '../utils/constants';
 import { encodeEmoji } from '../utils/venue.utils';
 import { addReactionExpireJob } from '../queue/jobs';
@@ -27,7 +26,7 @@ export const getVenue = async (req: Request, res: Response) => {
   try {
     const venueId = req.params?.venueId;
 
-    if (!ObjectId.isValid(venueId)) {
+    if (!mongoose.Types.ObjectId.isValid(venueId)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
     }
 
@@ -103,7 +102,7 @@ export const getVenues = async (req: Request, res: Response) => {
   const count = Number(req.query?.count);
 
   try {
-    if (!ObjectId.isValid(userId as string)) {
+    if (!mongoose.Types.ObjectId.isValid(userId as string)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
     }
 
@@ -183,11 +182,11 @@ export const addReactionToVenue = async (req: Request, res: Response) => {
     const userId = req.query?.userId!.toString();
     const emoji = req.query?.emoji as Emoji;
 
-    if (!ObjectId.isValid(venueId)) {
+    if (!mongoose.Types.ObjectId.isValid(venueId)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
     }
 
-    if (!ObjectId.isValid(userId)) {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).send({ message: 'Invalid user ID!' });
     }
 
@@ -219,7 +218,7 @@ export const deleteReactionFromVenue = async (req: Request, res: Response) => {
     const userId = req.query?.userId;
     const emoji = req.query?.emoji as Emoji;
 
-    if (!ObjectId.isValid(req.params?.venueId)) {
+    if (!mongoose.Types.ObjectId.isValid(req.params?.venueId)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
     }
 
@@ -244,7 +243,7 @@ export const deleteVenue = async (req: Request, res: Response) => {
   const venueId = req.params?.venueId;
 
   try {
-    if (!ObjectId.isValid(venueId)) {
+    if (!mongoose.Types.ObjectId.isValid(venueId)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
     }
     const result = await Venue.deleteOne({ _id: venueId });
@@ -263,7 +262,7 @@ export const updateVenue = async (req: Request, res: Response) => {
   const venueId = req.params?.venueId;
 
   try {
-    if (!ObjectId.isValid(venueId)) {
+    if (!mongoose.Types.ObjectId.isValid(venueId)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
     }
 
