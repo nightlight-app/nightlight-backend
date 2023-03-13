@@ -55,9 +55,9 @@ export class LocationService {
       // listen for the locationUpdate event
       socket.on('locationUpdate', (arg: LocationUpdateData) => {
         const { groupId, userId, location } = arg;
-        console.log(
-          `[${groupId}] [${userId}] [${location.latitude}, ${location.longitude}]`
-        );
+        // console.log(
+        //   `[${groupId}] [${userId}] [${location.latitude}, ${location.longitude}]`
+        // );
         // broadcast the location to all members of the group
         this.#io.to(groupId).emit('broadcastLocation', {
           userId: arg.userId,

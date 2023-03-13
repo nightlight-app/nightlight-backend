@@ -37,7 +37,12 @@ export const getVenue = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'Invalid venue ID!' });
     }
 
-    const userId = req.query?.userId;
+    const userId = req.query.userId as string;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).send({ message: 'Invalid user ID!' });
+    }
+
     const targetVenue: VenueInterface[] = await Venue.aggregate([
       {
         $match: {
@@ -114,7 +119,7 @@ export const getVenue = async (req: Request, res: Response) => {
  * @return {Venue} - The venue with its associated reactions for the user.
  */
 export const getVenues = async (req: Request, res: Response) => {
-  const userId = req.query?.userId;
+  const userId = req.query.userId as string;
   const count = Number(req.query?.count);
 
   try {
@@ -201,8 +206,8 @@ export const getVenues = async (req: Request, res: Response) => {
 export const addReactionToVenue = async (req: Request, res: Response) => {
   try {
     const venueId = req.params?.venueId;
-    const userId = req.query?.userId!.toString();
-    const emoji = req.query?.emoji as Emoji;
+    const userId = req.query.userId as string;
+    const emoji = req.query.emoji as Emoji;
 
     if (!mongoose.Types.ObjectId.isValid(venueId)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
@@ -250,12 +255,16 @@ export const addReactionToVenue = async (req: Request, res: Response) => {
  */
 export const deleteReactionFromVenue = async (req: Request, res: Response) => {
   try {
-    const venueId = req.params?.venueId;
-    const userId = req.query?.userId;
-    const emoji = req.query?.emoji as Emoji;
+    const venueId = req.params.venueId;
+    const userId = req.query.userId as string;
+    const emoji = req.query.emoji as Emoji;
 
-    if (!mongoose.Types.ObjectId.isValid(req.params?.venueId)) {
+    if (!mongoose.Types.ObjectId.isValid(venueId)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).send({ message: 'Invalid user ID!' });
     }
 
     const result = await Venue.findOne({ _id: venueId });
