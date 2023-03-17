@@ -49,6 +49,10 @@ export const getUser = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  if (firebaseUid && !mongoose.Types.ObjectId.isValid(firebaseUid)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
   if (firebaseUid && firebaseUid.length !== 28) {
     return res.status(400).send({ message: 'Invalid firebase UID!' });
   }

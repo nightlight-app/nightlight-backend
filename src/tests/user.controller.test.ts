@@ -467,7 +467,7 @@ describe('testing User Error', () => {
     chai
       .request(server)
       .get('/users/')
-      .query({ userId: new ObjectId(1234) })
+      .query({ userId: new ObjectId(1234).toString() })
       .then(res => {
         expect(res).to.have.status(400);
         expect(res.body.venue).to.equal(undefined);
