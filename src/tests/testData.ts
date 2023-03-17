@@ -261,6 +261,17 @@ export const VENUE_KEYS = [
   'reactions',
 ];
 
+export const NOTIFICATION_KEYS = [
+  '__v',
+  '_id',
+  'userId',
+  'title',
+  'notificationType',
+  'body',
+  'data',
+  'delay',
+];
+
 export const REACTION_KEYS = ['count', 'didReact'];
 
 export const VENUE_KEYS_EMOJIS = [...REACTION_EMOJIS];

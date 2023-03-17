@@ -8,6 +8,7 @@ import User from '../models/User.model';
 import Group from '../models/Group.model';
 import Venue from '../models/Venue.model';
 import { Server } from 'http';
+import Notification from '../models/Notification.model';
 require('dotenv').config();
 
 chai.use(chaiHttp);
@@ -32,6 +33,7 @@ before(async () => {
   await User.deleteMany({});
   await Group.deleteMany({});
   await Venue.deleteMany({});
+  await Notification.deleteMany({});
 });
 
 /**

@@ -16,6 +16,7 @@
     "test:venues": "nyc mocha --timeout 12000 --exit -r ts-node/register src/tests/venue.controller.test.ts",
     "test:users": "nyc mocha --timeout 8000 --exit -r ts-node/register src/tests/user.controller.test.ts",
     "test:groups": "nyc mocha --timeout 8000 --exit -r ts-node/register src/tests/group.controller.test.ts",
+    "test:notifs": "nyc mocha --timeout 8000 --exit -r ts-node/register src/tests/notification.controller.test.ts",
     "test": "nyc mocha --timeout 20000 --exit -r ts-node/register src/tests/*.test.ts"
   },
   "dependencies": {

@@ -6,3 +6,11 @@ export interface Notification {
   notificationType: string;
   delay?: number;
 }
+
+export interface ExpoNofication {
+  to: string;
+  sound?: string;
+  title?: string;
+  body?: string;
+  data?: any;
+}
