@@ -94,8 +94,8 @@ npm run worker
         "latitude": Number,
         "longitide": Number,
     },
-    "creationTime": Date,
-    "expirationDate": Date,
+    "creationDatetime": Date,
+    "expirationDatetime": Date,
 }
 ```
 

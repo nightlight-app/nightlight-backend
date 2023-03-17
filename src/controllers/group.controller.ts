@@ -12,7 +12,7 @@ import { inviteUsersToGroup } from '../utils/group.utils';
  * @return {Promise} - A promise that resolves when the group has been created or failed to create
  */
 export const createGroup = async (req: Request, res: Response) => {
-  const userId = req.query?.userId!.toString();
+  const userId = req.query.userId as string;
 
   const newGroup = new Group(req.body);
 
@@ -65,7 +65,7 @@ export const createGroup = async (req: Request, res: Response) => {
  * @return {Group} - The group that was retrieved
  */
 export const getGroup = async (req: Request, res: Response) => {
-  const groupId = req.query?.groupId!.toString();
+  const groupId = req.query.groupId as string;
 
   try {
     if (!mongoose.Types.ObjectId.isValid(groupId)) {
@@ -154,7 +154,8 @@ export const inviteMembersToExistingGroup = async (
  * @return {Promise} - A promise that resolves when the the members have been remove or failed to remove
  */
 export const removeMemberInvitation = async (req: Request, res: Response) => {
-  const userId = req.query?.userId!.toString();
+  const userId = req.query.userId as string;
+
   const groupId = req.params?.groupId;
   try {
     if (!mongoose.Types.ObjectId.isValid(groupId)) {
