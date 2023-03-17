@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  start-worker:
+  backend-tests:
     runs-on: ubuntu-latest
 
     services:
