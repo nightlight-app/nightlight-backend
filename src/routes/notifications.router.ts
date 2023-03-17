@@ -10,9 +10,6 @@ const notificationsRouter = express.Router();
 /* Notifications Controller */
 notificationsRouter.get('/', getNotifications);
 notificationsRouter.post('/', addNotificationsToDatabase);
-notificationsRouter.delete(
-  '/notifications/:notificationId',
-  deleteNotification
-);
+notificationsRouter.delete('/:notificationId', deleteNotification);
 
 export = notificationsRouter;

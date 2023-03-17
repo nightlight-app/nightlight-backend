@@ -132,6 +132,7 @@ export const deleteNotification = async (req: Request, res: Response) => {
       notification: targetNotification,
     });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    console.error(error.message);
+    return res.status(500).json({ error: error.message });
   }
 };

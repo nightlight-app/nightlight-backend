@@ -73,7 +73,7 @@ export const sendNotifications = async (
 /**
  * Sends a push notification to the specified Expo push token with the given title, body, and data.
  *
- * Function is not exception safe and not to be used directly, instead use sendNotifications.
+ * This is a helper function. Function is not exception safe and not to be used directly, instead use sendNotifications.
  * Expo is a trusted service. If the notification fails to send, it is likely due to an invalid token.
  * If the token is invalid, the notification will not be sent and no error will be thrown,
  * it will simply fail silently with the error logged.
