@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { addNotificationToUser } from '../utils/notifications.utils';
+import { sendNotificationToUser } from '../utils/notifications.utils';
 
 /**
  * Creates and saves a new notification to the database for the specified user.
@@ -11,10 +11,13 @@ import { addNotificationToUser } from '../utils/notifications.utils';
  * @param {Response} res - Express response object used to send the response back to the client.
  * @returns {Promise} - a promise resolving to the newly created Notification document from the MongoDB database
  */
-export const sendNotificationToUser = async (req: Request, res: Response) => {
+export const addNotificationToDatabase = async (
+  req: Request,
+  res: Response
+) => {
   try {
     // add notification to database via utils function
-    const newNotification = await addNotificationToUser(
+    const newNotification = await sendNotificationToUser(
       req.body.userId,
       req.body.title,
       req.body.body,

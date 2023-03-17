@@ -15,8 +15,8 @@ import User from '../models/User.model';
  * @param {any} data - Optional data to include with the notification.
  * @param {string} notificationType - The type of notification being sent.
  * @param {number} delay - The optional delay until the notification should be shown to the user. (set as 0 for now)
- * @throws {Error} - Throws an error if the userId is not a valid mongoose ObjectId.
- * @throws {Error} - Throws an error if the user id is not found in the database.
+ * @throws {Error} - Throws an error if a userId is not a valid mongoose ObjectId.
+ * @throws {Error} - Throws an error if a user id is not found in the database.
  * @throws {Error} - Throws an error if the delay is less than 0.
  */
 export const sendNotifications = async (
@@ -30,13 +30,15 @@ export const sendNotifications = async (
   // handle array of users
   if (Array.isArray(userId)) {
     userId.forEach(async id => {
-      // check if user id is valid
+      // check if user ids are valid
       if (!mongoose.Types.ObjectId.isValid(id)) {
         throw new Error('Invalid user id');
       }
+    });
 
+    userId.forEach(async id => {
       // add notification to database
-      await addNotificationToUser(
+      await sendNotificationToUser(
         id,
         title,
         body,
@@ -62,7 +64,7 @@ export const sendNotifications = async (
     }
 
     // add notification to database
-    await addNotificationToUser(
+    await sendNotificationToUser(
       userId,
       title,
       body,
@@ -82,7 +84,7 @@ export const sendNotifications = async (
 };
 
 /**
- * Sends a notification to the specified Expo push token with the given title, body, and data.
+ * Sends a push notification to the specified Expo push token with the given title, body, and data.
  *
  * Function is not exception safe and not to be used directly, instead use sendNotifications.
  *
@@ -100,7 +102,7 @@ export const sendNotificationToExpo = async (
 ) => {
   // check if required fields are missing
   if (!expoPushToken || !title || !body || !data) {
-    throw new Error('Missing required fields to create notification.');
+    throw new Error('Missing required fields to create notification for expo');
   }
 
   // create notification object
@@ -143,7 +145,7 @@ export const sendNotificationToExpo = async (
  * @throws {Error} - Throws an error if the delay is less than 0.
  * @return The created Notification object.
  */
-export const addNotificationToUser = async (
+export const sendNotificationToUser = async (
   userId: string,
   title: string,
   body: string,
@@ -160,7 +162,9 @@ export const addNotificationToUser = async (
     delay === undefined ||
     !data
   ) {
-    throw new Error('Missing required fields to create notification.');
+    throw new Error(
+      'Missing required fields to create notification for database.'
+    );
   }
 
   // check if delay is valid

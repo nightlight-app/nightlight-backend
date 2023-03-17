@@ -1,13 +1,13 @@
 import express from 'express';
 import {
+  addNotificationToDatabase,
   deleteNotification,
-  sendNotificationToUser,
 } from '../controllers/notification.controller';
 
 const notificationsRouter = express.Router();
 
 /* Notifications Controller */
-notificationsRouter.post('/', sendNotificationToUser);
+notificationsRouter.post('/', addNotificationToDatabase);
 notificationsRouter.delete(
   '/notifications/:notificationId',
   deleteNotification
