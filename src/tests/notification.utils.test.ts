@@ -82,7 +82,7 @@ describe('test notification utils', () => {
     });
   });
 
-  it('should return undefined if no userIds are provided', done => {
+  it('should return undefined if no userIds are provided via POST /notifications', done => {
     sendNotifications(
       [],
       'Test Title',
@@ -96,7 +96,7 @@ describe('test notification utils', () => {
     });
   });
 
-  it('should return undefined if userId is an empty string', done => {
+  it('should return undefined if userId is an empty string via POST /notifications', done => {
     sendNotifications(
       '',
       'Test Title',
@@ -112,7 +112,7 @@ describe('test notification utils', () => {
 });
 
 describe('test notification utils errors', () => {
-  it('should return undefined if userId is invalid', done => {
+  it('should return undefined if userId is invalid via POST /notifications', done => {
     sendNotifications(
       'invalidId',
       'Test Title',
