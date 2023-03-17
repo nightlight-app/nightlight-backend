@@ -5,6 +5,7 @@ import { SavedGroup } from './SavedGroup.interface';
 export interface User {
   _id?: mongoose.Types.ObjectId;
   firebaseUid: string;
+  notificationToken?: string;
   imgUrlProfileSmall?: string;
   imgUrlProfileLarge?: string;
   imgUrlCover?: string;

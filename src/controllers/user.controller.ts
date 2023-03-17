@@ -19,6 +19,10 @@ export const createUser = async (req: Request, res: Response) => {
 
   try {
     await newUser.save();
+
+    // remove the notificationToken from the response
+    newUser.notificationToken = undefined;
+
     return res
       .status(201)
       .send({ message: 'Successfully created user!', user: newUser });
@@ -42,7 +46,12 @@ export const getUser = async (req: Request, res: Response) => {
   }
 
   try {
-    const targetUser = await User.findById(userId);
+    const targetUser = await User.findById(
+      {
+        _id: userId,
+      },
+      { notificationToken: 0 }
+    );
 
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
@@ -97,7 +106,10 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 
   try {
-    const targetUser = await User.findByIdAndUpdate(userId, req.body);
+    const targetUser = await User.findByIdAndUpdate({ _id: userId }, req.body, {
+      new: true,
+      select: '-notificationToken',
+    });
 
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
@@ -124,11 +136,15 @@ export const saveGroup = async (req: Request, res: Response) => {
   }
 
   try {
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      $push: {
-        savedGroups: { ...req.body, _id: new mongoose.Types.ObjectId() },
+    const targetUser = await User.findByIdAndUpdate(
+      { _id: userId },
+      {
+        $push: {
+          savedGroups: { ...req.body, _id: new mongoose.Types.ObjectId() },
+        },
       },
-    });
+      { new: true, select: '-password' }
+    );
 
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
@@ -161,11 +177,18 @@ export const deleteSavedGroup = async (req: Request, res: Response) => {
   }
 
   try {
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      $pull: {
-        savedGroups: { _id: savedGroupId },
+    const targetUser = await User.findByIdAndUpdate(
+      { _id: userId },
+      {
+        $pull: {
+          savedGroups: { _id: savedGroupId },
+        },
       },
-    });
+      {
+        new: true,
+        select: '-notificationToken',
+      }
+    );
 
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
@@ -286,9 +309,12 @@ export const getFriends = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
-    const targetFriends = await User.find({
-      _id: { $in: targetUser?.friends },
-    });
+    const targetFriends = await User.find(
+      {
+        _id: { $in: targetUser?.friends },
+      },
+      { notificationToken: 0 }
+    );
 
     if (targetFriends === null) {
       return res.status(400).send({ message: 'A friend does not exist!' });
@@ -430,6 +456,65 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
     return res
       .status(200)
       .send({ message: 'Successfully declined friend request!' });
+  } catch (error: any) {
+    return res.status(500).send({ message: error?.message });
+  }
+};
+
+/**
+ * Adds a new notification token to the user's account.
+ * @param {Request} req - The incoming request object.
+ * @param {Response} res - The response object.
+ * @return {Promise} A promise that resolves to the updated user object.
+ */
+export const addNotificationToken = async (req: Request, res: Response) => {
+  const userId = req.params?.userId;
+  const notificationToken = req.body?.notificationToken;
+
+  try {
+    if (!notificationToken) {
+      return res
+        .status(400)
+        .send({ message: 'No notification token provided!' });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).send({ message: 'Invalid user ID!' });
+    }
+
+    if (!notificationToken.match(/^ExponentPushToken\[[a-zA-Z0-9]+\]$/)) {
+      return res.status(400).send({ message: 'Invalid notification token!' });
+    }
+
+    User.findByIdAndUpdate(userId, {
+      notificationToken: notificationToken,
+    });
+
+    return res.status(200).send({ message: 'Successfully added token!' });
+  } catch (error: any) {
+    return res.status(500).send({ message: error?.message });
+  }
+};
+
+/**
+ * Removes notification token to the user's account.
+ * @param {Request} req - The incoming request object.
+ * @param {Response} res - The response object.
+ * @return {Promise} A promise that resolves to the updated user object.
+ */
+export const removeNotificationToken = async (req: Request, res: Response) => {
+  const userId = req.params?.userId;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).send({ message: 'Invalid user ID!' });
+    }
+
+    User.findByIdAndUpdate(userId, {
+      notificationToken: undefined,
+    });
+
+    return res.status(200).send({ message: 'Successfully removed token!' });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }

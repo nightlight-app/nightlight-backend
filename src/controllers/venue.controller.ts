@@ -220,15 +220,19 @@ export const addReactionToVenue = async (req: Request, res: Response) => {
         .send({ message: 'Failed to react to venue, queue error!' });
     }
 
-    const result = await Venue.findByIdAndUpdate(venueId, {
-      $push: {
-        reactions: {
-          userId: userId,
-          emoji: emoji,
-          queueId: job?.id,
+    const result = await Venue.findByIdAndUpdate(
+      venueId,
+      {
+        $push: {
+          reactions: {
+            userId: userId,
+            emoji: emoji,
+            queueId: job?.id,
+          },
         },
       },
-    });
+      { new: true }
+    );
 
     if (result === null) {
       nightlightQueue.remove(job.id);
@@ -236,7 +240,7 @@ export const addReactionToVenue = async (req: Request, res: Response) => {
     }
     return res
       .status(200)
-      .send({ message: 'Successfully added reaction to Venue!' });
+      .send({ message: 'Successfully added reaction to Venue!', body: result });
   } catch (error: any) {
     return res.status(500).send({ message: error.message });
   }

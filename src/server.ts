@@ -5,6 +5,7 @@ import groupsRouter from './routes/groups.router';
 import usersRouter from './routes/users.router';
 import venuesRouter from './routes/venues.router';
 import { createBullBoardAdapter } from './queue/setup/bullboard.setup';
+import notificationsRouter from './routes/notifications.router';
 
 const createServer = ({
   shouldRunBullBoard = true,
@@ -34,6 +35,7 @@ const createServer = ({
   app.use('/groups', groupsRouter);
   app.use('/users', usersRouter);
   app.use('/venues', venuesRouter);
+  app.use('/notifications', notificationsRouter);
 
   // Create the server
   return http.createServer(app);

@@ -15,7 +15,6 @@ import {
 } from './testData';
 import { ObjectId } from 'mongodb';
 import { Server } from 'http';
-import { nightlightQueue } from '../queue/setup/queue.setup';
 
 require('dotenv').config();
 
@@ -86,7 +85,32 @@ describe('testing user actions', () => {
         expect(res).to.have.status(200);
         expect(user).to.be.an('object');
         expect(user).to.have.property('_id');
-        expect(user.email).to.equal(TEST_USER_2.email);
+        expect(user.email).to.equal(UPDATE_USER_1_TO_USER_2.email);
+        expect(user).to.have.keys(USER_KEYS);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should update notification token for a user via PATCH /users/{userId}', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId}/addNotificationToken`)
+      .send({ notificationToken: 'ExponentPushToken[TestToken1234]' })
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should remove notification token for a user via PATCH /users/{userId}', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId}/removeNotificationToken`)
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
         done();
       })
       .catch(err => done(err));
