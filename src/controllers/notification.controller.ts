@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { sendNotificationToUser } from '../utils/notifications.utils';
+import { sendNotificationToUser } from '../utils/notification.utils';
 
 /**
  * Creates and saves a new notification to the database for the specified user.

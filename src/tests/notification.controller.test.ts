@@ -3,7 +3,6 @@ import createServer from '../server';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import { Server } from 'http';
-import { NOTIFICATION_KEYS } from './testData';
 import { ObjectId } from 'mongodb';
 require('dotenv').config();
 

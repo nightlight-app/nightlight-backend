@@ -7,7 +7,9 @@ import User from '../models/User.model';
  * If userId is a string, sends notification to a single user. If it's an array of strings,
  * sends notification to all users in the array.
  *
- * This function is not exception safe. Must be wrapped in a try/catch block.
+ * This function is exception safe. If any of the required fields are missing, the function will return undefined.
+ * If the userId is invalid, the function will return undefined. If a userId in the array is invalid, the function
+ * will ignore that userId and continue to send notifications to the other valid userIds.
  *
  * @param {string | string[]} userId - The id or ids of the user(s) to receive the notification.
  * @param {string} title - The title of the notification.
@@ -15,26 +17,28 @@ import User from '../models/User.model';
  * @param {any} data - Optional data to include with the notification.
  * @param {string} notificationType - The type of notification being sent.
  * @param {number} delay - The optional delay until the notification should be shown to the user. (set as 0 for now)
- * @throws {Error} - Throws an error if a userId is not a valid mongoose ObjectId.
- * @throws {Error} - Throws an error if a user id is not found in the database.
- * @throws {Error} - Throws an error if the delay is less than 0.
  *
  * @return {Promise<Notification | Notification[]>} - Returns a promise that resolves to a single notification or an array of notifications.
  */
 export const sendNotifications = async (
-  userId: string,
+  userId: string | string[],
   title: string,
   body: string,
   data: any,
   notificationType: string,
   delay: number
 ) => {
+  // Exit function if userId is an empty string or an empty array (length === 0 works for both string and string[])
+  if (userId.length === 0) {
+    return;
+  }
+
   // handle array of users
   if (Array.isArray(userId)) {
     // array of notifications to return
-    let notifications: any[] = [];
+    let notifications = [] as any[];
 
-    userId.forEach(async id => {
+    const promises = userId.map(async id => {
       // check if current user id is valid
       if (mongoose.Types.ObjectId.isValid(id)) {
         // add notification to database
@@ -64,6 +68,9 @@ export const sendNotifications = async (
         }
       }
     });
+
+    // Javascript will not wait for promises to resolve in a for loop or mapping, so we must use Promise.all to wait for all resolutions
+    await Promise.all(promises);
 
     // return array of notifications
     return notifications;
@@ -103,6 +110,9 @@ export const sendNotifications = async (
  * Sends a push notification to the specified Expo push token with the given title, body, and data.
  *
  * Function is not exception safe and not to be used directly, instead use sendNotifications.
+ * Expo is a trusted service. If the notification fails to send, it is likely due to an invalid token.
+ * If the token is invalid, the notification will not be sent and no error will be thrown,
+ * it will simply fail silently with the error logged.
  *
  * @param expoPushToken The push token of the device to receive the notification.
  * @param title The title of the notification.
@@ -144,7 +154,7 @@ export const sendNotificationToExpo = async (
 /**
  * Adds a new notification to the mongo database with provided information.
  *
- * Function is not exception safe and not to be used directly, instead use sendNotifications.
+ * This is a helper function. For adding a notification to a user, use sendNotifications instead.
  *
  * @param userId The ID of the user the notification is being sent to
  * @param title The title of the new notification.
