@@ -2,9 +2,10 @@ import { Request, Response } from 'express';
 import { addNotificationToUser } from '../utils/notifications.utils';
 
 /**
- * Creates and saves a new notification to the database for the specified user
+ * Creates and saves a new notification to the database for the specified user.
+ * Does NOT send a notification via expo to a user's device.
  *
- * This endpoint is mainly for testing purposes. It is not used in the app.
+ * This endpoint is mainly for testing purposes and future admin purposes.
  *
  * @param {Request} req - Express request object containing the user data to be stored.
  * @param {Response} res - Express response object used to send the response back to the client.
@@ -12,6 +13,7 @@ import { addNotificationToUser } from '../utils/notifications.utils';
  */
 export const sendNotificationToUser = async (req: Request, res: Response) => {
   try {
+    // add notification to database via utils function
     const newNotification = await addNotificationToUser(
       req.body.userId,
       req.body.title,

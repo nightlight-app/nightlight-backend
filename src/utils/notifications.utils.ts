@@ -98,10 +98,12 @@ export const sendNotificationToExpo = async (
   body: string,
   data: any
 ) => {
+  // check if required fields are missing
   if (!expoPushToken || !title || !body || !data) {
     throw new Error('Missing required fields to create notification.');
   }
 
+  // create notification object
   const message = {
     to: expoPushToken,
     sound: 'default',
@@ -111,6 +113,7 @@ export const sendNotificationToExpo = async (
   };
 
   try {
+    // send notification to expo to be sent to device
     await fetch('https://exp.host/--/api/v2/push/send', {
       method: 'POST',
       headers: {
@@ -148,6 +151,7 @@ export const addNotificationToUser = async (
   notificationType: string,
   delay: number
 ) => {
+  // check if required fields are present
   if (
     !userId ||
     !title ||
@@ -159,10 +163,12 @@ export const addNotificationToUser = async (
     throw new Error('Missing required fields to create notification.');
   }
 
+  // check if delay is valid
   if (delay < 0) {
     throw new Error('Delay must be a positive number.');
   }
 
+  // create new notification
   const newNotification = new Notification({
     userId: userId,
     title: title,
@@ -172,6 +178,7 @@ export const addNotificationToUser = async (
     delay: delay,
   });
 
+  // save notification to database
   await newNotification.save();
 
   return newNotification;
