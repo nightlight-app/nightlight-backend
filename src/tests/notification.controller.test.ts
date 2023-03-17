@@ -43,7 +43,6 @@ describe('test notification controller', () => {
       })
       .then(res => {
         expect(res).to.have.status(201);
-        expect(res.body.notification).to.have.keys(NOTIFICATION_KEYS);
         done();
       })
       .catch(err => done(err));
@@ -64,6 +63,9 @@ describe('test notification controller errors', () => {
       })
       .then(res => {
         expect(res).to.have.status(500);
+        expect(res.body.message).to.equal(
+          'Missing required fields to create notification for database.'
+        );
         done();
       });
   });
@@ -81,6 +83,9 @@ describe('test notification controller errors', () => {
       })
       .then(res => {
         expect(res).to.have.status(500);
+        expect(res.body.message).to.equal(
+          'Missing required fields to create notification for database.'
+        );
         done();
       });
   });

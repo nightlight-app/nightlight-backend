@@ -16,19 +16,51 @@ export const addNotificationToDatabase = async (
   res: Response
 ) => {
   try {
-    // add notification to database via utils function
-    const newNotification = await sendNotificationToUser(
-      req.body.userId,
-      req.body.title,
-      req.body.body,
-      req.body.data,
-      req.body.notificationType,
-      req.body.delay
-    );
+    if (
+      !req.body.userId ||
+      !req.body.title ||
+      !req.body.body ||
+      !req.body.data ||
+      !req.body.notificationType ||
+      req.body.delay === undefined
+    ) {
+      return res.status(500).send({
+        message: 'Missing required fields to create notification for database.',
+      });
+    }
+
+    if (req.body.delay < 0) {
+      return res
+        .status(500)
+        .send({ message: 'Delay must be a positive number.' });
+    }
+
+    if (Array.isArray(req.body.userId)) {
+      req.body.userId.forEach(async (id: string) => {
+        // add notification to database via utils function
+        await sendNotificationToUser(
+          id,
+          req.body.title,
+          req.body.body,
+          req.body.data,
+          req.body.notificationType,
+          req.body.delay
+        );
+      });
+    } else {
+      // add notification to database via utils function
+      await sendNotificationToUser(
+        req.body.userId,
+        req.body.title,
+        req.body.body,
+        req.body.data,
+        req.body.notificationType,
+        req.body.delay
+      );
+    }
 
     return res.status(201).send({
-      message: 'Successfully created notification in database!',
-      notification: newNotification,
+      message: 'Successfully created notification(s) in database!',
     });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });

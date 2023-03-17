@@ -18,9 +18,11 @@ import User from '../models/User.model';
  * @throws {Error} - Throws an error if a userId is not a valid mongoose ObjectId.
  * @throws {Error} - Throws an error if a user id is not found in the database.
  * @throws {Error} - Throws an error if the delay is less than 0.
+ *
+ * @return {Promise<Notification | Notification[]>} - Returns a promise that resolves to a single notification or an array of notifications.
  */
 export const sendNotifications = async (
-  userId: string | string[],
+  userId: string,
   title: string,
   body: string,
   data: any,
@@ -29,17 +31,53 @@ export const sendNotifications = async (
 ) => {
   // handle array of users
   if (Array.isArray(userId)) {
+    // array of notifications to return
+    let notifications: any[] = [];
+
     userId.forEach(async id => {
-      // check if user ids are valid
-      if (!mongoose.Types.ObjectId.isValid(id)) {
-        throw new Error('Invalid user id');
+      // check if current user id is valid
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        // add notification to database
+        const notification = await sendNotificationToUser(
+          id,
+          title,
+          body,
+          data,
+          notificationType,
+          delay
+        );
+
+        // add notification to array of notifications to return
+        notifications.push(notification);
+
+        // find user for their notification token
+        const user = await User.findById(id);
+
+        // send notification to user through expo
+        if (user?.notificationToken) {
+          await sendNotificationToExpo(
+            user.notificationToken,
+            title,
+            body,
+            data
+          );
+        }
       }
     });
 
-    userId.forEach(async id => {
+    // return array of notifications
+    return notifications;
+
+    // handle single user
+  } else {
+    // single notification to return
+    let notification: any;
+
+    // check if user id is valid
+    if (mongoose.Types.ObjectId.isValid(userId)) {
       // add notification to database
-      await sendNotificationToUser(
-        id,
+      notification = await sendNotificationToUser(
+        userId,
         title,
         body,
         data,
@@ -48,38 +86,16 @@ export const sendNotifications = async (
       );
 
       // find user for notification token
-      const user = await User.findById(id);
+      const user = await User.findById(userId);
 
       // send notification to user through expo
       if (user?.notificationToken) {
         await sendNotificationToExpo(user.notificationToken, title, body, data);
       }
-    });
-
-    // handle single user
-  } else {
-    // check if user id is valid
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      throw new Error('Invalid user id');
     }
 
-    // add notification to database
-    await sendNotificationToUser(
-      userId,
-      title,
-      body,
-      data,
-      notificationType,
-      delay
-    );
-
-    // find user for notification token
-    const user = await User.findById(userId);
-
-    // send notification to user through expo
-    if (user?.notificationToken) {
-      await sendNotificationToExpo(user.notificationToken, title, body, data);
-    }
+    // return single notification
+    return notification;
   }
 };
 
@@ -100,11 +116,6 @@ export const sendNotificationToExpo = async (
   body: string,
   data: any
 ) => {
-  // check if required fields are missing
-  if (!expoPushToken || !title || !body || !data) {
-    throw new Error('Missing required fields to create notification for expo');
-  }
-
   // create notification object
   const message = {
     to: expoPushToken,
@@ -153,25 +164,6 @@ export const sendNotificationToUser = async (
   notificationType: string,
   delay: number
 ) => {
-  // check if required fields are present
-  if (
-    !userId ||
-    !title ||
-    !body ||
-    !notificationType ||
-    delay === undefined ||
-    !data
-  ) {
-    throw new Error(
-      'Missing required fields to create notification for database.'
-    );
-  }
-
-  // check if delay is valid
-  if (delay < 0) {
-    throw new Error('Delay must be a positive number.');
-  }
-
   // create new notification
   const newNotification = new Notification({
     userId: userId,
