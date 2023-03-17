@@ -24,16 +24,17 @@ const connectToMongo = async (): Promise<void> => {
 
 before(async () => {
   await connectToMongo();
-  server = app.listen(6064);
+  server = app.listen(6065);
 });
 
+/* NOTIFICATION TESTS */
 describe('test notification controller', () => {
   it('should send notification to user database via POST /notifications', done => {
     chai
       .request(server)
       .post('/notifications')
       .send({
-        userId: new ObjectId(12345).toString(),
+        userIds: [new ObjectId(12345).toString()],
         title: 'Test Title',
         body: 'Test Body',
         data: { test: 'test' },
@@ -43,8 +44,7 @@ describe('test notification controller', () => {
       .then(res => {
         expect(res).to.have.status(201);
         done();
-      })
-      .catch(err => done(err));
+      });
   });
 });
 
@@ -54,7 +54,7 @@ describe('test notification controller errors', () => {
       .request(server)
       .post('/notifications')
       .send({
-        userId: new ObjectId(12345).toString(),
+        userIds: [new ObjectId(12345).toString()],
         body: 'Test Body',
         data: { test: 'test' },
         notificationType: 'test',
@@ -74,7 +74,7 @@ describe('test notification controller errors', () => {
       .request(server)
       .post('/notifications')
       .send({
-        userId: new ObjectId(12345).toString(),
+        userIds: [new ObjectId(12345).toString()],
         title: 'Test Title',
         body: 'Test Body',
         notificationType: 'test',
@@ -89,12 +89,12 @@ describe('test notification controller errors', () => {
       });
   });
 
-  it('should return error when sending notification with invalid id via POST /notifications', done => {
+  it('should have no error when sending notification with invalid id via POST /notifications', done => {
     chai
       .request(server)
       .post('/notifications')
       .send({
-        userId: 'bad id',
+        userIds: ['bad id'],
         title: 'Test Title',
         body: 'Test Body',
         data: { test: 'test' },
@@ -102,10 +102,7 @@ describe('test notification controller errors', () => {
         delay: 0,
       })
       .then(res => {
-        expect(res).to.have.status(500);
-        expect(res.body.message).to.equal(
-          'Notification validation failed: userId: Cast to ObjectId failed for value "bad id" (type string) at path "userId" because of "BSONTypeError"'
-        );
+        expect(res).to.have.status(201);
         done();
       });
   });
@@ -115,7 +112,7 @@ describe('test notification controller errors', () => {
       .request(server)
       .post('/notifications')
       .send({
-        userId: new ObjectId(12345).toString(),
+        userIds: [new ObjectId(12345).toString()],
         title: 'Test Title',
         body: 'Test Body',
         data: { test: 'test' },

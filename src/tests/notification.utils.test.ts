@@ -28,19 +28,19 @@ before(async () => {
 describe('test notification utils', () => {
   it('should send notification to user database via POST /notifications', done => {
     sendNotifications(
-      new ObjectId().toString(),
+      [new ObjectId().toString()],
       'Test Title',
       'Test Body',
+      'testType',
       { test: 'test' },
-      'test',
       0
     ).then(notification => {
       assert.isNotNull(notification);
-      assert(notification.title === 'Test Title');
-      assert(notification.body === 'Test Body');
-      assert(notification.data.test === 'test');
-      assert(notification.notificationType === 'test');
-      assert(notification.delay === 0);
+      assert(notification[0].title === 'Test Title');
+      assert(notification[0].body === 'Test Body');
+      assert(notification[0].data.test === 'test');
+      assert(notification[0].notificationType === 'testType');
+      assert(notification[0].delay === 0);
       done();
     });
   });
@@ -54,8 +54,8 @@ describe('test notification utils', () => {
       ],
       'Test Title',
       'Test Body',
+      'testType',
       { test: 'test' },
-      'test',
       0
     ).then(notifications => {
       assert.isArray(notifications);
@@ -63,12 +63,12 @@ describe('test notification utils', () => {
       assert(notifications[0].title === 'Test Title');
       assert(notifications[0].body === 'Test Body');
       assert(notifications[0].data.test === 'test');
-      assert(notifications[0].notificationType === 'test');
+      assert(notifications[0].notificationType === 'testType');
       assert(notifications[0].delay === 0);
       assert(notifications[1].title === 'Test Title');
       assert(notifications[1].body === 'Test Body');
       assert(notifications[1].data.test === 'test');
-      assert(notifications[1].notificationType === 'test');
+      assert(notifications[1].notificationType === 'testType');
       assert(notifications[1].delay === 0);
       assert(notifications[0].userId !== notifications[1].userId);
       assert(notifications[2].userId !== notifications[1].userId);
@@ -76,7 +76,7 @@ describe('test notification utils', () => {
       assert(notifications[2].title === 'Test Title');
       assert(notifications[2].body === 'Test Body');
       assert(notifications[2].data.test === 'test');
-      assert(notifications[2].notificationType === 'test');
+      assert(notifications[2].notificationType === 'testType');
       assert(notifications[2].delay === 0);
       done();
     });
@@ -87,25 +87,25 @@ describe('test notification utils', () => {
       [],
       'Test Title',
       'Test Body',
+      'testType',
       { test: 'test' },
-      'test',
       0
     ).then(notification => {
-      assert.isUndefined(notification);
+      assert(notification.length === 0);
       done();
     });
   });
 
-  it('should return undefined if userId is an empty string via POST /notifications', done => {
+  it('should return undefined if userId is qn empty array via POST /notifications', done => {
     sendNotifications(
-      '',
+      [],
       'Test Title',
       'Test Body',
+      'testType',
       { test: 'test' },
-      'test',
       0
     ).then(notification => {
-      assert.isUndefined(notification);
+      assert(notification.length === 0);
       done();
     });
   });
@@ -114,17 +114,18 @@ describe('test notification utils', () => {
 describe('test notification utils errors', () => {
   it('should return undefined if userId is invalid via POST /notifications', done => {
     sendNotifications(
-      'invalidId',
+      ['invalidId'],
       'Test Title',
       'Test Body',
+      'testType',
       { test: 'test' },
-      'test',
       0
-    ).then(result => {
-      assert.isUndefined(result);
+    ).then(notifications => {
+      assert(notifications.length === 0);
       done();
     });
   });
+
   it('should send notifications to the valid IDs in the array and ignore the invalid ones via POST /notifications', done => {
     sendNotifications(
       [
@@ -134,8 +135,8 @@ describe('test notification utils errors', () => {
       ],
       'Test Title',
       'Test Body',
+      'testType',
       { test: 'test' },
-      'test',
       0
     ).then(notifications => {
       assert.isArray(notifications);
@@ -143,12 +144,12 @@ describe('test notification utils errors', () => {
       assert(notifications[0].title === 'Test Title');
       assert(notifications[0].body === 'Test Body');
       assert(notifications[0].data.test === 'test');
-      assert(notifications[0].notificationType === 'test');
+      assert(notifications[0].notificationType === 'testType');
       assert(notifications[0].delay === 0);
       assert(notifications[1].title === 'Test Title');
       assert(notifications[1].body === 'Test Body');
       assert(notifications[1].data.test === 'test');
-      assert(notifications[1].notificationType === 'test');
+      assert(notifications[1].notificationType === 'testType');
       assert(notifications[1].delay === 0);
       assert(notifications[0].userId !== notifications[1].userId);
       done();
