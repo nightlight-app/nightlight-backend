@@ -1,8 +1,8 @@
 # nightlight (backend)
 
-This is the backend for the nightlight app. It is a RESTful API built with Node.js and Express.js. It uses MongoDB as its database.
+This is the backend for the nightlight app. It is a RESTful API built with Node.js and Express.js. It uses MongoDB as its database. It implements a messaging queue for delay actions and expiring data.
 
-## To run the app:
+### _To run the full server locally_:
 
 In one terminal
 
@@ -23,7 +23,7 @@ npm run worker
 ```
 
 # API Endpoints
-
+---
 | HTTP Method                                               | Name                                                           | Description                                                                                                                                                                     | Parameters                                                                                                                                                                                                                                                                                               | Responses                                                                                                                                                                                                                                                    |
 | --------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | ![POST](https://img.shields.io/badge/-POST-green)         | `/user`                                                        | Create a user.                                                                                                                                                                  | ...all user fields                                                                                                                                                                                                                                                                                       | [`201`] Successful user creation. <br> [`401`] Unauthorized. idk who u r. <br> [`403`] Forbidden. ik who u r...nice try ;).<br> [`404`] Bad request. <br> [`500`] Internal server error.                                                                     |
@@ -50,7 +50,7 @@ npm run worker
 | ![DELETE](https://img.shields.io/badge/-DELETE-red)       | `/venue/{venueId}/reaction/?userId={userId}&emoji={emoji}`     | Delete a reaction for a specific venue id made a specific user id. Body should only contain emoji to be deleted since user can only have one reaction for each emoji per venue. | `userId` (Object ID) - The MongoDB-generated UUID (`_id`) attached to the target user (query param). <br><br> `venueId` (Object ID) - The MongoDB-generated UUID (`_id`) attached to the target venue. <br><br> `emoji` (string) - The string representation of the emoji of the reaction to be deleted. | [`201`] - Successful venue creation.<br> [`400`] - Venue not found.<br> [`400`] - Reaction not found. <br> [`401`] Unauthorized. idk who u r. <br> [`403`] Forbidden. ik who u r...nice try ;).<br> [`404`] Bad request. <br> [`500`] Internal server error. |
 
 # Models
-
+---
 ## User
 
 ```json
@@ -114,20 +114,102 @@ npm run worker
 }
 ```
 
+## Notification
+```json
+{
+    "_id": mongoose.Types.ObjectId,
+    "userId": mongoose.Types.ObjectId,
+    "title": String,
+    "body": String,
+    "data": Object,
+    "notificationType": String,
+    "delay": Number
+}
+```
+
 # Worker
+---
 
-**Queue setup:** When the REST server is started it also creates the queue using the queue.setup.ts file with a specific name (nightlight-queue). The queue assumes the presence of a redis container running on port 6379. To add to the queue we use jobs.
+### Queue setup:
+When the REST server is started it also creates the queue using the queue.setup.ts file with a specific name (nightlight-queue). The queue assumes the presence of a redis container running on port 6379. To add to the queue we use jobs.
 
-**Jobs:** Jobs are how the REST server adds to the queue. In jobs.ts we have a function called addGroupExpireJob which takes in the groupId to be added to the queue and a specified delay in milliseconds. We add the job to the queue with a job name (string), the job data (a type and the groupId) and the delay. There is an interface for the Job for extra type checking.
+### Jobs:
+Jobs are how the REST server adds to the queue. In jobs.ts we have a function called addGroupExpireJob which takes in the groupId to be added to the queue and a specified delay in milliseconds. We add the job to the queue with a job name (string), the job data (a type and the groupId) and the delay. There is an interface for the Job for extra type checking.
 
-**Worker Setup:** The worker is a seperate node process in the same codebase that is run in parallel to the REST server, also assuming the presence of a redis container at port 6379. The worker's only function is to intently stare at the redis queue (which was marked by the name setup in the queue.setup.ts) and to emit actions when the queue items pop out of the queue. When setting up the worker in workers.setup.ts, we have to connect to mongo again since this is a seperate process. The worker handler function takes the job and decides what to do with that job based off of the type (string) in the job.
+### Worker Setup:
+The worker is a seperate node process in the same codebase that is run in parallel to the REST server, also assuming the presence of a redis container at port 6379. The worker's function is to intently stare at the redis queue (which was marked by the name setup in the queue.setup.ts) and to emit actions when the queue items pop out of the queue. When setting up the worker in workers.setup.ts, we have to connect to mongo again since this is a seperate process. The worker handler function takes the job and decides what to do with that job based off of the type (string) in the job. Internally, the delayed queue jobs are put on a seperate queue while they wait to expire while the jobs that can be processed at the current instance are handled on a seperate main queue.
 
-**Workers:** The worker functions in worker.ts do the actions based on the jobs popped off the queue. In this case we are deleting the group from mongo. Since the mongo model exists within the same codebase as both the worker and the REST server, we do not have to duplicate the code despite the worker being a seperate node process.
+### Workers:
+The worker functions in worker.ts do the actions based on the jobs popped off the queue. In this case we are deleting the group from mongo. Since the mongo model exists within the same codebase as both the worker and the REST server, we do not have to duplicate the code despite the worker being a seperate node process.
 
-**Tests:** In group.controller.test.ts at the end of the first describe block you can see that we get the group (which should be successful) and delay the tests for 5000 milliseconds. When we get the group again it should not exist since the delay in the queue was set to 3000 milliseconds in the createGroup function in group.controller.ts. We'll have to modify this in the future to do the actual delay.
+### Tests:
+In group.controller.test.ts at the end of the first describe block you can see that we get the group (which should be successful) and delay the tests for 5000 milliseconds. When we get the group again it should not exist since the delay in the queue was set to 3000 milliseconds in the createGroup function in group.controller.ts. We'll have to modify this in the future to do the actual delay.
 
-## TODO
+# Notifications
+---
+### Notification Collection and Interfaces
 
+We are going to have to store notifications in the database for a variety of reasons. We can store them in a separate collection and index them by a user’s mongo id.
+
+```tsx
+interface MongoNotification {
+// _id: string (not needed in interface but here for reference)
+    userId: string, // indexed by this
+    title: string,
+    body: string,
+    data: Object,
+    notificationType: string,
+    delay: number
+}
+```
+
+When sending a notification to expo, we have to use a similar but slightly modified version of the MongoNotification structure which sent to an endpoint that is trusted from expo.
+
+```tsx
+interface ExpoNotification {
+  to: string;
+  sound: string;
+  title: string;
+  body: string;
+  data: Object;
+}
+```
+
+The notification type in the mongo document will be a string that invokes differences in the notification screen. For example we want notifications for friend requests, group invites, group updates, check ins, pings, etc. We will have to be able to distinguish between them (since the actions will be different for each type of notification)
+
+### Notification Handlers
+
+The backend has an endpoint to handle adding notifications but the user will **never** use this endpoint. The endpoint can be used by us for sending marketing and other notifications to the users but there is never a case where a user needs to send a notification that isn’t accompanied by an action done in another endpoint.
+
+Sending notifications is a separate function in the backend that can be called by any endpoint or worker function. It's important to note that a notification caused by a user action will never be put onto the queue. For example, if a group is created we don’t want to put a notification job and a group expiration job on the queue. Instead, we want to add just the group expiration job and when the group expires we want to send a notification from the worker that is completing the group expiration job.
+
+The function to send a notification is found in `notification.utils.ts` and headered as follows:
+
+```tsx
+export const sendNotifications = async (
+  userIds: string[],
+  title: string,
+  body: string,
+  notificationType: string,
+  data: Object = {},
+  delay: number = 0
+) => {
+    // code
+});
+```
+
+The function sends both a notification to the mongo and through the expo push notifications service. This is important to know because it means that this function is the only function in `notification.utils.ts` that should be called by a user action. The functions `sendNotificationToExpo` and `sendNotificationToUser` are helper functions that simplify the code of the `sendNotifications` functions. The only exception to this is in the admin endpoint described before that will not be used by the users (the endpoint for sending notifications to the mongo only).
+
+The notifications are done automatically by the backend based on the endpoint that is called. The function can be passed a list of user ids that the notifications can be sent to with a common title, body, data, type, and delay.
+
+We need to be sure to remember that some users will not have push notifications enabled. Therefore, the notifications should still be added to mongo even if they are not pushed through expo. 
+
+Notifications are secondary to any action that is completed in the database. For example, if the user creates a group and the notification fails to send to either the database or the expo, the database should remain if the group was created correctly. This means all of the notification stuff NEEDS to be no throw or made in some way such that the success of the notifications do not have an effect on the success of the http request as a whole.
+
+In the future, users will have notification preferences that will be checked against when sending push notifications. Users will have the choice to only receive push notifications for certain actions which they can choose in the app settings.
+
+# Current Tasks List
+---
 - Delete user ✅
 - Update venue ✅
 - Save group post ✅
@@ -141,7 +223,7 @@ npm run worker
 - Refactor for receivedFriendRequests ✅
 - Send friend request (post) ✅
 - Accept friend request (post) ✅
-- Upload profile image (use queue)
+- Upload profile image (use queue) ✅
 - Replace profile image (use queue)
 - Delete profile image (use queue)
 - Upload cover image (use queue)
@@ -149,4 +231,4 @@ npm run worker
 - Delete cover image (use queue)
 - Reaction expire ✅
 - Group expire ✅
-- Notifications 💀 (use queue)
+- Notifications 💀 (use queue) ✅
