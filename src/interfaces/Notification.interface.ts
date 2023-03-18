@@ -1,3 +1,13 @@
+/**
+ * @interface
+ * Interface defining the data structure for a notification to be saved in MongoDB database.
+ * @property {string} userId - ID of the user to whom the notification belongs.
+ * @property {string} title - Notification title.
+ * @property {string} body - Notification message body.
+ * @property {Object} data - Additional data that can be attached to the notification.
+ * @property {string} notificationType - Type of the notification.
+ * @property {number} delay - The delay in delivery of notification in seconds.
+ */
 export interface MongoNotification {
   userId: string;
   title: string;
@@ -8,6 +18,7 @@ export interface MongoNotification {
 }
 
 /**
+ * @interface
  * Represents an Expo push-notification message.
  * @property {string} to - The device token of the recipient.
  * @property {string} sound - The sound to play when notification is received by the device.
