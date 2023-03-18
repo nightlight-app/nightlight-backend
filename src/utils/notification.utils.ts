@@ -20,7 +20,7 @@ import User from '../models/User.model';
  * @param {string} body - The content of the notification.
  * @param {string} notificationType - The type of notification being sent.
  * @param {number} delay - Optional delay until the notification should be shown to the user. (set as 0 for now)
- * @param {any} data - Optional data to include with the notification.
+ * @param {Object} data - Optional data to include with the notification.
  *
  * @return {Promise<Notification[]>} - Returns a promise that resolves to an array of notifications.
  */
@@ -29,7 +29,7 @@ export const sendNotifications = async (
   title: string,
   body: string,
   notificationType: string,
-  data: any = {},
+  data: Object = {},
   delay: number = 0
 ) => {
   // array of notifications to return
