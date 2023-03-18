@@ -149,21 +149,16 @@ In group.controller.test.ts at the end of the first describe block you can see t
 ---
 ### Notification Collection and Interfaces
 
-We are going to have to store notifications in the database for a variety of reasons. We can store them in a separate collection and index them by a user’s mongo id.
+Push notifications are sent to the user in the following function, which uses the expo push notifications service that handles the architecture and security relate to apple push notification services (APNS):
 
 ```tsx
-interface MongoNotification {
-// _id: string (not needed in interface but here for reference)
-    userId: string, // indexed by this
-    title: string,
-    body: string,
-    data: Object,
-    notificationType: string,
-    delay: number
-}
+export const sendNotificationToExpo = async (
+  notification: ExpoNotification
+) => {
+  // code
+};
 ```
-
-When sending a notification to expo, we have to use a similar but slightly modified version of the MongoNotification structure which sent to an endpoint that is trusted from expo.
+When sending a notification to expo, we use an interface defined by the expo push notification service:
 
 ```tsx
 interface ExpoNotification {
@@ -174,6 +169,21 @@ interface ExpoNotification {
   data: Object;
 }
 ```
+
+We are going to have to store notifications in the database for a variety of reasons. We can store them in a separate collection and index them by a user’s mongo id:
+
+```tsx
+interface MongoNotification {
+    userId: string, // indexed by this
+    title: string,
+    body: string,
+    data: Object,
+    notificationType: string,
+    delay: number
+}
+```
+
+
 
 The notification type in the mongo document will be a string that invokes differences in the notification screen. For example we want notifications for friend requests, group invites, group updates, check ins, pings, etc. We will have to be able to distinguish between them (since the actions will be different for each type of notification)
 
@@ -198,13 +208,13 @@ export const sendNotifications = async (
 });
 ```
 
-The function sends both a notification to the mongo and through the expo push notifications service. This is important to know because it means that this function is the only function in `notification.utils.ts` that should be called by a user action. The functions `sendNotificationToExpo` and `sendNotificationToUser` are helper functions that simplify the code of the `sendNotifications` functions. The only exception to this is in the admin endpoint described before that will not be used by the users (the endpoint for sending notifications to the mongo only).
+The function sends both a notification to the mongo and through the expo push notifications service. This is important to know because it means that this function is the only function in `notification.utils.ts` that should be called by a user action. The functions `sendNotificationToExpo` and `sendNotificationToUser` are helper functions that simplify the code of the `sendNotifications` functions. The only exception to this is in the admin endpoint described before that will not be used by the users (the endpoint for sending notifications to the mongo only). If the user does not have a push notifications token (the token is undefined in their user document), the function will simply skip over them and not attempt to send the push notification.
 
 The notifications are done automatically by the backend based on the endpoint that is called. The function can be passed a list of user ids that the notifications can be sent to with a common title, body, data, type, and delay.
 
 We need to be sure to remember that some users will not have push notifications enabled. Therefore, the notifications should still be added to mongo even if they are not pushed through expo. 
 
-Notifications are secondary to any action that is completed in the database. For example, if the user creates a group and the notification fails to send to either the database or the expo, the database should remain if the group was created correctly. This means all of the notification stuff NEEDS to be no throw or made in some way such that the success of the notifications do not have an effect on the success of the http request as a whole.
+Notifications are secondary to any action that is completed in the database. For example, if the user creates a group and the notification fails to send to either the database or the expo, the database should remain if the group was created correctly. This means all of the notification stuff **needs** to be no throw or made in some way such that the success of the notifications do not have an effect on the success of the http request as a whole.
 
 In the future, users will have notification preferences that will be checked against when sending push notifications. Users will have the choice to only receive push notifications for certain actions which they can choose in the app settings.
 
