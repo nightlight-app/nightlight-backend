@@ -11,7 +11,7 @@ import {
   TEST_USER_4,
   TEST_USER_5,
   USER_KEYS,
-} from './testData';
+} from './data/testData';
 import { ObjectId } from 'mongodb';
 import { Server } from 'http';
 import { nightlightQueue } from '../queue/setup/queue.setup';

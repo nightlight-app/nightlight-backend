@@ -2,8 +2,13 @@ import mongoose, { ConnectOptions } from 'mongoose';
 import createServer from '../server';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
-import { createGroup, createUser, createVenue, SEED_VENUES } from './seedData';
-import { GROUP_KEYS, USER_KEYS, VENUE_KEYS } from './testData';
+import {
+  createGroup,
+  createUser,
+  createVenue,
+  SEED_VENUES,
+} from './data/seedData';
+import { GROUP_KEYS, USER_KEYS, VENUE_KEYS } from './data/testData';
 import User from '../models/User.model';
 import Group from '../models/Group.model';
 import Venue from '../models/Venue.model';

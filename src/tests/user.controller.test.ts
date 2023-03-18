@@ -12,7 +12,7 @@ import {
   TEST_USER_5,
   UPDATE_USER_1_TO_USER_2,
   USER_KEYS,
-} from './testData';
+} from './data/testData';
 import { ObjectId } from 'mongodb';
 import { Server } from 'http';
 

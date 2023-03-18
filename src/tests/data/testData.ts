@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
-import { Group } from '../interfaces/Group.interface';
-import { LastActive } from '../interfaces/LastActive.interface';
-import { SavedGroup } from '../interfaces/SavedGroup.interface';
-import { User } from '../interfaces/User.interface';
-import { Venue, VenueReaction } from '../interfaces/Venue.interface';
-import { REACTION_EMOJIS } from '../utils/constants';
-import { Emoji } from '../utils/types';
+import { Group } from '../../interfaces/Group.interface';
+import { LastActive } from '../../interfaces/LastActive.interface';
+import { SavedGroup } from '../../interfaces/SavedGroup.interface';
+import { User } from '../../interfaces/User.interface';
+import { Venue, VenueReaction } from '../../interfaces/Venue.interface';
+import { REACTION_EMOJIS } from '../../utils/constants';
+import { Emoji } from '../../utils/types';
 
 /* User 1 */
 const TEST_LAST_ACTIVE_1: LastActive = {

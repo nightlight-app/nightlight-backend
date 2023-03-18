@@ -17,6 +17,7 @@ const workerOptions: WorkerOptions = {
 /**
  * Decide which worker to use based on the type of an emmitted job.
  * @param job Job to be handled by the worker
+ * @returns {Promise<void>} completion of the worker after handling the job
  */
 const workerHandler = async (job: Job<NightlightQueueJob>) => {
   switch (job.data.type) {
@@ -25,6 +26,9 @@ const workerHandler = async (job: Job<NightlightQueueJob>) => {
       return;
     case 'reactionExpire':
       await expireReaction(job.data.userId, job.data.venueId, job.data.emoji);
+      return;
+    default:
+      // exit if the job type is not recognized
       return;
   }
 };

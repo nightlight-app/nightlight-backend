@@ -9,7 +9,7 @@ import {
   TEST_VENUE,
   USER_KEYS,
   VENUE_KEYS,
-} from './testData';
+} from './data/testData';
 import { ObjectId } from 'mongodb';
 import { decodeEmoji } from '../utils/venue.utils';
 import { Server } from 'http';

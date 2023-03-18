@@ -1,12 +1,17 @@
 import { Emoji } from '../utils/types';
 
 /**
- * The list of jobs that the queue can handle./v2
+ * The list of jobs that the queue can handle
+ * @options groupExpire, reactionExpire
  */
 export type JobsList = 'groupExpire' | 'reactionExpire';
 
 /**
- * Interface for the group expire job.
+ * Interface representing a group expire job.
+ * @interface GroupExpireJob
+ *
+ * @property {string} type - The type of job. Always "groupExpire".
+ * @property {string} groupId - The ID of the group to expire.
  */
 export interface GroupExpireJob {
   type: 'groupExpire';
@@ -14,7 +19,13 @@ export interface GroupExpireJob {
 }
 
 /**
- * Interface for the emoji expire job.
+ * Represents a job to expire a reaction on a venue.
+ * @interface
+ *
+ * @property {string} type - The type of the job, which should always be `'reactionExpire'`.
+ * @property {string} userId - The ID of the user who reacted to the venue.
+ * @property {string} venueId - The ID of the venue where the reaction was made.
+ * @property {Emoji} emoji - The emoji that was used in the reaction.
  */
 export interface ReactionExpireJob {
   type: 'reactionExpire';
@@ -25,7 +36,8 @@ export interface ReactionExpireJob {
 
 /**
  * Generic type for the jobs that the queue can handle.
- *
  * This is the union of all the jobs that the queue can handle.
+ *
+ * @options GroupExpireJob, ReactionExpireJob
  */
 export type NightlightQueueJob = GroupExpireJob | ReactionExpireJob;

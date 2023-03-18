@@ -4,7 +4,7 @@ import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import { Server } from 'http';
 import { ObjectId } from 'mongodb';
-import { TEST_USER_2 } from './testData';
+import { TEST_USER_2 } from './data/testData';
 require('dotenv').config();
 
 chai.use(chaiHttp);

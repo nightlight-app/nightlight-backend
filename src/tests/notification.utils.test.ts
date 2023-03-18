@@ -6,7 +6,7 @@ import {
   sendNotificationToUser,
 } from '../utils/notification.utils';
 import { ObjectId } from 'mongodb';
-import { NOTIFICATION_KEYS } from './testData';
+import { NOTIFICATION_KEYS } from './data/testData';
 require('dotenv').config();
 
 chai.should();

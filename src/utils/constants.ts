@@ -1,3 +1,4 @@
+// emoji reaction options
 export const REACTION_EMOJIS = ['🔥', '⚠️', '🛡', '💩', '🎉'];
 
 // the name of the queue
@@ -8,10 +9,10 @@ export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 /**
  * The options to iterate through when uploading images
  *
- * width: the width of the image
- * height: the height of the image
- * dimension: the dimension of the image appended to the filename
- * userField: the field in the user model to update with the image url
+ * @property width: the width of the image
+ * @property height: the height of the image
+ * @property dimension: the dimension of the image appended to the filename
+ * @property userField: the field in the user model to update with the image url
  */
 export const IMAGE_UPLOAD_OPTIONS = [
   {
