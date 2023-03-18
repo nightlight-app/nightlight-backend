@@ -22,7 +22,7 @@ export const createUser = async (req: Request, res: Response) => {
     await newUser.save();
 
     // remove the notificationToken from the response
-    delete newUser.notificationToken;
+    newUser.notificationToken = undefined;
 
     return res
       .status(201)
