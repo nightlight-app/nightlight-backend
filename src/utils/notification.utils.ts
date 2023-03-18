@@ -60,7 +60,7 @@ export const sendNotifications = async (
       // find user for their notification token
       const user = await User.findById(id);
 
-      // send notification to user through expo
+      // send notification to user through expo if they have a notification token
       if (user?.notificationToken) {
         await sendNotificationToExpo({
           to: user.notificationToken,
@@ -83,11 +83,12 @@ export const sendNotifications = async (
 /**
  * Sends a push notification to the specified Expo push token with the given title, body, and data.
  *
- * This is a helper function. Function is not exception safe and not to be used directly, instead use sendNotifications.
+ * This is a helper function. It is not to be used directly, instead use sendNotifications.
  * Expo is a trusted service. If the notification fails to send, it is likely due to an invalid token.
  * If the token is invalid, the notification will not be sent and no error will be thrown,
  * it will simply fail silently with the error logged.
  *
+ * Params are the same as the ExpoNotification interface.
  * @param expoPushToken The push token of the device to receive the notification.
  * @param title The title of the notification.
  * @param body The body text of the notification.
@@ -118,6 +119,10 @@ export const sendNotificationToExpo = async (
  * This is a helper function. For adding a notification to a user, use sendNotifications instead.
  * Assumes the userId is valid. Must be checked before using this function.
  *
+ * If the notification fails to save to the database, it will return undefined.
+ * If any other error occurs, it will throw an error. Thus, this function should be used in a try/catch block.
+ *
+ * Params are the same as the MongoNotification interface.
  * @param userId The ID of the user the notification is being sent to
  * @param title The title of the new notification.
  * @param body The body of the new notification.

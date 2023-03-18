@@ -1,6 +1,10 @@
+import mongoose from 'mongoose';
+
 /**
- * @interface
+ * @interface MongoNotification
  * Interface defining the data structure for a notification to be saved in MongoDB database.
+ *
+ * @property {_id} mongoose.Types.ObjectId - Optional ID of the notification.
  * @property {string} userId - ID of the user to whom the notification belongs.
  * @property {string} title - Notification title.
  * @property {string} body - Notification message body.
@@ -9,6 +13,7 @@
  * @property {number} delay - The delay in delivery of notification in seconds.
  */
 export interface MongoNotification {
+  _id?: mongoose.Types.ObjectId;
   userId: string;
   title: string;
   body: string;
@@ -18,8 +23,9 @@ export interface MongoNotification {
 }
 
 /**
- * @interface
+ * @interface ExpoNotification
  * Represents an Expo push-notification message.
+ *
  * @property {string} to - The device token of the recipient.
  * @property {string} sound - The sound to play when notification is received by the device.
  * @property {string} title - The title of the notification to display.
