@@ -18,10 +18,11 @@ export const createUser = async (req: Request, res: Response) => {
   const newUser = new User(req.body);
 
   try {
+    // add the user to the database
     await newUser.save();
 
     // remove the notificationToken from the response
-    newUser.notificationToken = undefined;
+    delete newUser.notificationToken;
 
     return res
       .status(201)
@@ -45,19 +46,23 @@ export const getUser = async (req: Request, res: Response) => {
   // Determine which query parameter was provided (prefer userId over firebaseUid)
   const queryType = userId ? '_id' : 'firebaseUid';
 
+  // Check if the provided userId is valid
   if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Check if the provided firebaseUid is valid
   if (firebaseUid && !mongoose.Types.ObjectId.isValid(firebaseUid)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Check if the provided firebaseUid is the correct length
   if (firebaseUid && firebaseUid.length !== 28) {
     return res.status(400).send({ message: 'Invalid firebase UID!' });
   }
 
   try {
+    // Find the user in the database and omit the notificationToken from the response
     const targetUser = await User.findById(
       {
         [queryType]: queryType === '_id' ? userId : firebaseUid,
@@ -65,6 +70,7 @@ export const getUser = async (req: Request, res: Response) => {
       { notificationToken: 0 }
     );
 
+    // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
@@ -86,13 +92,16 @@ export const getUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
 
+  // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
   try {
+    // Delete the user from the database
     const result = await User.deleteOne({ _id: userId });
 
+    // Check if the user was deleted
     if (result.deletedCount === 0) {
       return res.status(400).send({ message: 'User not found!' });
     }
@@ -113,19 +122,23 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
 
+  // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
   try {
+    // Find the user in the database and update the user data, omitting the notificationToken from the response
     const targetUser = await User.findByIdAndUpdate({ _id: userId }, req.body, {
       new: true,
       select: '-notificationToken',
     });
 
+    // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
+
     return res
       .status(200)
       .send({ message: 'Successfully updated user!', user: targetUser });
@@ -143,11 +156,13 @@ export const updateUser = async (req: Request, res: Response) => {
 export const saveGroup = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
 
+  // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
   try {
+    // Find the user in the database and update the user data, omitting the notificationToken from the response
     const targetUser = await User.findByIdAndUpdate(
       { _id: userId },
       {
@@ -155,9 +170,10 @@ export const saveGroup = async (req: Request, res: Response) => {
           savedGroups: { ...req.body, _id: new mongoose.Types.ObjectId() },
         },
       },
-      { new: true, select: '-password' }
+      { new: true, select: '-notificationToken' }
     );
 
+    // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
@@ -180,15 +196,18 @@ export const deleteSavedGroup = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const savedGroupId = req.query.savedGroupId as string;
 
+  // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Check if the provided savedGroupId is valid
   if (!mongoose.Types.ObjectId.isValid(savedGroupId)) {
     return res.status(400).send({ message: 'Invalid saved group ID!' });
   }
 
   try {
+    // Find the user in the database and update the user data, omitting the notificationToken from the response
     const targetUser = await User.findByIdAndUpdate(
       { _id: userId },
       {
@@ -202,6 +221,7 @@ export const deleteSavedGroup = async (req: Request, res: Response) => {
       }
     );
 
+    // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
@@ -223,10 +243,12 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const groupId = req.query.groupId as string;
 
+  // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Check if the provided groupId is valid
   if (!mongoose.Types.ObjectId.isValid(groupId)) {
     return res.status(400).send({ message: 'Invalid group ID!' });
   }
@@ -238,6 +260,7 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
       currentGroup: groupId,
     });
 
+    // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
@@ -248,6 +271,7 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
       $push: { members: userId },
     });
 
+    // Check if the group exists
     if (targetGroup === null) {
       return res.status(400).send({ message: 'Group does not exist!' });
     }
@@ -270,27 +294,33 @@ export const leaveGroup = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const groupId = req.query.groupId as string;
 
+  // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Check if the provided groupId is valid
   if (!mongoose.Types.ObjectId.isValid(groupId)) {
     return res.status(400).send({ message: 'Invalid group ID!' });
   }
 
   try {
+    // Remove userId from members in group
     const targetGroup = await Group.findByIdAndUpdate(groupId, {
       $pull: { members: userId },
     });
 
+    // Check if the group exists
     if (targetGroup === null) {
       return res.status(400).send({ message: 'Group does not exist!' });
     }
 
+    // Remove groupId from currentGroup of user
     const targetUser = await User.findByIdAndUpdate(userId, {
       currentGroup: undefined,
     });
 
+    // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
@@ -310,17 +340,21 @@ export const leaveGroup = async (req: Request, res: Response) => {
 export const getFriends = async (req: Request, res: Response) => {
   const userId = req.params?.userId as string;
 
+  // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
   try {
+    // Find the user in the database
     const targetUser = await User.findById(userId);
 
+    // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
+    // Find the friends of the user and omit their notificationTokens
     const targetFriends = await User.find(
       {
         _id: { $in: targetUser?.friends },
@@ -328,6 +362,7 @@ export const getFriends = async (req: Request, res: Response) => {
       { notificationToken: 0 }
     );
 
+    // Check if the friends exist
     if (targetFriends === null) {
       return res.status(400).send({ message: 'A friend does not exist!' });
     }
@@ -350,25 +385,31 @@ export const requestFriend = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const friendId = req.query.friendId as string;
 
+  // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Check if the provided friendId is valid
   if (!mongoose.Types.ObjectId.isValid(friendId)) {
     return res.status(400).send({ message: 'Invalid friend ID!' });
   }
 
   try {
+    // Find the user in the database
     const targetUser = await User.findById(userId);
 
+    // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
+    // Find the friend in the database and add the userId to their friendRequests
     const targetFriend = await User.findByIdAndUpdate(friendId, {
       $push: { friendRequests: userId },
     });
 
+    // Check if the friend exists
     if (targetFriend === null) {
       return res
         .status(400)
@@ -395,28 +436,34 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const friendId = req.query.friendId as string;
 
+  // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Check if the provided friendId is valid
   if (!mongoose.Types.ObjectId.isValid(friendId)) {
     return res.status(400).send({ message: 'Invalid friend ID!' });
   }
 
   try {
+    // Find the user in the database and add the friendId to their friend array while removing it from their friendRequests array
     const targetUser = await User.findByIdAndUpdate(userId, {
       $push: { friends: friendId },
       $pull: { friendRequests: friendId },
     });
 
+    // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
+    // Find the friend in the database and add the userId to their friend array
     const targetFriendUser = await User.findByIdAndUpdate(friendId, {
       $push: { friends: userId },
     });
 
+    // Check if the friend exists
     if (targetFriendUser === null) {
       return res.status(400).send({ message: 'Friend does not exist!' });
     }
@@ -440,27 +487,33 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const friendId = req.query.friendId as string;
 
+  // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Check if the provided friendId is valid
   if (!mongoose.Types.ObjectId.isValid(friendId)) {
     return res.status(400).send({ message: 'Invalid friend ID!' });
   }
 
   try {
+    // Find the friend user in the database
     const targetFriend = await User.findById(friendId);
 
+    // Check if the friend exists
     if (targetFriend === null) {
       return res
         .status(400)
         .send({ message: 'User requesting does not exist!' });
     }
 
+    // Find the user in the database and remove the friendId from their friendRequests array
     const targetUser = await User.findByIdAndUpdate(userId, {
       $pull: { friendRequests: friendId },
     });
 
+    // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
@@ -483,22 +536,24 @@ export const addNotificationToken = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
   const notificationToken = req.body?.notificationToken;
 
+  // Check if the notification token was provided
+  if (!notificationToken) {
+    return res.status(400).send({ message: 'No notification token provided!' });
+  }
+
+  // Check if the provided userId is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  // Check if the notification token is valid
+  if (!notificationToken.match(/^ExponentPushToken\[[a-zA-Z0-9]+\]$/)) {
+    return res.status(400).send({ message: 'Invalid notification token!' });
+  }
+
   try {
-    if (!notificationToken) {
-      return res
-        .status(400)
-        .send({ message: 'No notification token provided!' });
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).send({ message: 'Invalid user ID!' });
-    }
-
-    if (!notificationToken.match(/^ExponentPushToken\[[a-zA-Z0-9]+\]$/)) {
-      return res.status(400).send({ message: 'Invalid notification token!' });
-    }
-
-    User.findByIdAndUpdate(userId, {
+    // Find the user in the database and add the notification token to their account
+    await User.findByIdAndUpdate(userId, {
       notificationToken: notificationToken,
     });
 
@@ -517,12 +572,14 @@ export const addNotificationToken = async (req: Request, res: Response) => {
 export const removeNotificationToken = async (req: Request, res: Response) => {
   const userId = req.params?.userId;
 
-  try {
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).send({ message: 'Invalid user ID!' });
-    }
+  // Check if the provided userId is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
 
-    User.findByIdAndUpdate(userId, {
+  try {
+    // Find the user in the database and remove the notification token from their account
+    await User.findByIdAndUpdate(userId, {
       notificationToken: undefined,
     });
 

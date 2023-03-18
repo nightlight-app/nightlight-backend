@@ -1,16 +1,16 @@
-export interface Notification {
+export interface MongoNotification {
   userId: string;
   title: string;
-  body?: string;
-  data?: any;
+  body: string;
+  data: any;
   notificationType: string;
-  delay?: number;
+  delay: number;
 }
 
-export interface ExpoNofication {
+export interface ExpoNotification {
   to: string;
-  sound?: string;
-  title?: string;
-  body?: string;
-  data?: any;
+  sound: string;
+  title: string;
+  body: string;
+  data: any;
 }

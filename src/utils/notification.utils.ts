@@ -1,4 +1,8 @@
 import mongoose from 'mongoose';
+import {
+  ExpoNotification,
+  MongoNotification,
+} from '../interfaces/Notification.interface';
 import Notification from '../models/Notification.model';
 import User from '../models/User.model';
 
@@ -41,14 +45,14 @@ export const sendNotifications = async (
     // check if current user id is valid
     if (mongoose.Types.ObjectId.isValid(id)) {
       // add notification to database
-      const notification = await sendNotificationToUser(
-        id,
+      const notification = await sendNotificationToUser({
+        userId: id,
         title,
         body,
         data,
         notificationType,
-        delay
-      );
+        delay,
+      } as MongoNotification);
 
       // add notification to array of notifications to return
       notifications.push(notification);
@@ -58,7 +62,13 @@ export const sendNotifications = async (
 
       // send notification to user through expo
       if (user?.notificationToken) {
-        await sendNotificationToExpo(user.notificationToken, title, body, data);
+        await sendNotificationToExpo({
+          to: user.notificationToken,
+          title,
+          body,
+          data,
+          sound: 'default',
+        });
       }
     }
   });
@@ -84,20 +94,8 @@ export const sendNotifications = async (
  * @param data Optional additional data to send along with the notification.
  */
 export const sendNotificationToExpo = async (
-  expoPushToken: string,
-  title: string,
-  body: string,
-  data: any
+  notification: ExpoNotification
 ) => {
-  // create notification object
-  const message = {
-    to: expoPushToken,
-    sound: 'default',
-    title: title,
-    body: body,
-    data: data,
-  };
-
   try {
     // send notification to expo to be sent to device
     await fetch('https://exp.host/--/api/v2/push/send', {
@@ -107,7 +105,7 @@ export const sendNotificationToExpo = async (
         'Accept-encoding': 'gzip, deflate',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(message),
+      body: JSON.stringify(notification),
     });
   } catch (error: any) {
     console.log(error?.message);
@@ -129,22 +127,10 @@ export const sendNotificationToExpo = async (
  * @return The created Notification object or undefined.
  */
 export const sendNotificationToUser = async (
-  userId: string,
-  title: string,
-  body: string,
-  data: any,
-  notificationType: string,
-  delay: number = 0
+  notification: MongoNotification
 ) => {
   // create new notification
-  const newNotification = new Notification({
-    userId: userId,
-    title: title,
-    body: body,
-    data: data,
-    notificationType: notificationType,
-    delay: delay,
-  });
+  const newNotification = new Notification(notification);
 
   // save notification to database
   await newNotification.save();

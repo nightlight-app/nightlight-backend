@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import { sendNotificationToUser } from '../utils/notification.utils';
 import Notification from '../models/Notification.model';
+import { MongoNotification } from '../interfaces/Notification.interface';
 
 /**
  * Retrieves all notifications for a given user.
@@ -10,17 +11,15 @@ import Notification from '../models/Notification.model';
  * @returns {Promise<Notification[]>} HTTP response indicating success and found notifications.
  */
 export const getNotifications = async (req: Request, res: Response) => {
+  // get userId from query parameters
+  const userId = req.query.userId as string;
+
+  // check if userId is present
+  if (!userId) {
+    return res.status(400).send({ message: 'Missing userId query parameter.' });
+  }
+
   try {
-    // get userId from query parameters
-    const userId = req.query.userId as string;
-
-    // check if userId is present
-    if (!userId) {
-      return res
-        .status(400)
-        .send({ message: 'Missing userId query parameter.' });
-    }
-
     // find all notifications for the given user
     const notifications = await Notification.find({ userId: userId });
 
@@ -48,41 +47,41 @@ export const addNotificationsToDatabase = async (
   req: Request,
   res: Response
 ) => {
+  // check if all required fields are present
+  if (
+    !req.body.userIds ||
+    !req.body.title ||
+    !req.body.body ||
+    !req.body.data ||
+    !req.body.notificationType ||
+    req.body.delay === undefined
+  ) {
+    return res.status(500).send({
+      message: 'Missing required fields to create notification for database.',
+    });
+  }
+
+  // check if delay is a positive number
+  if (req.body.delay < 0) {
+    return res
+      .status(500)
+      .send({ message: 'Delay must be a positive number.' });
+  }
+
   try {
-    // check if all required fields are present
-    if (
-      !req.body.userIds ||
-      !req.body.title ||
-      !req.body.body ||
-      !req.body.data ||
-      !req.body.notificationType ||
-      req.body.delay === undefined
-    ) {
-      return res.status(500).send({
-        message: 'Missing required fields to create notification for database.',
-      });
-    }
-
-    // check if delay is a positive number
-    if (req.body.delay < 0) {
-      return res
-        .status(500)
-        .send({ message: 'Delay must be a positive number.' });
-    }
-
     // Javascript will not wait for promises to resolve in a for loop or mapping, so we must collect all the promises
     const promises = req.body.userIds.map(async (id: string) => {
       // check if current user id is valid
       if (mongoose.Types.ObjectId.isValid(id)) {
         // add notification to database via utils function
-        await sendNotificationToUser(
-          id,
-          req.body.title,
-          req.body.body,
-          req.body.data,
-          req.body.notificationType,
-          req.body.delay
-        );
+        await sendNotificationToUser({
+          userId: id,
+          title: req.body.title,
+          body: req.body.body,
+          data: req.body.data,
+          notificationType: req.body.notificationType,
+          delay: req.body.delay,
+        } as MongoNotification);
       }
     });
 
@@ -107,15 +106,15 @@ export const addNotificationsToDatabase = async (
  * @returns {Promise<Notification>} - The promise that resolves after successful deletion. Returns the deleted notification.
  */
 export const deleteNotification = async (req: Request, res: Response) => {
+  // get notification id from request
+  const notificationId = req.params.notificationId;
+
+  // check if notification id is valid
+  if (!mongoose.Types.ObjectId.isValid(notificationId)) {
+    return res.status(400).send({ message: 'Invalid notification id.' });
+  }
+
   try {
-    // get notification id from request
-    const notificationId = req.params.notificationId;
-
-    // check if notification id is valid
-    if (!mongoose.Types.ObjectId.isValid(notificationId)) {
-      return res.status(400).send({ message: 'Invalid notification id.' });
-    }
-
     // delete notification from database
     const targetNotification = await Notification.findByIdAndRemove(
       notificationId
