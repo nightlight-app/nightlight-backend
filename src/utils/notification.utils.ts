@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import {
   ExpoNotification,
   MongoNotification,
+  NotificationData,
 } from '../interfaces/Notification.interface';
 import Notification from '../models/Notification.model';
 import User from '../models/User.model';
@@ -18,9 +19,8 @@ import User from '../models/User.model';
  * @param {string[]} userIds - The id or ids of the user(s) to receive the notification.
  * @param {string} title - The title of the notification.
  * @param {string} body - The content of the notification.
- * @param {string} notificationType - The type of notification being sent.
  * @param {number} delay - Optional delay until the notification should be shown to the user. (set as 0 for now)
- * @param {Object} data - Optional data to include with the notification.
+ * @param {NotificationData} data - Optional data to include with the notification.
  *
  * @return {Promise<Notification[]>} - Returns a promise that resolves to an array of notifications.
  */
@@ -28,8 +28,7 @@ export const sendNotifications = async (
   userIds: string[],
   title: string,
   body: string,
-  notificationType: string,
-  data: Object = {},
+  data: NotificationData,
   delay: number = 0
 ) => {
   // array of notifications to return
@@ -50,7 +49,6 @@ export const sendNotifications = async (
         title,
         body,
         data,
-        notificationType,
         delay,
       } as MongoNotification);
 
@@ -120,25 +118,29 @@ export const sendNotificationToExpo = async (
  * Assumes the userId is valid. Must be checked before using this function.
  *
  * If the notification fails to save to the database, it will return undefined.
- * If any other error occurs, it will throw an error. Thus, this function should be used in a try/catch block.
+ * If any other errors occurs, it will be silently logged and undefined will be returned.
  *
  * Params are the same as the MongoNotification interface.
  * @param userId The ID of the user the notification is being sent to
  * @param title The title of the new notification.
  * @param body The body of the new notification.
  * @param data Any additional data to attach to the notification.
- * @param notificationType The type of the notification, e.g. "message", "alert", etc.
  * @param delay The amount of time to delay sending the notification (in milliseconds).
  * @return The created Notification object or undefined.
  */
 export const sendNotificationToUser = async (
   notification: MongoNotification
 ) => {
-  // create new notification
-  const newNotification = new Notification(notification);
+  try {
+    // create new notification
+    const newNotification = new Notification(notification);
 
-  // save notification to database
-  await newNotification.save();
+    // save notification to database
+    await newNotification.save();
 
-  return newNotification;
+    return newNotification;
+  } catch (error: any) {
+    console.log(error?.message);
+    return undefined;
+  }
 };

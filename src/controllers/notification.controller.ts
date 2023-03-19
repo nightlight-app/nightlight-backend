@@ -53,7 +53,6 @@ export const addNotificationsToDatabase = async (
     !req.body.title ||
     !req.body.body ||
     !req.body.data ||
-    !req.body.notificationType ||
     req.body.delay === undefined
   ) {
     return res.status(500).send({
@@ -79,7 +78,6 @@ export const addNotificationsToDatabase = async (
           title: req.body.title,
           body: req.body.body,
           data: req.body.data,
-          notificationType: req.body.notificationType,
           delay: req.body.delay,
         } as MongoNotification);
       }

@@ -31,15 +31,13 @@ describe('test notification utils', () => {
       [new ObjectId().toString()],
       'Test Title',
       'Test Body',
-      'testType',
-      { test: 'test' },
+      { notificationType: 'test' },
       0
     ).then(notification => {
       assert.isNotNull(notification);
       assert(notification[0].title === 'Test Title');
       assert(notification[0].body === 'Test Body');
-      assert(notification[0].data.test === 'test');
-      assert(notification[0].notificationType === 'testType');
+      assert(notification[0].data.notificationType === 'test');
       assert(notification[0].delay === 0);
       done();
     });
@@ -54,29 +52,25 @@ describe('test notification utils', () => {
       ],
       'Test Title',
       'Test Body',
-      'testType',
-      { test: 'test' },
+      { notificationType: 'test' },
       0
     ).then(notifications => {
       assert.isArray(notifications);
       assert.lengthOf(notifications, 3);
       assert(notifications[0].title === 'Test Title');
       assert(notifications[0].body === 'Test Body');
-      assert(notifications[0].data.test === 'test');
-      assert(notifications[0].notificationType === 'testType');
+      assert(notifications[0].data.notificationType === 'test');
       assert(notifications[0].delay === 0);
       assert(notifications[1].title === 'Test Title');
       assert(notifications[1].body === 'Test Body');
-      assert(notifications[1].data.test === 'test');
-      assert(notifications[1].notificationType === 'testType');
+      assert(notifications[1].data.notificationType === 'test');
       assert(notifications[1].delay === 0);
       assert(notifications[0].userId !== notifications[1].userId);
       assert(notifications[2].userId !== notifications[1].userId);
       assert(notifications[2].userId !== notifications[0].userId);
       assert(notifications[2].title === 'Test Title');
       assert(notifications[2].body === 'Test Body');
-      assert(notifications[2].data.test === 'test');
-      assert(notifications[2].notificationType === 'testType');
+      assert(notifications[2].data.notificationType === 'test');
       assert(notifications[2].delay === 0);
       done();
     });
@@ -87,8 +81,7 @@ describe('test notification utils', () => {
       [],
       'Test Title',
       'Test Body',
-      'testType',
-      { test: 'test' },
+      { notificationType: 'test' },
       0
     ).then(notification => {
       assert(notification.length === 0);
@@ -101,8 +94,7 @@ describe('test notification utils', () => {
       [],
       'Test Title',
       'Test Body',
-      'testType',
-      { test: 'test' },
+      { notificationType: 'test' },
       0
     ).then(notification => {
       assert(notification.length === 0);
@@ -117,8 +109,7 @@ describe('test notification utils errors', () => {
       ['invalidId'],
       'Test Title',
       'Test Body',
-      'testType',
-      { test: 'test' },
+      { notificationType: 'test' },
       0
     ).then(notifications => {
       assert(notifications.length === 0);
@@ -135,21 +126,18 @@ describe('test notification utils errors', () => {
       ],
       'Test Title',
       'Test Body',
-      'testType',
-      { test: 'test' },
+      { notificationType: 'test' },
       0
     ).then(notifications => {
       assert.isArray(notifications);
       assert.lengthOf(notifications, 2);
       assert(notifications[0].title === 'Test Title');
       assert(notifications[0].body === 'Test Body');
-      assert(notifications[0].data.test === 'test');
-      assert(notifications[0].notificationType === 'testType');
+      assert(notifications[0].data.notificationType === 'test');
       assert(notifications[0].delay === 0);
       assert(notifications[1].title === 'Test Title');
       assert(notifications[1].body === 'Test Body');
-      assert(notifications[1].data.test === 'test');
-      assert(notifications[1].notificationType === 'testType');
+      assert(notifications[1].data.notificationType === 'test');
       assert(notifications[1].delay === 0);
       assert(notifications[0].userId !== notifications[1].userId);
       done();

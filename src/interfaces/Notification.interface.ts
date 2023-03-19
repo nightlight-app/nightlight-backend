@@ -8,8 +8,7 @@ import mongoose from 'mongoose';
  * @property {string} userId - ID of the user to whom the notification belongs.
  * @property {string} title - Notification title.
  * @property {string} body - Notification message body.
- * @property {Object} data - Additional data that can be attached to the notification.
- * @property {string} notificationType - Type of the notification.
+ * @property {NotificationData} data - Additional data that can be attached to the notification.
  * @property {number} delay - The delay in delivery of notification in seconds.
  */
 export interface MongoNotification {
@@ -17,8 +16,7 @@ export interface MongoNotification {
   userId: string;
   title: string;
   body: string;
-  data: Object;
-  notificationType: string;
+  data: NotificationData;
   delay: number;
 }
 
@@ -30,12 +28,23 @@ export interface MongoNotification {
  * @property {string} sound - The sound to play when notification is received by the device.
  * @property {string} title - The title of the notification to display.
  * @property {string} body - The message body of the notification.
- * @property {Object} data - Additional data to attach to the notification
+ * @property {NotificationData} data - Additional data to attach to the notification
  */
 export interface ExpoNotification {
   to: string;
   sound: string;
   title: string;
   body: string;
-  data: Object;
+  data: NotificationData;
+}
+
+/**
+ * Interface for notification data. Will be added to over time.
+ * This data will be used when the notification is clicked.
+ *
+ * @interface
+ * @property {string} notificationType - The type of notification.
+ */
+export interface NotificationData {
+  notificationType: string;
 }

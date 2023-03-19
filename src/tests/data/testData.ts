@@ -266,7 +266,6 @@ export const NOTIFICATION_KEYS = [
   '_id',
   'userId',
   'title',
-  'notificationType',
   'body',
   'data',
   'delay',

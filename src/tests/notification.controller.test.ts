@@ -57,7 +57,6 @@ describe('test notification controller', () => {
         title: 'Test Title 1',
         body: 'Test Body 1',
         data: { test: 'test 1' },
-        notificationType: 'test 1',
         delay: 0,
       })
       .then(res => {
@@ -79,7 +78,6 @@ describe('test notification controller', () => {
         title: 'Test Title 2',
         body: 'Test Body 2',
         data: { test: 'test 2' },
-        notificationType: 'test 2',
         delay: 0,
       })
       .then(res => {
@@ -141,7 +139,6 @@ describe('test notification controller errors', () => {
         userIds: [new ObjectId(12345).toString()],
         body: 'Test Body',
         data: { test: 'test' },
-        notificationType: 'test',
         delay: 0,
       })
       .then(res => {
@@ -161,7 +158,6 @@ describe('test notification controller errors', () => {
         userIds: [new ObjectId(12345).toString()],
         title: 'Test Title',
         body: 'Test Body',
-        notificationType: 'test',
         delay: 0,
       })
       .then(res => {
@@ -182,7 +178,6 @@ describe('test notification controller errors', () => {
         title: 'Test Title',
         body: 'Test Body',
         data: { test: 'test' },
-        notificationType: 'test',
         delay: 0,
       })
       .then(res => {
@@ -200,7 +195,6 @@ describe('test notification controller errors', () => {
         title: 'Test Title',
         body: 'Test Body',
         data: { test: 'test' },
-        notificationType: 'test',
         delay: -3,
       })
       .then(res => {

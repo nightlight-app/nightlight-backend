@@ -122,7 +122,6 @@ npm run worker
     "title": String,
     "body": String,
     "data": Object,
-    "notificationType": String,
     "delay": Number
 }
 ```
@@ -177,12 +176,18 @@ interface MongoNotification {
     userId: string, // indexed by this
     title: string,
     body: string,
-    data: Object,
-    notificationType: string,
+    data: NotificationData,
     delay: number
 }
 ```
 
+where we store the notification data in a nightlight defined object:
+
+```tsx
+interface NotificationData {
+    notificationType: String
+}
+```
 
 
 The notification type in the mongo document will be a string that invokes differences in the notification screen. For example we want notifications for friend requests, group invites, group updates, check ins, pings, etc. We will have to be able to distinguish between them (since the actions will be different for each type of notification)
@@ -200,8 +205,7 @@ export const sendNotifications = async (
   userIds: string[],
   title: string,
   body: string,
-  notificationType: string,
-  data: Object = {},
+  data: NotificationData,
   delay: number = 0
 ) => {
     // code
@@ -234,9 +238,9 @@ In the future, users will have notification preferences that will be checked aga
 - Send friend request (post) ✅
 - Accept friend request (post) ✅
 - Upload profile image (use queue) ✅
-- Replace profile image (use queue)
+- Replace profile image (use queue) ✅
 - Delete profile image (use queue)
-- Upload cover image (use queue)
+- Upload cover image (use queue) 
 - Replace cover image (use queue)
 - Delete cover image (use queue)
 - Reaction expire ✅
