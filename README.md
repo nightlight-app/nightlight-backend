@@ -4,19 +4,40 @@ This is the backend for the nightlight app. It is a RESTful API built with Node.
 
 ## To run the app:
 
-In one terminal
+1. Install the packages
 
 ```zsh
 npm install
-npm run start:all
 ```
 
-This runs `docker compose up`, `npm run worker`, and `npm start` in three separate terminals (using `ttab` and `npm-run-all` packages).
+2. Install ttab CLI (add a `sudo` in front if you get EACCES error):
+
+```zsh
+npm install ttab -g
+```
+
+3. Verify that `ttab` is installed (this should spawn a new terminal) and follow instruction to allow permission:
+
+```zsh
+ttab -w
+```
+
+4. If on Mac, go to `System Preferences` > `Security & Privacy` > `Accessibility` and check the `Visual Studio Code` box and the terminal you use (i.e. `iTerm2`).
+
+<img width="400" src="https://i.imgur.com/mRiL3PJ.png">
+
+5. Run `docker compose up`, `npm run worker`, and `nodemon src/index.ts` with one command:
+
+```zsh
+npm run start
+```
 
 **Common issues:**
 
 - _System Events got an error: osascript is not allowed assistive access._
   Go to `System Preferences` > `Privacy` > `Accessibility` and allow `VSCode` to give permission for `ttab` to run.
+
+- [See official documentation for ttab here](https://www.npmjs.com/package/ttab)
 
 # API Endpoints
 
