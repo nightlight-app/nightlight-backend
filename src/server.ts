@@ -6,6 +6,7 @@ import usersRouter from './routes/users.router';
 import venuesRouter from './routes/venues.router';
 import { createBullBoardAdapter } from './queue/setup/bullboard.setup';
 import notificationsRouter from './routes/notifications.router';
+import helmet from 'helmet';
 
 const createServer = ({
   shouldRunBullBoard = true,
@@ -17,6 +18,7 @@ const createServer = ({
   // Middleware
   app.use(express.json()); // Parse JSON bodies
   app.use(cors()); // Enable CORS
+  app.use(helmet());
 
   // Set up bull board
   if (shouldRunBullBoard) {
