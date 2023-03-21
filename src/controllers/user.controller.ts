@@ -6,7 +6,8 @@ import { v2 as cloudinary } from 'cloudinary';
 import { upload } from '../config/cloudinary.config';
 import { MulterError } from 'multer';
 import streamifier from 'streamifier';
-import { IMAGE_UPLOAD_OPTIONS } from '../utils/constants';
+import { IMAGE_UPLOAD_OPTIONS, NotificationType } from '../utils/constants';
+import { sendNotifications } from '../utils/notification.utils';
 
 /**
  * Creates a new user in the database based on the information provided in the request body.
@@ -415,6 +416,18 @@ export const requestFriend = async (req: Request, res: Response) => {
         .status(400)
         .send({ message: 'User being requested does not exist!' });
     }
+
+    // Send a notification to the friend that they have received a friend request
+    sendNotifications(
+      [friendId],
+      targetUser.firstName +
+        ' ' +
+        targetUser.lastName +
+        ' has sent you a friend request!',
+      '',
+      { notificationType: NotificationType.friendRequest },
+      true
+    );
 
     return res
       .status(200)

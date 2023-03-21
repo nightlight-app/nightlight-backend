@@ -28,3 +28,23 @@ export const IMAGE_UPLOAD_OPTIONS = [
     userField: 'imgUrlProfileLarge',
   },
 ];
+
+/**
+ * @enum NotificationType
+ * Defines the types of notification available
+ *
+ * @property friendRequest - When a user receives a friend request
+ * @property friendRequestAccepted - When a user's friend request is accepted by the other user
+ * @property friendRequestDeclined - When a user's friend request is declined by the other user
+ * @property groupInvite - When a user is invited to a new group
+ * @property groupInviteAccepted - When a user accepts an invitation to join a group
+ * @property groupInviteDeclined - WHen a user declines an invitation to join a group
+ */
+export enum NotificationType {
+  friendRequest = 'friendRequest',
+  friendRequestAccepted = 'friendRequestAccepted',
+  friendRequestDeclined = 'friendRequestDeclined',
+  groupInvite = 'groupInvite',
+  groupInviteAccepted = 'groupInviteAccepted',
+  groupInviteDeclined = 'groupInviteDeclined',
+}
