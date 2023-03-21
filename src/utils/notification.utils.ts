@@ -29,6 +29,7 @@ export const sendNotifications = async (
   title: string,
   body: string,
   data: NotificationData,
+  isPush: boolean,
   delay: number = 0
 ) => {
   // array of notifications to return
@@ -58,8 +59,8 @@ export const sendNotifications = async (
       // find user for their notification token
       const user = await User.findById(id);
 
-      // send notification to user through expo if they have a notification token
-      if (user?.notificationToken) {
+      // send notification to user through expo if they have a notification token and if isPush is true (is a push notification)
+      if (isPush && user?.notificationToken) {
         await sendNotificationToExpo({
           to: user.notificationToken,
           title,

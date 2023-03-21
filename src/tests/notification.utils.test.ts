@@ -32,6 +32,7 @@ describe('test notification utils', () => {
       'Test Title',
       'Test Body',
       { notificationType: 'test' },
+      false,
       0
     ).then(notification => {
       assert.isNotNull(notification);
@@ -53,6 +54,7 @@ describe('test notification utils', () => {
       'Test Title',
       'Test Body',
       { notificationType: 'test' },
+      false,
       0
     ).then(notifications => {
       assert.isArray(notifications);
@@ -82,6 +84,7 @@ describe('test notification utils', () => {
       'Test Title',
       'Test Body',
       { notificationType: 'test' },
+      false,
       0
     ).then(notification => {
       assert(notification.length === 0);
@@ -95,6 +98,7 @@ describe('test notification utils', () => {
       'Test Title',
       'Test Body',
       { notificationType: 'test' },
+      false,
       0
     ).then(notification => {
       assert(notification.length === 0);
@@ -110,7 +114,7 @@ describe('test notification utils errors', () => {
       'Test Title',
       'Test Body',
       { notificationType: 'test' },
-      0
+      false
     ).then(notifications => {
       assert(notifications.length === 0);
       done();
@@ -127,7 +131,7 @@ describe('test notification utils errors', () => {
       'Test Title',
       'Test Body',
       { notificationType: 'test' },
-      0
+      false
     ).then(notifications => {
       assert.isArray(notifications);
       assert.lengthOf(notifications, 2);
