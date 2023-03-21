@@ -18,7 +18,10 @@ const createServer = ({
   // Middleware
   app.use(express.json()); // Parse JSON bodies
   app.use(cors()); // Enable CORS
+
+  // Security
   app.use(helmet());
+  app.disable('x-powered-by');
 
   // Set up bull board
   if (shouldRunBullBoard) {
