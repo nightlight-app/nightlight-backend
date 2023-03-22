@@ -36,7 +36,7 @@ const TEST_SAVED_GROUP_2: SavedGroup = {
 
 export const TEST_USER_1: User = {
   firebaseUid: 'FAKEUSERID1',
-  notificationToken: 'ExponentPushToken[TEST_TOKEN_06]',
+  notificationToken: undefined,
   imgUrlProfileSmall: 'www.smallProfileImage1.com',
   imgUrlProfileLarge: 'www.largeProfileImage1.com',
   imgUrlCover: 'www.coverImage1.com',
@@ -99,7 +99,7 @@ const TEST_SAVED_GROUP_4: SavedGroup = {
 
 export const TEST_USER_2: User = {
   firebaseUid: 'FAKEUSERID2',
-  notificationToken: 'ExponentPushToken[TEST_TOKEN_12]',
+  notificationToken: undefined,
   imgUrlProfileSmall: 'www.smallProfileImage2.com',
   imgUrlProfileLarge: 'www.largeProfileImage2.com',
   imgUrlCover: 'www.coverImage2.com',
@@ -121,7 +121,7 @@ export const TEST_USER_2: User = {
 
 export const TEST_USER_3: User = {
   firebaseUid: 'FAKEUSERID3',
-  notificationToken: 'ExponentPushToken[TEST_TOKEN_27]',
+  notificationToken: undefined,
   imgUrlProfileSmall: 'www.smallProfileImage3.com',
   imgUrlProfileLarge: 'www.largeProfileImage3.com',
   imgUrlCover: 'www.coverImage3.com',
@@ -143,7 +143,7 @@ export const TEST_USER_3: User = {
 
 export const TEST_USER_4: User = {
   firebaseUid: 'FAKEUSERID4',
-  notificationToken: 'ExponentPushToken[TEST_TOKEN_32]',
+  notificationToken: undefined,
   imgUrlProfileSmall: 'www.smallProfileImage4.com',
   imgUrlProfileLarge: 'www.largeProfileImage4.com',
   imgUrlCover: 'www.coverImage4.com',
@@ -162,7 +162,7 @@ export const TEST_USER_4: User = {
 
 export const TEST_USER_5: User = {
   firebaseUid: 'FAKEUSERID5',
-  notificationToken: 'ExponentPushToken[TEST_TOKEN_41]',
+  notificationToken: undefined,
   imgUrlProfileSmall: 'www.smallProfileImage5.com',
   imgUrlProfileLarge: 'www.largeProfileImage5.com',
   imgUrlCover: 'www.coverImage5.com',

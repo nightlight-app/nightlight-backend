@@ -420,11 +420,11 @@ export const requestFriend = async (req: Request, res: Response) => {
     // Send a notification to the friend that they have received a friend request
     sendNotifications(
       [friendId],
+      'New friend request! 👥',
       targetUser.firstName +
         ' ' +
         targetUser.lastName +
-        ' has sent you a friend request!',
-      '',
+        ' has sent you a friend request.',
       { notificationType: NotificationType.friendRequest },
       true
     );

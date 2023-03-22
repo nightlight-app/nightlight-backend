@@ -61,11 +61,11 @@ export const createGroup = async (req: Request, res: Response) => {
     // send notifications to all invited users that they have been invited to the group
     sendNotifications(
       [...stringIds],
+      'New group invite! 🎉',
       targetUser.firstName +
         ' ' +
         targetUser.lastName +
-        ' has invited you to join their group!',
-      '',
+        ' has invited you to join their group.',
       { notificationType: NotificationType.groupInvite },
       true
     );

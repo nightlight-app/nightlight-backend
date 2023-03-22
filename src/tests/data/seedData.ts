@@ -18,8 +18,7 @@ export const createUser = (
 ) => {
   return {
     firebaseUid: faker.random.alphaNumeric(32),
-    notificationToken:
-      'ExponentPushToken[' + faker.random.alphaNumeric(12) + ']',
+    notificationToken: undefined,
     imgUrlProfileSmall: faker.internet.url(),
     imgUrlProfileLarge: faker.internet.url(),
     imgUrlCover: faker.internet.url(),
