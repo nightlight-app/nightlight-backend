@@ -491,9 +491,9 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
 
 /**
  * Accepts a friend request for a user by updating both their friends and friendRequests arrays.
- * @param req - the Request object containing userId in the params and friendId in the query
- * @param res - the Response object sent back to the client
- * @returns Returns either an error response with a 400 or 500 status code and a message,
+ * @param {Request} req - the Request object containing userId in the params and friendId in the query
+ * @param {Response} res - the Response object sent back to the client
+ * @returns {Promise} Returns either an error response with a 400 or 500 status code and a message,
  * or a success response with a 200 status code and a message
  */
 export const declineFriendRequest = async (req: Request, res: Response) => {
@@ -534,6 +534,52 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
     return res
       .status(200)
       .send({ message: 'Successfully declined friend request!' });
+  } catch (error: any) {
+    return res.status(500).send({ message: error?.message });
+  }
+};
+
+/**
+ * Removes a friend from a user's friend list.
+ * @param {Request} req - The HTTP request object containing the user ID and friend ID to remove.
+ * @param {Response} res - The HTTP response object used to send status messages back to the client.
+ * @returns {Promise} The response object containing either a success or error message.
+ */
+export const removeFriend = async (req: Request, res: Response) => {
+  const userId = req.params.userId as string;
+  const friendId = req.query.friendId as string;
+
+  // Check if the provided userId is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  // Check if the provided friendId is valid
+  if (!mongoose.Types.ObjectId.isValid(friendId)) {
+    return res.status(400).send({ message: 'Invalid friend ID!' });
+  }
+
+  try {
+    const targetUser = await User.findByIdAndUpdate(userId, {
+      $pull: { friends: friendId },
+    });
+
+    // Check if the user exists
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    // Find the friend in the database and add the userId to their friend array
+    const targetFriendUser = await User.findByIdAndUpdate(friendId, {
+      $pull: { friends: userId },
+    });
+
+    // Check if the friend exists
+    if (targetFriendUser === null) {
+      return res.status(400).send({ message: 'Friend does not exist!' });
+    }
+
+    return res.status(200).send({ message: 'Successfully removed friend!' });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }

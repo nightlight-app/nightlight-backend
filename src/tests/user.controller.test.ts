@@ -421,6 +421,40 @@ describe('testing friend requests', () => {
         done();
       });
   });
+
+  // test friend removal
+  it('should remove a friend via PATCH /users/:userId/removeFriend', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId1}/removeFriend`)
+      .query({ friendId: userId2 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('should get a list of friends by user id via GET /users/:userId/friends', done => {
+    chai
+      .request(server)
+      .get(`/users/${userId2}/friends`)
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.friends).to.have.length(0);
+        done();
+      });
+  });
+
+  it('should get a list of friends by user id via GET /users/:userId/friends', done => {
+    chai
+      .request(server)
+      .get(`/users/${userId1}/friends`)
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.friends).to.have.length(0);
+        done();
+      });
+  });
 });
 
 /* TEST USER ERRORS */
