@@ -488,19 +488,16 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'Friend does not exist!' });
     }
 
-    sendNotificationToUser({
-      userId: friendId,
-      title: 'Friend request accepted! 👥',
-      body:
-        targetUser.firstName +
+    sendNotifications(
+      [friendId],
+      'Friend request accepted! 🎉',
+      targetUser.firstName +
         ' ' +
         targetUser.lastName +
         ' has accepted your friend request.',
-      data: {
-        notificationType: NotificationType.friendRequestAccepted,
-      } as NotificationData,
-      delay: 0,
-    } as MongoNotification);
+      { notificationType: NotificationType.friendRequestAccepted },
+      false
+    );
 
     return res
       .status(200)
@@ -552,19 +549,16 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
-    sendNotificationToUser({
-      userId: friendId,
-      title: 'Friend request declined! ❌',
-      body:
-        targetUser.firstName +
+    sendNotifications(
+      [friendId],
+      'Friend request declined! ❌',
+      targetFriend.firstName +
         ' ' +
-        targetUser.lastName +
+        targetFriend.lastName +
         ' has declined your friend request.',
-      data: {
-        notificationType: NotificationType.friendRequestAccepted,
-      } as NotificationData,
-      delay: 0,
-    } as MongoNotification);
+      { notificationType: NotificationType.friendRequestDeclined },
+      false
+    );
 
     return res
       .status(200)
