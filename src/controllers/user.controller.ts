@@ -7,7 +7,14 @@ import { upload } from '../config/cloudinary.config';
 import { MulterError } from 'multer';
 import streamifier from 'streamifier';
 import { IMAGE_UPLOAD_OPTIONS, NotificationType } from '../utils/constants';
-import { sendNotifications } from '../utils/notification.utils';
+import {
+  sendNotifications,
+  sendNotificationToUser,
+} from '../utils/notification.utils';
+import {
+  MongoNotification,
+  NotificationData,
+} from '../interfaces/Notification.interface';
 
 /**
  * Creates a new user in the database based on the information provided in the request body.
@@ -481,6 +488,20 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'Friend does not exist!' });
     }
 
+    sendNotificationToUser({
+      userId: friendId,
+      title: 'Friend request accepted! 👥',
+      body:
+        targetUser.firstName +
+        ' ' +
+        targetUser.lastName +
+        ' has accepted your friend request.',
+      data: {
+        notificationType: NotificationType.friendRequestAccepted,
+      } as NotificationData,
+      delay: 0,
+    } as MongoNotification);
+
     return res
       .status(200)
       .send({ message: 'Successfully accepted friend request!' });
@@ -530,6 +551,20 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
+
+    sendNotificationToUser({
+      userId: friendId,
+      title: 'Friend request declined! ❌',
+      body:
+        targetUser.firstName +
+        ' ' +
+        targetUser.lastName +
+        ' has declined your friend request.',
+      data: {
+        notificationType: NotificationType.friendRequestAccepted,
+      } as NotificationData,
+      delay: 0,
+    } as MongoNotification);
 
     return res
       .status(200)
