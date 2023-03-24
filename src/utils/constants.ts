@@ -3,9 +3,14 @@ import { MongoNotification } from '../interfaces/Notification.interface';
 import { User } from '../interfaces/User.interface';
 import { Venue } from '../interfaces/Venue.interface';
 
-// emoji reaction options
+/**
+ * Emoji reaction options
+ */
 export const REACTION_EMOJIS = ['🔥', '⚠️', '🛡', '💩', '🎉'];
 
+/**
+ * The necessary keys for a user object
+ */
 export const USER_KEYS = [
   '__v',
   '_id',
@@ -17,6 +22,9 @@ export const USER_KEYS = [
   'phone',
 ];
 
+/**
+ * The necessary keys for a group object
+ */
 export const GROUP_KEYS = [
   '__v',
   '_id',
@@ -27,8 +35,14 @@ export const GROUP_KEYS = [
   'expirationDatetime',
 ];
 
+/**
+ * The necessary keys for a venue object
+ */
 export const VENUE_KEYS = ['__v', '_id', 'name', 'address', 'location'];
 
+/**
+ * The necessary keys for a notification object
+ */
 export const NOTIFICATION_KEYS = [
   '__v',
   '_id',
@@ -38,9 +52,14 @@ export const NOTIFICATION_KEYS = [
   'data',
 ];
 
-// the name of the queue
+/**
+ * The name of the queue
+ */
 export const NIGHTLIGHT_QUEUE = 'nightlight-queue';
-// maximum file size for image upload in bytes
+
+/**
+ * Maximum file size for image upload in bytes
+ */
 export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 /**
