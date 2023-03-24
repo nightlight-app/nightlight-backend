@@ -47,3 +47,4 @@ jobs:
           npm test
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          ENVIRONMENT: 'development'
