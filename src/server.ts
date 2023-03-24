@@ -8,6 +8,9 @@ import { createBullBoardAdapter } from './queue/setup/bullboard.setup';
 import notificationsRouter from './routes/notifications.router';
 import helmet from 'helmet';
 import authenticateFirebaseToken from './middleware/auth.middleware';
+import { credential } from 'firebase-admin';
+import admin from 'firebase-admin';
+import { FIREBASE_ADMIN_CONFIG } from './utils/constants';
 
 const createServer = ({
   shouldRunBullBoard = true,
@@ -19,6 +22,12 @@ const createServer = ({
   // Middleware
   app.use(express.json()); // Parse JSON bodies
   app.use(cors()); // Enable CORS
+
+  if (!admin.apps.length) {
+    admin.initializeApp({
+      credential: credential.cert(FIREBASE_ADMIN_CONFIG),
+    });
+  }
 
   if (process.env.ENVIRONMENT !== 'development') {
     app.use(authenticateFirebaseToken); // Authenticate Firebase token

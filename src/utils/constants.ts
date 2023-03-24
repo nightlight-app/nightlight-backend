@@ -1,3 +1,4 @@
+import { ServiceAccount } from 'firebase-admin';
 import { Group } from '../interfaces/Group.interface';
 import { MongoNotification } from '../interfaces/Notification.interface';
 import { User } from '../interfaces/User.interface';
@@ -104,3 +105,30 @@ export enum NotificationType {
   groupInviteAccepted = 'groupInviteAccepted',
   groupInviteDeclined = 'groupInviteDeclined',
 }
+
+/**
+ * The Firebase admin configuration object.
+ * @type {Object}
+ * @property {string} type - The Firebase project's type.
+ * @property {string} project_id - The Firebase project ID.
+ * @property {string} private_key_id - The Firebase project's private key ID.
+ * @property {string} private_key - The Firebase project's private key.
+ * @property {string} client_email - The Firebase client email address.
+ * @property {string} client_id - The Firebase client ID.
+ * @property {string} auth_uri - The Firebase authorization URI.
+ * @property {string} token_uri - The Firebase token URI.
+ * @property {string} auth_provider_x509_cert_url - The Firebase auth provider's X.509 certificate URL.
+ * @property {string} client_x509_cert_url - The Firebase client's X.509 certificate URL.
+ */
+export const FIREBASE_ADMIN_CONFIG = {
+  type: process.env.FIREBASE_TYPE,
+  project_id: process.env.FIREBASE_PROJECT_ID,
+  private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
+  private_key: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/gm, '\n'),
+  client_email: process.env.FIREBASE_CLIENT_EMAIL,
+  client_id: process.env.FIREBASE_CLIENT_ID,
+  auth_uri: process.env.FIREBASE_AUTH_URI,
+  token_uri: process.env.FIREBASE_TOKEN_URI,
+  auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_CERT_URL,
+  client_x509_cert_url: process.env.FIREBASE_CLIENT_CERT_URL,
+} as ServiceAccount;
