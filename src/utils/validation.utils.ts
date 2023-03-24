@@ -10,10 +10,7 @@
  *
  * @return a comma-separated string of any missing keys, or null if all keys are present.
  */
-export const verifyKeys = <T extends Record<string, any>>(
-  obj: T,
-  keys: Array<keyof T>
-): string | null => {
+export const verifyKeys = (obj: any, keys: string[]): string | null => {
   const missingKeys = keys.filter(key => !obj.hasOwnProperty(key) || !obj[key]);
   return missingKeys.length > 0 ? missingKeys.join(', ') : null;
 };

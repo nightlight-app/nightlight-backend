@@ -18,6 +18,7 @@
     "seed": "nyc mocha --exit --timeout 8000 -r ts-node/register src/tests/seed.test.ts",
     "test:venue-utils": "nyc mocha --timeout 8000 --exit -r ts-node/register src/tests/venue.utils.test.ts",
     "test:notifs-utils": "nyc mocha --timeout 8000 --exit -r ts-node/register src/tests/notification.utils.test.ts",
+    "test:validation-utils": "nyc mocha --timeout 8000 --exit -r ts-node/register src/tests/validation.utils.test.ts",
     "test:venues": "nyc mocha --timeout 12000 --exit -r ts-node/register src/tests/venue.controller.test.ts",
     "test:users": "nyc mocha --timeout 8000 --exit -r ts-node/register src/tests/user.controller.test.ts",
     "test:groups": "nyc mocha --timeout 8000 --exit -r ts-node/register src/tests/group.controller.test.ts",

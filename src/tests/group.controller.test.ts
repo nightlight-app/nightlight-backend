@@ -3,14 +3,14 @@ import createServer from '../server';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import {
-  GROUP_KEYS,
+  GROUP_KEYS_TEST,
   TEST_GROUP2,
   TEST_USER_1,
   TEST_USER_2,
   TEST_USER_3,
   TEST_USER_4,
   TEST_USER_5,
-  USER_KEYS,
+  USER_KEYS_TEST,
 } from './data/testData';
 import { ObjectId } from 'mongodb';
 import { Server } from 'http';
@@ -50,7 +50,7 @@ describe('testing group actions', () => {
       .then(res => {
         userIdFriend1 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -64,7 +64,7 @@ describe('testing group actions', () => {
       .then(res => {
         userIdFriend2 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -78,7 +78,7 @@ describe('testing group actions', () => {
       .then(res => {
         userIdFriend3 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -92,7 +92,7 @@ describe('testing group actions', () => {
       .then(res => {
         userIdFriend4 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -106,7 +106,7 @@ describe('testing group actions', () => {
       .then(res => {
         userIdFriend5 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -129,7 +129,7 @@ describe('testing group actions', () => {
       .then(res => {
         userIdMain = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -148,7 +148,7 @@ describe('testing group actions', () => {
       .then(res => {
         groupId = res.body.group._id;
         expect(res).to.have.status(200);
-        expect(res.body.group).to.have.keys(GROUP_KEYS);
+        expect(res.body.group).to.have.keys(GROUP_KEYS_TEST);
         done();
       });
   });
@@ -160,7 +160,7 @@ describe('testing group actions', () => {
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.group).to.have.keys(GROUP_KEYS);
+        expect(res.body.group).to.have.keys(GROUP_KEYS_TEST);
         expect(res.body.group.members).to.include(userIdMain);
         expect(res.body.group.invitedMembers).to.include(userIdFriend1);
         expect(res.body.group.invitedMembers).to.include(userIdFriend2);
@@ -176,7 +176,7 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend1 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         expect(res.body.user.invitedGroups).to.include(groupId);
         done();
       });
@@ -189,7 +189,7 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend2 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         expect(res.body.user.invitedGroups).to.include(groupId);
         done();
       });
@@ -202,7 +202,7 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend5 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         expect(res.body.user.invitedGroups).to.include(groupId);
         done();
       });
@@ -226,7 +226,7 @@ describe('testing group actions', () => {
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.group).to.have.keys(GROUP_KEYS);
+        expect(res.body.group).to.have.keys(GROUP_KEYS_TEST);
         expect(res.body.group.members).to.include(userIdMain);
         expect(res.body.group.invitedMembers).to.include(userIdFriend1);
         expect(res.body.group.invitedMembers).to.include(userIdFriend2);
@@ -256,7 +256,7 @@ describe('testing group actions', () => {
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.group).to.have.keys(GROUP_KEYS);
+        expect(res.body.group).to.have.keys(GROUP_KEYS_TEST);
         expect(res.body.group.members).to.include(userIdMain);
         expect(res.body.group.invitedMembers).to.include(userIdFriend1);
         expect(res.body.group.invitedMembers).to.include(userIdFriend2);
@@ -297,7 +297,7 @@ describe('testing group actions', () => {
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.group).to.have.keys(GROUP_KEYS);
+        expect(res.body.group).to.have.keys(GROUP_KEYS_TEST);
         expect(res.body.group.members).to.include(userIdMain);
         expect(res.body.group.members).to.include(userIdFriend2);
         expect(res.body.group.members).to.include(userIdFriend5);
@@ -313,7 +313,7 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend5 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys([...USER_KEYS, 'currentGroup']);
+        expect(res.body.user).to.have.keys([...USER_KEYS_TEST, 'currentGroup']);
         expect(res.body.user.invitedGroups).to.have.length(0);
         expect(res.body.user.currentGroup).to.equal(groupId);
         done();
@@ -338,7 +338,7 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend5 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys([...USER_KEYS]);
+        expect(res.body.user).to.have.keys([...USER_KEYS_TEST]);
         expect(res.body.user.invitedGroups).to.have.length(0);
         expect(res.body.user.currentGroup).to.be.undefined;
         done();
@@ -353,7 +353,7 @@ describe('testing group actions', () => {
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.group).to.have.keys(GROUP_KEYS);
+        expect(res.body.group).to.have.keys(GROUP_KEYS_TEST);
         expect(res.body.group.members).to.include(userIdMain);
         expect(res.body.group.members).to.include(userIdFriend2);
         expect(res.body.group.members).to.not.include(userIdFriend5);
@@ -369,7 +369,7 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend2 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys([...USER_KEYS, 'currentGroup']);
+        expect(res.body.user).to.have.keys([...USER_KEYS_TEST, 'currentGroup']);
         expect(res.body.user.invitedGroups).to.have.length(0);
         expect(res.body.user.currentGroup).to.equal(groupId);
         done();
@@ -383,7 +383,7 @@ describe('testing group actions', () => {
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.group).to.have.keys(GROUP_KEYS);
+        expect(res.body.group).to.have.keys(GROUP_KEYS_TEST);
         setTimeout(function () {
           done();
         }, 6000);
@@ -412,7 +412,7 @@ describe('testing group errors', () => {
       .then(res => {
         userId = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });

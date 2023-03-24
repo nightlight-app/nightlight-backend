@@ -4,11 +4,11 @@ import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import {
   createTestReaction,
-  REACTION_KEYS,
+  REACTION_KEYS_TEST,
   TEST_USER_1,
   TEST_VENUE,
-  USER_KEYS,
-  VENUE_KEYS,
+  USER_KEYS_TEST,
+  VENUE_KEYS_TEST,
 } from './data/testData';
 import { ObjectId } from 'mongodb';
 import { decodeEmoji } from '../utils/venue.utils';
@@ -49,7 +49,7 @@ describe('testing venue with reactions', () => {
       .then(res => {
         userId = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -63,7 +63,7 @@ describe('testing venue with reactions', () => {
       .then(res => {
         venueId = res.body.venue._id;
         expect(res).to.have.status(201);
-        expect(res.body.venue).to.have.keys(VENUE_KEYS);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_TEST);
         done();
       });
   });
@@ -137,20 +137,20 @@ describe('testing venue with reactions', () => {
       .query({ userId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.venue).to.have.keys(VENUE_KEYS);
-        expect(res.body.venue.reactions['🔥']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_TEST);
+        expect(res.body.venue.reactions['🔥']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['🔥'].count).to.equal(1);
         expect(res.body.venue.reactions['🔥'].didReact).to.equal(true);
-        expect(res.body.venue.reactions['🎉']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['🎉']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['🎉'].count).to.equal(1);
         expect(res.body.venue.reactions['🎉'].didReact).to.equal(true);
-        expect(res.body.venue.reactions['🛡']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['🛡']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['🛡'].count).to.equal(1);
         expect(res.body.venue.reactions['🛡'].didReact).to.equal(false);
-        expect(res.body.venue.reactions['💩']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['💩']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['💩'].count).to.equal(1);
         expect(res.body.venue.reactions['💩'].didReact).to.equal(false);
-        expect(res.body.venue.reactions['⚠️']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['⚠️']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['⚠️'].count).to.equal(0);
         expect(res.body.venue.reactions['⚠️'].didReact).to.equal(false);
         done();
@@ -187,20 +187,20 @@ describe('testing venue with reactions', () => {
       .send()
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.venue).to.have.keys(VENUE_KEYS);
-        expect(res.body.venue.reactions['🔥']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_TEST);
+        expect(res.body.venue.reactions['🔥']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['🔥'].count).to.equal(0);
         expect(res.body.venue.reactions['🔥'].didReact).to.equal(false);
-        expect(res.body.venue.reactions['🎉']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['🎉']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['🎉'].count).to.equal(1);
         expect(res.body.venue.reactions['🎉'].didReact).to.equal(true);
-        expect(res.body.venue.reactions['🛡']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['🛡']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['🛡'].count).to.equal(1);
         expect(res.body.venue.reactions['🛡'].didReact).to.equal(false);
-        expect(res.body.venue.reactions['💩']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['💩']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['💩'].count).to.equal(0);
         expect(res.body.venue.reactions['💩'].didReact).to.equal(false);
-        expect(res.body.venue.reactions['⚠️']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['⚠️']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['⚠️'].count).to.equal(0);
         expect(res.body.venue.reactions['⚠️'].didReact).to.equal(false);
         done();
@@ -237,20 +237,20 @@ describe('testing venue with reactions', () => {
       .query({ userId: userId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.venue).to.have.keys(VENUE_KEYS);
-        expect(res.body.venue.reactions['🔥']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_TEST);
+        expect(res.body.venue.reactions['🔥']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['🔥'].count).to.equal(0);
         expect(res.body.venue.reactions['🔥'].didReact).to.equal(false);
-        expect(res.body.venue.reactions['🎉']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['🎉']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['🎉'].count).to.equal(0);
         expect(res.body.venue.reactions['🎉'].didReact).to.equal(false);
-        expect(res.body.venue.reactions['🛡']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['🛡']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['🛡'].count).to.equal(0);
         expect(res.body.venue.reactions['🛡'].didReact).to.equal(false);
-        expect(res.body.venue.reactions['💩']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['💩']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['💩'].count).to.equal(0);
         expect(res.body.venue.reactions['💩'].didReact).to.equal(false);
-        expect(res.body.venue.reactions['⚠️']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['⚠️']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['⚠️'].count).to.equal(0);
         expect(res.body.venue.reactions['⚠️'].didReact).to.equal(false);
         done();
@@ -280,20 +280,20 @@ describe('testing venue with reactions', () => {
       .query({ userId: userId6 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.venue).to.have.keys(VENUE_KEYS);
-        expect(res.body.venue.reactions['🔥']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_TEST);
+        expect(res.body.venue.reactions['🔥']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['🔥'].count).to.equal(0);
         expect(res.body.venue.reactions['🔥'].didReact).to.equal(false);
-        expect(res.body.venue.reactions['🎉']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['🎉']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['🎉'].count).to.equal(0);
         expect(res.body.venue.reactions['🎉'].didReact).to.equal(false);
-        expect(res.body.venue.reactions['🛡']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['🛡']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['🛡'].count).to.equal(0);
         expect(res.body.venue.reactions['🛡'].didReact).to.equal(false);
-        expect(res.body.venue.reactions['💩']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['💩']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['💩'].count).to.equal(1);
         expect(res.body.venue.reactions['💩'].didReact).to.equal(true);
-        expect(res.body.venue.reactions['⚠️']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['⚠️']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['⚠️'].count).to.equal(0);
         expect(res.body.venue.reactions['⚠️'].didReact).to.equal(false);
         setTimeout(() => {
@@ -309,20 +309,20 @@ describe('testing venue with reactions', () => {
       .query({ userId: userId6 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.venue).to.have.keys(VENUE_KEYS);
-        expect(res.body.venue.reactions['🔥']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_TEST);
+        expect(res.body.venue.reactions['🔥']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['🔥'].count).to.equal(0);
         expect(res.body.venue.reactions['🔥'].didReact).to.equal(false);
-        expect(res.body.venue.reactions['🎉']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['🎉']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['🎉'].count).to.equal(0);
         expect(res.body.venue.reactions['🎉'].didReact).to.equal(false);
-        expect(res.body.venue.reactions['🛡']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['🛡']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['🛡'].count).to.equal(0);
         expect(res.body.venue.reactions['🛡'].didReact).to.equal(false);
-        expect(res.body.venue.reactions['💩']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['💩']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['💩'].count).to.equal(0);
         expect(res.body.venue.reactions['💩'].didReact).to.equal(false);
-        expect(res.body.venue.reactions['⚠️']).to.have.keys(REACTION_KEYS);
+        expect(res.body.venue.reactions['⚠️']).to.have.keys(REACTION_KEYS_TEST);
         expect(res.body.venue.reactions['⚠️'].count).to.equal(0);
         expect(res.body.venue.reactions['⚠️'].didReact).to.equal(false);
         done();
@@ -361,7 +361,7 @@ describe('testing venue without reactions', () => {
       .then(res => {
         userId = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -375,7 +375,7 @@ describe('testing venue without reactions', () => {
       .then(res => {
         venueId = res.body.venue._id;
         expect(res).to.have.status(201);
-        expect(res.body.venue).to.have.keys(VENUE_KEYS);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_TEST);
         done();
       });
   });
@@ -387,7 +387,7 @@ describe('testing venue without reactions', () => {
       .query({ userId: userId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.venue).to.have.keys(VENUE_KEYS);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_TEST);
         done();
       });
   });
@@ -421,7 +421,7 @@ describe('testing venue without reactions', () => {
       .query({ userId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.venue).to.have.keys(VENUE_KEYS);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_TEST);
         done();
       });
   });
@@ -455,7 +455,7 @@ describe('testing venue without reactions', () => {
       .query({ userId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.venue).to.have.keys(VENUE_KEYS);
+        expect(res.body.venue).to.have.keys(VENUE_KEYS_TEST);
         done();
       });
   });
@@ -468,7 +468,7 @@ describe('testing venue without reactions', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.venues).to.have.length(10);
-        expect(res.body.venues[0]).to.have.keys(VENUE_KEYS);
+        expect(res.body.venues[0]).to.have.keys(VENUE_KEYS_TEST);
         done();
       });
   });

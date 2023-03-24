@@ -8,7 +8,11 @@ import {
   createVenue,
   SEED_VENUES,
 } from './data/seedData';
-import { GROUP_KEYS, USER_KEYS, VENUE_KEYS } from './data/testData';
+import {
+  GROUP_KEYS_TEST,
+  USER_KEYS_TEST,
+  VENUE_KEYS_TEST,
+} from './data/testData';
 import User from '../models/User.model';
 import Group from '../models/Group.model';
 import Venue from '../models/Venue.model';
@@ -67,7 +71,10 @@ describe('seed database for prod', () => {
         .then(res => {
           userIds.push(new mongoose.Types.ObjectId(res.body.user._id));
           expect(res).to.have.status(201);
-          expect(res.body.user).to.have.keys([...USER_KEYS, 'currentGroup']);
+          expect(res.body.user).to.have.keys([
+            ...USER_KEYS_TEST,
+            'currentGroup',
+          ]);
           done();
         });
     });
@@ -84,7 +91,7 @@ describe('seed database for prod', () => {
       .then(res => {
         mainUserId = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -102,7 +109,7 @@ describe('seed database for prod', () => {
         groupId = res.body.group._id;
         expect(res).to.have.status(200);
         expect(res.body.group).to.have.keys([
-          ...GROUP_KEYS,
+          ...GROUP_KEYS_TEST,
           'expectedDestination',
         ]);
         done();
@@ -139,7 +146,7 @@ describe('seed database for prod', () => {
         .then(res => {
           venueIds.push(new mongoose.Types.ObjectId(res.body.venue._id));
           expect(res).to.have.status(201);
-          expect(res.body.venue).to.have.keys(VENUE_KEYS);
+          expect(res.body.venue).to.have.keys(VENUE_KEYS_TEST);
           done();
         });
     });

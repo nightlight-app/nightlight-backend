@@ -1,5 +1,42 @@
+import { Group } from '../interfaces/Group.interface';
+import { MongoNotification } from '../interfaces/Notification.interface';
+import { User } from '../interfaces/User.interface';
+import { Venue } from '../interfaces/Venue.interface';
+
 // emoji reaction options
 export const REACTION_EMOJIS = ['🔥', '⚠️', '🛡', '💩', '🎉'];
+
+export const USER_KEYS = [
+  '__v',
+  '_id',
+  'birthday',
+  'email',
+  'firebaseUid',
+  'firstName',
+  'lastName',
+  'phone',
+];
+
+export const GROUP_KEYS = [
+  '__v',
+  '_id',
+  'name',
+  'members',
+  'invitedMembers',
+  'creationDatetime',
+  'expirationDatetime',
+];
+
+export const VENUE_KEYS = ['__v', '_id', 'name', 'address', 'location'];
+
+export const NOTIFICATION_KEYS = [
+  '__v',
+  '_id',
+  'userId',
+  'title',
+  'body',
+  'data',
+];
 
 // the name of the queue
 export const NIGHTLIGHT_QUEUE = 'nightlight-queue';

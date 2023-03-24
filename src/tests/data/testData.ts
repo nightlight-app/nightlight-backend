@@ -1,10 +1,14 @@
 import mongoose from 'mongoose';
 import { Group } from '../../interfaces/Group.interface';
 import { LastActive } from '../../interfaces/LastActive.interface';
+import {
+  MongoNotification,
+  NotificationData,
+} from '../../interfaces/Notification.interface';
 import { SavedGroup } from '../../interfaces/SavedGroup.interface';
 import { User } from '../../interfaces/User.interface';
 import { Venue, VenueReaction } from '../../interfaces/Venue.interface';
-import { REACTION_EMOJIS } from '../../utils/constants';
+import { NotificationType, REACTION_EMOJIS } from '../../utils/constants';
 import { Emoji } from '../../utils/types';
 
 /* User 1 */
@@ -213,6 +217,18 @@ export const TEST_VENUE: Venue = {
   reactions: [],
 };
 
+/* Notification */
+export const TEST_NOTIFICATION: MongoNotification = {
+  _id: new mongoose.Types.ObjectId(),
+  userId: new mongoose.Types.ObjectId(123).toString(),
+  title: 'Friend Request',
+  body: 'You have a friend request!',
+  data: {
+    notificationType: NotificationType.friendRequest,
+  } as NotificationData,
+  delay: 0,
+};
+
 /* Reactions */
 export const createTestReaction = (userId: string | number, emoji: Emoji) => {
   return {
@@ -223,7 +239,7 @@ export const createTestReaction = (userId: string | number, emoji: Emoji) => {
 
 /* KEYS FOR TESTING */
 // TODO: can these be enums?
-export const USER_KEYS = [
+export const USER_KEYS_TEST = [
   '__v',
   '_id',
   'birthday',
@@ -242,7 +258,7 @@ export const USER_KEYS = [
   'savedGroups',
 ];
 
-export const GROUP_KEYS = [
+export const GROUP_KEYS_TEST = [
   '__v',
   '_id',
   'name',
@@ -252,7 +268,7 @@ export const GROUP_KEYS = [
   'expirationDatetime',
 ];
 
-export const VENUE_KEYS = [
+export const VENUE_KEYS_TEST = [
   '__v',
   '_id',
   'name',
@@ -261,7 +277,7 @@ export const VENUE_KEYS = [
   'reactions',
 ];
 
-export const NOTIFICATION_KEYS = [
+export const NOTIFICATION_KEYS_TEST = [
   '__v',
   '_id',
   'userId',
@@ -271,8 +287,8 @@ export const NOTIFICATION_KEYS = [
   'delay',
 ];
 
-export const REACTION_KEYS = ['count', 'didReact'];
+export const REACTION_KEYS_TEST = ['count', 'didReact'];
 
-export const VENUE_KEYS_EMOJIS = [...REACTION_EMOJIS];
+export const VENUE_KEYS_EMOJIS_TEST = [...REACTION_EMOJIS];
 
 export const SAVED_GROUP_KEYS = ['_id', 'name', 'users'];

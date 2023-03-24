@@ -11,7 +11,7 @@ import {
   TEST_USER_4,
   TEST_USER_5,
   UPDATE_USER_1_TO_USER_2,
-  USER_KEYS,
+  USER_KEYS_TEST,
 } from './data/testData';
 import { ObjectId } from 'mongodb';
 import { Server } from 'http';
@@ -86,7 +86,7 @@ describe('testing user actions', () => {
         expect(user).to.be.an('object');
         expect(user).to.have.property('_id');
         expect(user.email).to.equal(UPDATE_USER_1_TO_USER_2.email);
-        expect(user).to.have.keys(USER_KEYS);
+        expect(user).to.have.keys(USER_KEYS_TEST);
         done();
       })
       .catch(err => done(err));
@@ -140,7 +140,7 @@ describe('testing save groups', () => {
       .then(res => {
         userId = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -164,7 +164,7 @@ describe('testing save groups', () => {
       .then(res => {
         groupId = res.body.user.savedGroups[2]._id;
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         expect(res.body.user.savedGroups[2]).to.have.keys(SAVED_GROUP_KEYS);
         expect(res.body.user.savedGroups[2].name).to.equal('Test group');
         expect(res.body.user.savedGroups[2].users).to.have.length(3);
@@ -191,7 +191,7 @@ describe('testing save groups', () => {
       .query({ userId: userId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         expect(res.body.user.savedGroups).to.have.length(2);
         done();
       });
@@ -221,7 +221,7 @@ describe('testing save groups', () => {
       .then(res => {
         userId2 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         testData.friends?.push(new mongoose.Types.ObjectId(userId2!));
         done();
       });
@@ -237,7 +237,7 @@ describe('testing save groups', () => {
         userId3 = res.body.user._id;
         testData.friends?.push(new mongoose.Types.ObjectId(userId3!));
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -251,7 +251,7 @@ describe('testing save groups', () => {
       .then(res => {
         userId1 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -278,7 +278,7 @@ describe('testing friend requests', () => {
       .then(res => {
         userId1 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -292,7 +292,7 @@ describe('testing friend requests', () => {
       .then(res => {
         userId2 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -306,7 +306,7 @@ describe('testing friend requests', () => {
       .then(res => {
         userId3 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -468,7 +468,7 @@ describe('testing User Error', () => {
       .then(res => {
         userId1 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -492,7 +492,7 @@ describe('testing User Error', () => {
       .then(res => {
         userId1 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -538,7 +538,7 @@ describe('testing User Error', () => {
       .query({ userId: userId1 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
