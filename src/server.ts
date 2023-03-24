@@ -7,6 +7,7 @@ import venuesRouter from './routes/venues.router';
 import { createBullBoardAdapter } from './queue/setup/bullboard.setup';
 import notificationsRouter from './routes/notifications.router';
 import helmet from 'helmet';
+import authenticateFirebaseToken from './middleware/auth.middleware';
 
 const createServer = ({
   shouldRunBullBoard = true,
@@ -18,6 +19,10 @@ const createServer = ({
   // Middleware
   app.use(express.json()); // Parse JSON bodies
   app.use(cors()); // Enable CORS
+
+  if (process.env.ENVIRONMENT !== 'development') {
+    app.use(authenticateFirebaseToken); // Authenticate Firebase token
+  }
 
   // Security
   app.use(helmet());

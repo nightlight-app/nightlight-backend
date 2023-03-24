@@ -132,6 +132,21 @@ The worker functions in worker.ts do the actions based on the jobs popped off th
 ### Tests:
 In group.controller.test.ts at the end of the first describe block you can see that we get the group (which should be successful) and delay the tests for 5000 milliseconds. When we get the group again it should not exist since the delay in the queue was set to 3000 milliseconds in the createGroup function in group.controller.ts. We'll have to modify this in the future to do the actual delay.
 
+# Authorization
+---
+
+When sending any request, be sure to include the firebase id in the headers of the request.
+Also, make sure the environment variable in the .env is sent to anything but `'development'`.
+```tsx
+fetch(url, {
+  headers: {
+    'Authorization': `Bearer ${firebaseId}`
+  }
+}).then((response) => {
+    // code
+});
+```
+
 # Notifications
 ---
 ### Notification Collection and Interfaces
