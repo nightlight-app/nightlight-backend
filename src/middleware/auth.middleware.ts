@@ -9,11 +9,11 @@ interface CustomRequest extends Request {
 // Initialize Firebase app
 admin.initializeApp();
 
-function authenticateFirebaseToken(
+export const authenticateFirebaseToken = (
   req: CustomRequest,
   res: Response,
   next: NextFunction
-) {
+) => {
   // Get the Authorization header from the request
   const authHeader = req.headers['authorization'];
 
@@ -41,6 +41,4 @@ function authenticateFirebaseToken(
       console.error('Error verifying Firebase token:', error);
       return res.status(401).send('Invalid Firebase token');
     });
-}
-
-export default authenticateFirebaseToken;
+};

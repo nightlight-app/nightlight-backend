@@ -7,10 +7,10 @@ import venuesRouter from './routes/venues.router';
 import { createBullBoardAdapter } from './queue/setup/bullboard.setup';
 import notificationsRouter from './routes/notifications.router';
 import helmet from 'helmet';
-import authenticateFirebaseToken from './middleware/auth.middleware';
 import { credential } from 'firebase-admin';
 import admin from 'firebase-admin';
 import { FIREBASE_ADMIN_CONFIG } from './utils/constants';
+import { authenticateFirebaseToken } from './middleware/auth.middleware';
 
 const createServer = ({
   shouldRunBullBoard = true,
