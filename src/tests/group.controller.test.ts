@@ -212,6 +212,7 @@ describe('testing group actions', () => {
     chai
       .request(server)
       .patch(`/groups/${groupId}/inviteMembers`)
+      .query({ userId: userIdMain })
       .send([userIdFriend3])
       .then(res => {
         expect(res).to.have.status(200);

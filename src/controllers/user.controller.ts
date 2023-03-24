@@ -284,6 +284,22 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'Group does not exist!' });
     }
 
+    // send notifications to all invited users that they have been invited to the group
+    sendNotifications(
+      [
+        ...targetGroup.members
+          .map(objectId => objectId.toString())
+          .filter(id => id !== userId),
+      ],
+      'New group member! 😎',
+      targetUser.firstName +
+        ' ' +
+        targetUser.lastName +
+        ' has joined your group.',
+      { notificationType: NotificationType.groupInviteAccepted },
+      true
+    );
+
     return res
       .status(200)
       .send({ message: 'Successfully accepted invitation to group!' });

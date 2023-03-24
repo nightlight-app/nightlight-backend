@@ -1,8 +1,4 @@
 import { ServiceAccount } from 'firebase-admin';
-import { Group } from '../interfaces/Group.interface';
-import { MongoNotification } from '../interfaces/Notification.interface';
-import { User } from '../interfaces/User.interface';
-import { Venue } from '../interfaces/Venue.interface';
 
 /**
  * Emoji reaction options
@@ -104,6 +100,7 @@ export enum NotificationType {
   groupInvite = 'groupInvite',
   groupInviteAccepted = 'groupInviteAccepted',
   groupInviteDeclined = 'groupInviteDeclined',
+  groupExpired = 'groupExpired',
 }
 
 /**

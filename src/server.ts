@@ -23,12 +23,14 @@ const createServer = ({
   app.use(express.json()); // Parse JSON bodies
   app.use(cors()); // Enable CORS
 
+  // Initialize Firebase app
   if (!admin.apps.length) {
     admin.initializeApp({
       credential: credential.cert(FIREBASE_ADMIN_CONFIG),
     });
   }
 
+  // Authenticate Firebase token
   if (process.env.ENVIRONMENT !== 'development') {
     app.use(authenticateFirebaseToken); // Authenticate Firebase token
   }

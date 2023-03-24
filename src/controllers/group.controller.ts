@@ -157,10 +157,17 @@ export const inviteMembersToExistingGroup = async (
 ) => {
   const users = req.body;
   const groupId = req.params?.groupId;
+  const userId = req.query.userId as string;
+
   try {
     // check if group id is valid
     if (!mongoose.Types.ObjectId.isValid(groupId)) {
       return res.status(400).send({ message: 'Invalid group ID!' });
+    }
+
+    // check if user id is valid
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).send({ message: 'Invalid user ID!' });
     }
 
     // add users to the group's invitedMembers array
@@ -175,6 +182,28 @@ export const inviteMembersToExistingGroup = async (
 
     // invite all users in the invitedMembers array to the group
     const result = inviteUsersToGroup(groupId, users);
+
+    // get target user
+    const targetUser = await User.findById(userId);
+
+    // check if user exists
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    if (result.status == 200) {
+      // send notifications to all invited users that they have been invited to the group
+      sendNotifications(
+        [...users],
+        'New group invite! 🎉',
+        targetUser.firstName +
+          ' ' +
+          targetUser.lastName +
+          ' has invited you to join their group.',
+        { notificationType: NotificationType.groupInvite },
+        true
+      );
+    }
 
     return res
       .status(result.status)
