@@ -306,6 +306,62 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
   }
 };
 
+export const declineGroupInvitation = async (req: Request, res: Response) => {
+  const userId = req.params.userId as string;
+  const groupId = req.query.groupId as string;
+
+  // Check if the provided userId is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  // Check if the provided groupId is valid
+  if (!mongoose.Types.ObjectId.isValid(groupId)) {
+    return res.status(400).send({ message: 'Invalid group ID!' });
+  }
+
+  try {
+    // Remove groupId from invited groups
+    const targetGroup = await Group.findByIdAndUpdate(groupId, {
+      $pull: { invitedMembers: userId },
+    });
+
+    // Check if the group exists
+    if (targetGroup === null) {
+      return res.status(400).send({ message: 'Group does not exist!' });
+    }
+
+    // Find target user
+    const targetUser = await User.findById(userId);
+
+    // Check if the user exists
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    sendNotifications(
+      [
+        ...targetGroup.members
+          .map(objectId => objectId.toString())
+          .filter(id => id !== userId),
+      ],
+      'Group invitation declined 😢',
+      targetUser.firstName +
+        ' ' +
+        targetUser.lastName +
+        ' rejected invitation to group.',
+      { notificationType: NotificationType.groupInviteDeclined },
+      false
+    );
+
+    return res
+      .status(200)
+      .send({ message: 'Successfully declined invitation!' });
+  } catch (error: any) {
+    return res.status(500).send({ message: error.message });
+  }
+};
+
 /**
  * An async function that enables a user to leave a group they are currently in
  * @param {Request} req - Express request object.

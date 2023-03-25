@@ -111,8 +111,22 @@ describe('testing group actions', () => {
       });
   });
 
+  let userIdFriend6: string;
+  it('should create user5 via POST /users/ (friend5)', done => {
+    chai
+      .request(server)
+      .post('/users/')
+      .send(TEST_USER_5)
+      .then(res => {
+        userIdFriend6 = res.body.user._id;
+        expect(res).to.have.status(201);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
+        done();
+      });
+  });
+
   let userIdMain: string;
-  it('should create main user with 5 friends via POST /users/', done => {
+  it('should create main user with 6 friends via POST /users/', done => {
     chai
       .request(server)
       .post('/users/')
@@ -124,6 +138,7 @@ describe('testing group actions', () => {
           userIdFriend3,
           userIdFriend4,
           userIdFriend5,
+          userIdFriend6,
         ],
       })
       .then(res => {
@@ -208,12 +223,24 @@ describe('testing group actions', () => {
       });
   });
 
-  it('should invite a new member to a group via PATCH /group/{groupId}/inviteMembers', done => {
+  it('should invite a new member to a group via PATCH /group/{groupId}/inviteMembers (friend3)', done => {
     chai
       .request(server)
       .patch(`/groups/${groupId}/inviteMembers`)
       .query({ userId: userIdMain })
       .send([userIdFriend3])
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('should invite a new member to a group via PATCH /group/{groupId}/inviteMembers (friend6)', done => {
+    chai
+      .request(server)
+      .patch(`/groups/${groupId}/inviteMembers`)
+      .query({ userId: userIdMain })
+      .send([userIdFriend6])
       .then(res => {
         expect(res).to.have.status(200);
         done();
@@ -234,6 +261,7 @@ describe('testing group actions', () => {
         expect(res.body.group.invitedMembers).to.include(userIdFriend3);
         expect(res.body.group.invitedMembers).to.not.include(userIdFriend4);
         expect(res.body.group.invitedMembers).to.include(userIdFriend5);
+        expect(res.body.group.invitedMembers).to.include(userIdFriend6);
         done();
       });
   });
@@ -243,6 +271,18 @@ describe('testing group actions', () => {
       .request(server)
       .patch(`/groups/${groupId}/removeMemberInvitation`)
       .query({ userId: userIdFriend3 })
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('should decline a member invitation via PATCH /users/${userId}/declineGroupInvitation (friend6)', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userIdFriend6}/declineGroupInvitation`)
+      .query({ groupId: groupId })
       .send()
       .then(res => {
         expect(res).to.have.status(200);
@@ -263,6 +303,7 @@ describe('testing group actions', () => {
         expect(res.body.group.invitedMembers).to.include(userIdFriend2);
         expect(res.body.group.invitedMembers).to.not.include(userIdFriend3);
         expect(res.body.group.invitedMembers).to.not.include(userIdFriend4);
+        expect(res.body.group.invitedMembers).to.not.include(userIdFriend6);
         expect(res.body.group.invitedMembers).to.include(userIdFriend5);
         done();
       });
