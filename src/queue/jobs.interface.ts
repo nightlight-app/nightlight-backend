@@ -1,4 +1,4 @@
-import { Emoji } from '../utils/types';
+import { Emoji } from '../utils/venue.utils';
 
 /**
  * The list of jobs that the queue can handle
