@@ -7,15 +7,8 @@ import { upload } from '../config/cloudinary.config';
 import { MulterError } from 'multer';
 import streamifier from 'streamifier';
 import { IMAGE_UPLOAD_OPTIONS } from '../utils/constants';
-import {
-  sendNotifications,
-  sendNotificationToUser,
-} from '../utils/notification.utils';
-import {
-  MongoNotification,
-  NotificationData,
-  NotificationType,
-} from '../interfaces/Notification.interface';
+import { sendNotifications } from '../utils/notification.utils';
+import { NotificationType } from '../interfaces/Notification.interface';
 
 /**
  * Creates a new user in the database based on the information provided in the request body.
@@ -69,7 +62,7 @@ export const getUser = async (req: Request, res: Response) => {
 
   try {
     // Find the user in the database and omit the notificationToken from the response
-    const targetUser = await User.find(
+    const targetUser = await User.findOne(
       {
         [queryType]: queryType === '_id' ? userId : firebaseUid,
       },
@@ -77,13 +70,13 @@ export const getUser = async (req: Request, res: Response) => {
     );
 
     // Check if the user exists
-    if (targetUser.length === 0 || !targetUser) {
+    if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
     return res
       .status(200)
-      .send({ message: 'Successfully found user!', user: targetUser[0] });
+      .send({ message: 'Successfully found user!', user: targetUser });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }
