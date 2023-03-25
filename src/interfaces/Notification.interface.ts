@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { Document } from 'mongoose';
 
 /**
  * @interface MongoNotification
@@ -47,4 +48,34 @@ export interface ExpoNotification {
  */
 export interface NotificationData {
   notificationType: string;
+}
+
+/**
+ * @enum NotificationType
+ * Defines the types of notification available
+ *
+ * @options friendRequest, friendRequestAccepted, friendRequestDeclined, groupInvite, groupInviteAccepted, groupInviteDeclined, groupExpired
+ */
+export enum NotificationType {
+  friendRequest = 'friendRequest',
+  friendRequestAccepted = 'friendRequestAccepted',
+  friendRequestDeclined = 'friendRequestDeclined',
+  groupInvite = 'groupInvite',
+  groupInviteAccepted = 'groupInviteAccepted',
+  groupInviteDeclined = 'groupInviteDeclined',
+  groupExpired = 'groupExpired',
+}
+
+/**
+ * @interface NotificationDocument
+ *
+ * This interface represents a notification document that represents the document in the response from the database.
+ * It contains information such as the user ID, title, body, data, and delay for displaying notifications.
+ */
+export interface NotificationDocument extends Document {
+  userId: mongoose.Types.ObjectId;
+  title: string;
+  body: string;
+  data: NotificationData;
+  delay: number;
 }

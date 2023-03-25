@@ -105,7 +105,7 @@ export const addNotificationsToDatabase = async (
  */
 export const deleteNotification = async (req: Request, res: Response) => {
   // get notification id from request
-  const notificationId = req.params.notificationId;
+  const notificationId = req.params.notificationId as string;
 
   // check if notification id is valid
   if (!mongoose.Types.ObjectId.isValid(notificationId)) {

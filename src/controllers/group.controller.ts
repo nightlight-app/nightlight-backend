@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
+import { NotificationType } from '../interfaces/Notification.interface';
 import Group from '../models/Group.model';
 import User from '../models/User.model';
 import { addGroupExpireJob } from '../queue/jobs';
-import { NotificationType } from '../utils/constants';
 import { inviteUsersToGroup } from '../utils/group.utils';
 import { sendNotifications } from '../utils/notification.utils';
 

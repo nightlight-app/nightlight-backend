@@ -4,12 +4,13 @@ import { LastActive } from '../../interfaces/LastActive.interface';
 import {
   MongoNotification,
   NotificationData,
+  NotificationType,
 } from '../../interfaces/Notification.interface';
 import { SavedGroup } from '../../interfaces/SavedGroup.interface';
 import { User } from '../../interfaces/User.interface';
 import { Venue, VenueReaction } from '../../interfaces/Venue.interface';
-import { NotificationType, REACTION_EMOJIS } from '../../utils/constants';
-import { Emoji } from '../../utils/types';
+import { REACTION_EMOJIS } from '../../utils/constants';
+import { Emoji } from '../../utils/venue.utils';
 
 /* User 1 */
 const TEST_LAST_ACTIVE_1: LastActive = {

@@ -4,9 +4,8 @@ import mongoose from 'mongoose';
 import { Venue as VenueInterface } from '../interfaces/Venue.interface';
 import Venue from '../models/Venue.model';
 import { REACTION_EMOJIS } from '../utils/constants';
-import { encodeEmoji } from '../utils/venue.utils';
+import { Emoji, encodeEmoji } from '../utils/venue.utils';
 import { addReactionExpireJob } from '../queue/jobs';
-import { Emoji } from '../utils/types';
 import { nightlightQueue } from '../queue/setup/queue.setup';
 
 /**

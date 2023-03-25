@@ -6,7 +6,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import { upload } from '../config/cloudinary.config';
 import { MulterError } from 'multer';
 import streamifier from 'streamifier';
-import { IMAGE_UPLOAD_OPTIONS, NotificationType } from '../utils/constants';
+import { IMAGE_UPLOAD_OPTIONS } from '../utils/constants';
 import {
   sendNotifications,
   sendNotificationToUser,
@@ -14,6 +14,7 @@ import {
 import {
   MongoNotification,
   NotificationData,
+  NotificationType,
 } from '../interfaces/Notification.interface';
 
 /**
@@ -32,9 +33,11 @@ export const createUser = async (req: Request, res: Response) => {
     // remove the notificationToken from the response
     newUser.notificationToken = undefined;
 
-    return res
-      .status(201)
-      .send({ message: 'Successfully created user!', user: newUser });
+    // create a notification to be sent to the user and remove the notificationToken from the response
+    return res.status(201).send({
+      message: 'Successfully created user!',
+      user: newUser,
+    });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }
@@ -59,11 +62,6 @@ export const getUser = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
-  // Check if the provided firebaseUid is valid
-  if (firebaseUid && !mongoose.Types.ObjectId.isValid(firebaseUid)) {
-    return res.status(400).send({ message: 'Invalid user ID!' });
-  }
-
   // Check if the provided firebaseUid is the correct length
   if (firebaseUid && firebaseUid.length !== 28) {
     return res.status(400).send({ message: 'Invalid firebase UID!' });
@@ -71,7 +69,7 @@ export const getUser = async (req: Request, res: Response) => {
 
   try {
     // Find the user in the database and omit the notificationToken from the response
-    const targetUser = await User.findById(
+    const targetUser = await User.find(
       {
         [queryType]: queryType === '_id' ? userId : firebaseUid,
       },
@@ -79,13 +77,13 @@ export const getUser = async (req: Request, res: Response) => {
     );
 
     // Check if the user exists
-    if (targetUser === null) {
+    if (targetUser.length === 0 || !targetUser) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
     return res
       .status(200)
-      .send({ message: 'Successfully found user!', user: targetUser });
+      .send({ message: 'Successfully found user!', user: targetUser[0] });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }

@@ -3,10 +3,10 @@ import {
   ExpoNotification,
   MongoNotification,
   NotificationData,
+  NotificationDocument,
 } from '../interfaces/Notification.interface';
 import Notification from '../models/Notification.model';
 import User from '../models/User.model';
-
 /**
  * Sends notification to specified user(s) through expo and saves notification to database.
  * If userId is a string, sends notification to a single user. If it's an array of strings,
@@ -33,7 +33,7 @@ export const sendNotifications = async (
   delay: number = 0
 ) => {
   // array of notifications to return
-  let notifications: any[] = [];
+  let notifications: NotificationDocument[] = [];
 
   // Exit function if userId is an empty array
   if (userIds.length === 0) {
@@ -53,8 +53,8 @@ export const sendNotifications = async (
         delay,
       } as MongoNotification);
 
-      // add notification to array of notifications to return
-      notifications.push(notification);
+      // add notification to array of notifications to return if it was successfully added to database
+      if (notification) notifications.push(notification);
 
       // find user for their notification token
       const user = await User.findById(id);

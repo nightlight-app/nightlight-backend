@@ -1,6 +1,6 @@
+import { NotificationType } from '../interfaces/Notification.interface';
 import Group from '../models/Group.model';
 import Venue from '../models/Venue.model';
-import { NotificationType } from '../utils/constants';
 import { sendNotifications } from '../utils/notification.utils';
 
 /**

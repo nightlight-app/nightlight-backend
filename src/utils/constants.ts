@@ -83,39 +83,9 @@ export const IMAGE_UPLOAD_OPTIONS = [
 ];
 
 /**
- * @enum NotificationType
- * Defines the types of notification available
- *
- * @property friendRequest - When a user receives a friend request
- * @property friendRequestAccepted - When a user's friend request is accepted by the other user
- * @property friendRequestDeclined - When a user's friend request is declined by the other user
- * @property groupInvite - When a user is invited to a new group
- * @property groupInviteAccepted - When a user accepts an invitation to join a group
- * @property groupInviteDeclined - WHen a user declines an invitation to join a group
- */
-export enum NotificationType {
-  friendRequest = 'friendRequest',
-  friendRequestAccepted = 'friendRequestAccepted',
-  friendRequestDeclined = 'friendRequestDeclined',
-  groupInvite = 'groupInvite',
-  groupInviteAccepted = 'groupInviteAccepted',
-  groupInviteDeclined = 'groupInviteDeclined',
-  groupExpired = 'groupExpired',
-}
-
-/**
- * The Firebase admin configuration object.
+ * The Firebase admin configuration object, loaded from environment variables
  * @type {Object}
- * @property {string} type - The Firebase project's type.
- * @property {string} project_id - The Firebase project ID.
- * @property {string} private_key_id - The Firebase project's private key ID.
- * @property {string} private_key - The Firebase project's private key.
- * @property {string} client_email - The Firebase client email address.
- * @property {string} client_id - The Firebase client ID.
- * @property {string} auth_uri - The Firebase authorization URI.
- * @property {string} token_uri - The Firebase token URI.
- * @property {string} auth_provider_x509_cert_url - The Firebase auth provider's X.509 certificate URL.
- * @property {string} client_x509_cert_url - The Firebase client's X.509 certificate URL.
+ * @keys `type`, `project_id`, `private_key_id`, `private_key`, `client_email`, `client_id`, `auth_uri`, `token_uri`, `auth_provider_x509_cert_url`, `client_x509_cert_url`
  */
 export const FIREBASE_ADMIN_CONFIG = {
   type: process.env.FIREBASE_TYPE,
