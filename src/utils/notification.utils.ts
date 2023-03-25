@@ -7,6 +7,8 @@ import {
 } from '../interfaces/Notification.interface';
 import Notification from '../models/Notification.model';
 import User from '../models/User.model';
+import axios from 'axios';
+
 /**
  * Sends notification to specified user(s) through expo and saves notification to database.
  * If userId is a string, sends notification to a single user. If it's an array of strings,
@@ -34,6 +36,7 @@ export const sendNotifications = async (
 ) => {
   // array of notifications to return
   let notifications: NotificationDocument[] = [];
+  console.log('TEST.2');
 
   // Exit function if userId is an empty array
   if (userIds.length === 0) {
@@ -61,6 +64,7 @@ export const sendNotifications = async (
 
       // send notification to user through expo if they have a notification token and if isPush is true (is a push notification)
       if (isPush && user?.notificationToken) {
+        console.log('TEST: ' + user.notificationToken);
         await sendNotificationToExpo({
           to: user.notificationToken,
           title,
@@ -97,18 +101,21 @@ export const sendNotificationToExpo = async (
   notification: ExpoNotification
 ) => {
   try {
+    console.log({ ...notification });
     // send notification to expo to be sent to device
-    await fetch('https://exp.host/--/api/v2/push/send', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Accept-encoding': 'gzip, deflate',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(notification),
-    });
+    await axios.post(
+      'https://exp.host/--/api/v2/push/send',
+      { ...notification },
+      {
+        headers: {
+          Accept: 'application/json',
+          'Accept-encoding': 'gzip, deflate',
+          'Content-Type': 'application/json',
+        },
+      }
+    );
   } catch (error: any) {
-    console.log(error?.message);
+    console.log(JSON.stringify(error));
   }
 };
 
