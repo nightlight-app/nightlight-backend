@@ -12,7 +12,7 @@ export interface User {
   lastName: string;
   email: string;
   phone: string;
-  birthday: Date;
+  birthday?: Date;
   currentGroup?: mongoose.Types.ObjectId;
   invitedGroups?: mongoose.Types.ObjectId[];
   friends?: mongoose.Types.ObjectId[];
