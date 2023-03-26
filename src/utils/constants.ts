@@ -19,6 +19,30 @@ export const USER_KEYS = [
 ];
 
 /**
+ * All possible keys for a user object
+ */
+export const USER_KEYS_ALL = [
+  '__v',
+  '_id',
+  'email',
+  'firebaseUid',
+  'firstName',
+  'lastName',
+  'phone',
+  'birthday',
+  'friends',
+  'friendRequests',
+  'imgUrlCover',
+  'imgUrlProfileLarge',
+  'imgUrlProfileSmall',
+  'invitedGroups',
+  'lastActive',
+  'savedGroups',
+  'notificationToken',
+  'currentGroup',
+];
+
+/**
  * The necessary keys for a group object
  */
 export const GROUP_KEYS = [
@@ -32,9 +56,35 @@ export const GROUP_KEYS = [
 ];
 
 /**
+ * All possible keys for a group object
+ */
+export const GROUP_KEYS_ALL = [
+  '__v',
+  '_id',
+  'name',
+  'members',
+  'invitedMembers',
+  'creationDatetime',
+  'expirationDatetime',
+  'expectedDestination',
+];
+
+/**
  * The necessary keys for a venue object
  */
 export const VENUE_KEYS = ['__v', '_id', 'name', 'address', 'location'];
+
+/**
+ * All possible keys for a venue object
+ */
+export const VENUE_KEYS_ALL = [
+  '__v',
+  '_id',
+  'name',
+  'address',
+  'location',
+  'reactions',
+];
 
 /**
  * The necessary keys for a notification object
@@ -46,6 +96,19 @@ export const NOTIFICATION_KEYS = [
   'title',
   'body',
   'data',
+];
+
+/**
+ * All possible keys for a notification object
+ */
+export const NOTIFICATION_KEYS_ALL = [
+  '__v',
+  '_id',
+  'userId',
+  'title',
+  'body',
+  'data',
+  'delay',
 ];
 
 /**

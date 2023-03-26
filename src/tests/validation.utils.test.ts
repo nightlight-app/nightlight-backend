@@ -2,11 +2,15 @@ import { assert } from 'chai';
 import { User } from '../interfaces/User.interface';
 import {
   GROUP_KEYS,
+  GROUP_KEYS_ALL,
   NOTIFICATION_KEYS,
+  NOTIFICATION_KEYS_ALL,
   USER_KEYS,
+  USER_KEYS_ALL,
   VENUE_KEYS,
+  VENUE_KEYS_ALL,
 } from '../utils/constants';
-import { verifyKeys } from '../utils/validation.utils';
+import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
 import {
   TEST_GROUP1,
   TEST_NOTIFICATION,
@@ -17,14 +21,20 @@ import {
 describe('testing validation utils', () => {
   it('should validate keys in an object (user)', done => {
     assert(
-      verifyKeys({ ...TEST_USER_1, _id: 'test', __v: 1 }, USER_KEYS) === null
+      verifyKeys(
+        { ...TEST_USER_1, _id: 'test', __v: 1 },
+        KeyValidationType.USERS
+      ) === ''
     );
     done();
   });
 
   it('should validate keys in an object (group)', done => {
     assert(
-      verifyKeys({ ...TEST_GROUP1, _id: 'test', __v: 1 }, GROUP_KEYS) === null
+      verifyKeys(
+        { ...TEST_GROUP1, _id: 'test', __v: 1 },
+        KeyValidationType.GROUPS
+      ) === ''
     );
     done();
   });
@@ -33,15 +43,18 @@ describe('testing validation utils', () => {
     assert(
       verifyKeys(
         { ...TEST_NOTIFICATION, _id: 'test', __v: 1 },
-        NOTIFICATION_KEYS
-      ) === null
+        KeyValidationType.NOTIFICATIONS
+      ) === ''
     );
     done();
   });
 
   it('should validate keys in an object (venue)', done => {
     assert(
-      verifyKeys({ ...TEST_VENUE, _id: 'test', __v: 1 }, VENUE_KEYS) === null
+      verifyKeys(
+        { ...TEST_VENUE, _id: 'test', __v: 1 },
+        KeyValidationType.VENUES
+      ) === ''
     );
     done();
   });
@@ -53,7 +66,7 @@ describe('testing validation utils', () => {
       __v: 1,
     } as any;
     delete badUser?.email;
-    assert(verifyKeys(badUser, USER_KEYS) !== null);
+    assert(verifyKeys(badUser, KeyValidationType.USERS) !== '');
     done();
   });
 
@@ -64,7 +77,7 @@ describe('testing validation utils', () => {
       __v: 1,
     } as any;
     delete badGroup?.name;
-    assert(verifyKeys(badGroup, GROUP_KEYS) !== null);
+    assert(verifyKeys(badGroup, KeyValidationType.GROUPS) !== '');
     done();
   });
 
@@ -73,9 +86,11 @@ describe('testing validation utils', () => {
       ...TEST_NOTIFICATION,
       _id: 'test',
       __v: 1,
+      bleh: 'bleh',
     } as any;
     delete badNotification?.title;
-    assert(verifyKeys(badNotification, USER_KEYS) !== null);
+    console.log(verifyKeys(badNotification, KeyValidationType.NOTIFICATIONS));
+    assert(verifyKeys(badNotification, KeyValidationType.NOTIFICATIONS) !== '');
     done();
   });
 
@@ -86,7 +101,7 @@ describe('testing validation utils', () => {
       __v: 1,
     } as any;
     delete badVenue?.name;
-    assert(verifyKeys(badVenue, USER_KEYS) !== null);
+    assert(verifyKeys(badVenue, KeyValidationType.VENUES) !== '');
     done();
   });
 });
