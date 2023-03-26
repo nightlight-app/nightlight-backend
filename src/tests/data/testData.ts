@@ -243,6 +243,7 @@ export const createTestReaction = (userId: string | number, emoji: Emoji) => {
 export const USER_KEYS_TEST = [
   '__v',
   '_id',
+  'birthday',
   'email',
   'firebaseUid',
   'firstName',
