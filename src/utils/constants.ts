@@ -11,7 +11,6 @@ export const REACTION_EMOJIS = ['🔥', '⚠️', '🛡', '💩', '🎉'];
 export const USER_KEYS = [
   '__v',
   '_id',
-  'birthday',
   'email',
   'firebaseUid',
   'firstName',
