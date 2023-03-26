@@ -66,7 +66,7 @@ describe('testing user actions', () => {
       .get(`/users/`)
       .query({ userId: userId })
       .then(res => {
-        const user = res.body.user;
+        const user = res.body.users[0];
         expect(res).to.have.status(200);
         expect(user._id).to.equal(userId);
         expect(user.email).to.equal(TEST_USER_2.email);
@@ -162,12 +162,12 @@ describe('testing save groups', () => {
       .get('/users/')
       .query({ userId: userId })
       .then(res => {
-        groupId = res.body.user.savedGroups[2]._id;
+        groupId = res.body.users[0].savedGroups[2]._id;
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
-        expect(res.body.user.savedGroups[2]).to.have.keys(SAVED_GROUP_KEYS);
-        expect(res.body.user.savedGroups[2].name).to.equal('Test group');
-        expect(res.body.user.savedGroups[2].users).to.have.length(3);
+        expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
+        expect(res.body.users[0].savedGroups[2]).to.have.keys(SAVED_GROUP_KEYS);
+        expect(res.body.users[0].savedGroups[2].name).to.equal('Test group');
+        expect(res.body.users[0].savedGroups[2].users).to.have.length(3);
         done();
       });
   });
@@ -191,8 +191,8 @@ describe('testing save groups', () => {
       .query({ userId: userId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
-        expect(res.body.user.savedGroups).to.have.length(2);
+        expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
+        expect(res.body.users[0].savedGroups).to.have.length(2);
         done();
       });
   });
@@ -339,7 +339,7 @@ describe('testing friend requests', () => {
       .get(`/users/`)
       .query({ userId: userId2 })
       .then(res => {
-        const user = res.body.user;
+        const user = res.body.users[0];
         expect(res).to.have.status(200);
         expect(user._id).to.equal(userId2);
         expect(user.friendRequests).to.have.length(2);
@@ -365,7 +365,7 @@ describe('testing friend requests', () => {
       .get(`/users/`)
       .query({ userId: userId2 })
       .then(res => {
-        const user = res.body.user;
+        const user = res.body.users[0];
         expect(res).to.have.status(200);
         expect(user._id).to.equal(userId2);
         expect(user.friendRequests).to.have.length(1);
@@ -391,7 +391,7 @@ describe('testing friend requests', () => {
       .get(`/users/`)
       .query({ userId: userId2 })
       .then(res => {
-        const user = res.body.user;
+        const user = res.body.users[0];
         expect(res).to.have.status(200);
         expect(user._id).to.equal(userId2);
         expect(user.friendRequests).to.have.length(0);
@@ -479,6 +479,7 @@ describe('testing User Error', () => {
       .get('/users/')
       .query({ userId: 'FAKEID' })
       .then(res => {
+        console.log(res.body);
         expect(res).to.have.status(400);
         done();
       });
@@ -538,7 +539,7 @@ describe('testing User Error', () => {
       .query({ userId: userId1 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
+        expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });

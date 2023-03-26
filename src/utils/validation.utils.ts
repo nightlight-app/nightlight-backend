@@ -1,7 +1,6 @@
 /**
  * Verifies if a given object has all the specified keys.
  *
- * @param {<T>} the type of the object to verify.
  * @param obj the object to verify.
  * @param keys the keys to check for in the object.
  *

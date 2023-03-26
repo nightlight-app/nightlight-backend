@@ -191,8 +191,8 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend1 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
-        expect(res.body.user.invitedGroups).to.include(groupId);
+        expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
+        expect(res.body.users[0].invitedGroups).to.include(groupId);
         done();
       });
   });
@@ -204,8 +204,8 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend2 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
-        expect(res.body.user.invitedGroups).to.include(groupId);
+        expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
+        expect(res.body.users[0].invitedGroups).to.include(groupId);
         done();
       });
   });
@@ -217,8 +217,8 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend5 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
-        expect(res.body.user.invitedGroups).to.include(groupId);
+        expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
+        expect(res.body.users[0].invitedGroups).to.include(groupId);
         done();
       });
   });
@@ -355,9 +355,12 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend5 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys([...USER_KEYS_TEST, 'currentGroup']);
-        expect(res.body.user.invitedGroups).to.have.length(0);
-        expect(res.body.user.currentGroup).to.equal(groupId);
+        expect(res.body.users[0]).to.have.keys([
+          ...USER_KEYS_TEST,
+          'currentGroup',
+        ]);
+        expect(res.body.users[0].invitedGroups).to.have.length(0);
+        expect(res.body.users[0].currentGroup).to.equal(groupId);
         done();
       });
   });
@@ -380,9 +383,9 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend5 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys([...USER_KEYS_TEST]);
-        expect(res.body.user.invitedGroups).to.have.length(0);
-        expect(res.body.user.currentGroup).to.be.undefined;
+        expect(res.body.users[0]).to.have.keys([...USER_KEYS_TEST]);
+        expect(res.body.users[0].invitedGroups).to.have.length(0);
+        expect(res.body.users[0].currentGroup).to.be.undefined;
         done();
       });
   });
@@ -411,9 +414,12 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend2 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys([...USER_KEYS_TEST, 'currentGroup']);
-        expect(res.body.user.invitedGroups).to.have.length(0);
-        expect(res.body.user.currentGroup).to.equal(groupId);
+        expect(res.body.users[0]).to.have.keys([
+          ...USER_KEYS_TEST,
+          'currentGroup',
+        ]);
+        expect(res.body.users[0].invitedGroups).to.have.length(0);
+        expect(res.body.users[0].currentGroup).to.equal(groupId);
         done();
       });
   });

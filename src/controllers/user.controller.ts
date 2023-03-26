@@ -44,39 +44,51 @@ export const createUser = async (req: Request, res: Response) => {
  * Otherwise, returns an error status with an appropriate message.
  */
 export const getUser = async (req: Request, res: Response) => {
-  const userId = req.query.userId as string;
-  const firebaseUid = req.query.firebaseUid as string;
+  const userIds = req.query.userId as string;
+  const firebaseUids = req.query.firebaseUid as string;
 
   // Determine which query parameter was provided (prefer userId over firebaseUid)
-  const queryType = userId ? '_id' : 'firebaseUid';
+  const queryType = userIds ? '_id' : 'firebaseUid';
 
-  // Check if the provided userId is valid
-  if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(400).send({ message: 'Invalid user ID!' });
+  let idList;
+  if (userIds) idList = userIds.split(',');
+  if (firebaseUids) idList = firebaseUids.split(',');
+
+  if (!idList)
+    return res
+      .status(400)
+      .send({ message: 'No user IDs or firebase UIDs provided!' });
+
+  if (userIds) {
+    idList = idList.filter((id: string) => mongoose.Types.ObjectId.isValid(id));
   }
 
-  // Check if the provided firebaseUid is the correct length
-  if (firebaseUid && firebaseUid.length !== 28) {
-    return res.status(400).send({ message: 'Invalid firebase UID!' });
+  if (firebaseUids) {
+    idList = idList.filter((id: string) => id.length === 28);
   }
+
+  if (idList.length === 0)
+    return res
+      .status(400)
+      .send({ message: 'Invalid user IDs or firebase UIDs provided!' });
 
   try {
     // Find the user in the database and omit the notificationToken from the response
-    const targetUser = await User.findOne(
+    const targetUsers = await User.find(
       {
-        [queryType]: queryType === '_id' ? userId : firebaseUid,
+        [queryType]: idList,
       },
       { notificationToken: 0 }
     );
 
     // Check if the user exists
-    if (targetUser === null) {
-      return res.status(400).send({ message: 'User does not exist!' });
+    if (targetUsers.length === 0 || !targetUsers) {
+      return res.status(400).send({ message: 'User(s) does not exist!' });
     }
 
     return res
       .status(200)
-      .send({ message: 'Successfully found user!', user: targetUser });
+      .send({ message: 'Successfully found user!', users: targetUsers });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }

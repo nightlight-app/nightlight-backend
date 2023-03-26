@@ -36,8 +36,6 @@ export const sendNotifications = async (
 ) => {
   // array of notifications to return
   let notifications: NotificationDocument[] = [];
-  console.log('TEST.2');
-
   // Exit function if userId is an empty array
   if (userIds.length === 0) {
     return notifications;
@@ -64,7 +62,6 @@ export const sendNotifications = async (
 
       // send notification to user through expo if they have a notification token and if isPush is true (is a push notification)
       if (isPush && user?.notificationToken) {
-        console.log('TEST: ' + user.notificationToken);
         await sendNotificationToExpo({
           to: user.notificationToken,
           title,
