@@ -1,11 +1,16 @@
 import mongoose from 'mongoose';
-import { Group } from '../interfaces/Group.interface';
-import { LastActive } from '../interfaces/LastActive.interface';
-import { SavedGroup } from '../interfaces/SavedGroup.interface';
-import { User } from '../interfaces/User.interface';
-import { Venue, VenueReaction } from '../interfaces/Venue.interface';
-import { REACTION_EMOJIS } from '../utils/constants';
-import { Emoji } from '../utils/types';
+import { Group } from '../../interfaces/Group.interface';
+import { LastActive } from '../../interfaces/LastActive.interface';
+import {
+  MongoNotification,
+  NotificationData,
+  NotificationType,
+} from '../../interfaces/Notification.interface';
+import { SavedGroup } from '../../interfaces/SavedGroup.interface';
+import { User } from '../../interfaces/User.interface';
+import { Venue, VenueReaction } from '../../interfaces/Venue.interface';
+import { REACTION_EMOJIS } from '../../utils/constants';
+import { Emoji } from '../../utils/venue.utils';
 
 /* User 1 */
 const TEST_LAST_ACTIVE_1: LastActive = {
@@ -36,6 +41,7 @@ const TEST_SAVED_GROUP_2: SavedGroup = {
 
 export const TEST_USER_1: User = {
   firebaseUid: 'FAKEUSERID1',
+  notificationToken: undefined,
   imgUrlProfileSmall: 'www.smallProfileImage1.com',
   imgUrlProfileLarge: 'www.largeProfileImage1.com',
   imgUrlCover: 'www.coverImage1.com',
@@ -98,6 +104,7 @@ const TEST_SAVED_GROUP_4: SavedGroup = {
 
 export const TEST_USER_2: User = {
   firebaseUid: 'FAKEUSERID2',
+  notificationToken: undefined,
   imgUrlProfileSmall: 'www.smallProfileImage2.com',
   imgUrlProfileLarge: 'www.largeProfileImage2.com',
   imgUrlCover: 'www.coverImage2.com',
@@ -119,6 +126,7 @@ export const TEST_USER_2: User = {
 
 export const TEST_USER_3: User = {
   firebaseUid: 'FAKEUSERID3',
+  notificationToken: undefined,
   imgUrlProfileSmall: 'www.smallProfileImage3.com',
   imgUrlProfileLarge: 'www.largeProfileImage3.com',
   imgUrlCover: 'www.coverImage3.com',
@@ -140,6 +148,7 @@ export const TEST_USER_3: User = {
 
 export const TEST_USER_4: User = {
   firebaseUid: 'FAKEUSERID4',
+  notificationToken: undefined,
   imgUrlProfileSmall: 'www.smallProfileImage4.com',
   imgUrlProfileLarge: 'www.largeProfileImage4.com',
   imgUrlCover: 'www.coverImage4.com',
@@ -158,6 +167,7 @@ export const TEST_USER_4: User = {
 
 export const TEST_USER_5: User = {
   firebaseUid: 'FAKEUSERID5',
+  notificationToken: undefined,
   imgUrlProfileSmall: 'www.smallProfileImage5.com',
   imgUrlProfileLarge: 'www.largeProfileImage5.com',
   imgUrlCover: 'www.coverImage5.com',
@@ -208,6 +218,18 @@ export const TEST_VENUE: Venue = {
   reactions: [],
 };
 
+/* Notification */
+export const TEST_NOTIFICATION: MongoNotification = {
+  _id: new mongoose.Types.ObjectId(),
+  userId: new mongoose.Types.ObjectId(123).toString(),
+  title: 'Friend Request',
+  body: 'You have a friend request!',
+  data: {
+    notificationType: NotificationType.friendRequest,
+  } as NotificationData,
+  delay: 0,
+};
+
 /* Reactions */
 export const createTestReaction = (userId: string | number, emoji: Emoji) => {
   return {
@@ -218,7 +240,7 @@ export const createTestReaction = (userId: string | number, emoji: Emoji) => {
 
 /* KEYS FOR TESTING */
 // TODO: can these be enums?
-export const USER_KEYS = [
+export const USER_KEYS_TEST = [
   '__v',
   '_id',
   'birthday',
@@ -237,7 +259,7 @@ export const USER_KEYS = [
   'savedGroups',
 ];
 
-export const GROUP_KEYS = [
+export const GROUP_KEYS_TEST = [
   '__v',
   '_id',
   'name',
@@ -247,7 +269,7 @@ export const GROUP_KEYS = [
   'expirationDatetime',
 ];
 
-export const VENUE_KEYS = [
+export const VENUE_KEYS_TEST = [
   '__v',
   '_id',
   'name',
@@ -256,8 +278,18 @@ export const VENUE_KEYS = [
   'reactions',
 ];
 
-export const REACTION_KEYS = ['count', 'didReact'];
+export const NOTIFICATION_KEYS_TEST = [
+  '__v',
+  '_id',
+  'userId',
+  'title',
+  'body',
+  'data',
+  'delay',
+];
 
-export const VENUE_KEYS_EMOJIS = [...REACTION_EMOJIS];
+export const REACTION_KEYS_TEST = ['count', 'didReact'];
+
+export const VENUE_KEYS_EMOJIS_TEST = [...REACTION_EMOJIS];
 
 export const SAVED_GROUP_KEYS = ['_id', 'name', 'users'];

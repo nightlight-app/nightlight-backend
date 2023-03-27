@@ -1,5 +1,10 @@
+import { ObjectId } from 'mongodb';
+import mongoose from 'mongoose';
+import { NotificationType } from '../interfaces/Notification.interface';
 import Group from '../models/Group.model';
+import User from '../models/User.model';
 import Venue from '../models/Venue.model';
+import { sendNotifications } from '../utils/notification.utils';
 
 /**
  * Expire a group from the database after the queue job has been processed
@@ -7,7 +12,28 @@ import Venue from '../models/Venue.model';
  */
 export const expireGroup = async (groupId: string) => {
   try {
-    await Group.findByIdAndDelete(groupId);
+    const targetGroup = await Group.findByIdAndDelete(groupId);
+
+    if (targetGroup === null) {
+      return;
+    }
+
+    if (targetGroup.members && targetGroup.members.length > 0) {
+      const result = await User.updateMany(
+        { _id: targetGroup.members },
+        {
+          currentGroup: undefined,
+        }
+      );
+    }
+
+    sendNotifications(
+      [...targetGroup.members.map(objectId => objectId.toString())],
+      'Group expired! 👋',
+      'Your group has expired. We hope you had a safe night!',
+      { notificationType: NotificationType.groupExpired },
+      false
+    );
   } catch (error: any) {
     console.log(error.message);
   }

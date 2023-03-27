@@ -1,4 +1,4 @@
-import { Emoji } from '../utils/types';
+import { Emoji } from '../utils/venue.utils';
 import { nightlightQueue } from './setup/queue.setup';
 
 /**

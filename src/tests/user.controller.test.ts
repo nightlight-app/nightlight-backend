@@ -11,11 +11,10 @@ import {
   TEST_USER_4,
   TEST_USER_5,
   UPDATE_USER_1_TO_USER_2,
-  USER_KEYS,
-} from './testData';
+  USER_KEYS_TEST,
+} from './data/testData';
 import { ObjectId } from 'mongodb';
 import { Server } from 'http';
-import { nightlightQueue } from '../queue/setup/queue.setup';
 
 require('dotenv').config();
 
@@ -67,7 +66,7 @@ describe('testing user actions', () => {
       .get(`/users/`)
       .query({ userId: userId })
       .then(res => {
-        const user = res.body.user;
+        const user = res.body.users[0];
         expect(res).to.have.status(200);
         expect(user._id).to.equal(userId);
         expect(user.email).to.equal(TEST_USER_2.email);
@@ -86,7 +85,32 @@ describe('testing user actions', () => {
         expect(res).to.have.status(200);
         expect(user).to.be.an('object');
         expect(user).to.have.property('_id');
-        expect(user.email).to.equal(TEST_USER_2.email);
+        expect(user.email).to.equal(UPDATE_USER_1_TO_USER_2.email);
+        expect(user).to.have.keys(USER_KEYS_TEST);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should update notification token for a user via PATCH /users/{userId}', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId}/addNotificationToken`)
+      .send({ notificationToken: 'ExponentPushToken[TestToken1234]' })
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should remove notification token for a user via PATCH /users/{userId}', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId}/removeNotificationToken`)
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
         done();
       })
       .catch(err => done(err));
@@ -116,7 +140,7 @@ describe('testing save groups', () => {
       .then(res => {
         userId = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -138,12 +162,12 @@ describe('testing save groups', () => {
       .get('/users/')
       .query({ userId: userId })
       .then(res => {
-        groupId = res.body.user.savedGroups[2]._id;
+        groupId = res.body.users[0].savedGroups[2]._id;
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS);
-        expect(res.body.user.savedGroups[2]).to.have.keys(SAVED_GROUP_KEYS);
-        expect(res.body.user.savedGroups[2].name).to.equal('Test group');
-        expect(res.body.user.savedGroups[2].users).to.have.length(3);
+        expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
+        expect(res.body.users[0].savedGroups[2]).to.have.keys(SAVED_GROUP_KEYS);
+        expect(res.body.users[0].savedGroups[2].name).to.equal('Test group');
+        expect(res.body.users[0].savedGroups[2].users).to.have.length(3);
         done();
       });
   });
@@ -167,8 +191,8 @@ describe('testing save groups', () => {
       .query({ userId: userId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS);
-        expect(res.body.user.savedGroups).to.have.length(2);
+        expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
+        expect(res.body.users[0].savedGroups).to.have.length(2);
         done();
       });
   });
@@ -197,7 +221,7 @@ describe('testing save groups', () => {
       .then(res => {
         userId2 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         testData.friends?.push(new mongoose.Types.ObjectId(userId2!));
         done();
       });
@@ -213,7 +237,7 @@ describe('testing save groups', () => {
         userId3 = res.body.user._id;
         testData.friends?.push(new mongoose.Types.ObjectId(userId3!));
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -227,7 +251,7 @@ describe('testing save groups', () => {
       .then(res => {
         userId1 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -254,7 +278,7 @@ describe('testing friend requests', () => {
       .then(res => {
         userId1 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -268,7 +292,7 @@ describe('testing friend requests', () => {
       .then(res => {
         userId2 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -282,7 +306,7 @@ describe('testing friend requests', () => {
       .then(res => {
         userId3 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -315,7 +339,7 @@ describe('testing friend requests', () => {
       .get(`/users/`)
       .query({ userId: userId2 })
       .then(res => {
-        const user = res.body.user;
+        const user = res.body.users[0];
         expect(res).to.have.status(200);
         expect(user._id).to.equal(userId2);
         expect(user.friendRequests).to.have.length(2);
@@ -341,7 +365,7 @@ describe('testing friend requests', () => {
       .get(`/users/`)
       .query({ userId: userId2 })
       .then(res => {
-        const user = res.body.user;
+        const user = res.body.users[0];
         expect(res).to.have.status(200);
         expect(user._id).to.equal(userId2);
         expect(user.friendRequests).to.have.length(1);
@@ -367,7 +391,7 @@ describe('testing friend requests', () => {
       .get(`/users/`)
       .query({ userId: userId2 })
       .then(res => {
-        const user = res.body.user;
+        const user = res.body.users[0];
         expect(res).to.have.status(200);
         expect(user._id).to.equal(userId2);
         expect(user.friendRequests).to.have.length(0);
@@ -397,6 +421,40 @@ describe('testing friend requests', () => {
         done();
       });
   });
+
+  // test friend removal
+  it('should remove a friend via PATCH /users/:userId/removeFriend', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId1}/removeFriend`)
+      .query({ friendId: userId2 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('should get a list of friends by user id via GET /users/:userId/friends', done => {
+    chai
+      .request(server)
+      .get(`/users/${userId2}/friends`)
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.friends).to.have.length(0);
+        done();
+      });
+  });
+
+  it('should get a list of friends by user id via GET /users/:userId/friends', done => {
+    chai
+      .request(server)
+      .get(`/users/${userId1}/friends`)
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.friends).to.have.length(0);
+        done();
+      });
+  });
 });
 
 /* TEST USER ERRORS */
@@ -410,7 +468,7 @@ describe('testing User Error', () => {
       .then(res => {
         userId1 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -434,7 +492,7 @@ describe('testing User Error', () => {
       .then(res => {
         userId1 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -443,7 +501,7 @@ describe('testing User Error', () => {
     chai
       .request(server)
       .get('/users/')
-      .query({ userId: new ObjectId(1234) })
+      .query({ userId: new ObjectId(1234).toString() })
       .then(res => {
         expect(res).to.have.status(400);
         expect(res.body.venue).to.equal(undefined);
@@ -451,13 +509,13 @@ describe('testing User Error', () => {
       });
   });
 
-  it('should return a 500 status code for POST request with incorrectly formatted data', done => {
+  it('should return a 400 status code for POST request with incorrectly formatted data', done => {
     chai
       .request(server)
       .post('/users/')
       .send({ data: { message: 'This is incorrect' } })
       .then(res => {
-        expect(res).to.have.status(500);
+        expect(res).to.have.status(400);
         done();
       });
   });
@@ -480,7 +538,7 @@ describe('testing User Error', () => {
       .query({ userId: userId1 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });

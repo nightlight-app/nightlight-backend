@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
 import mongoose from 'mongoose';
-import { Group } from '../interfaces/Group.interface';
-import { User } from '../interfaces/User.interface';
-import { Venue } from '../interfaces/Venue.interface';
+import { Group } from '../../interfaces/Group.interface';
+import { User } from '../../interfaces/User.interface';
+import { Venue } from '../../interfaces/Venue.interface';
 
 /**
  * Creates a random user that can be sent as a post to the backend. Utilizes faker.js npm package for value generation
@@ -18,6 +18,7 @@ export const createUser = (
 ) => {
   return {
     firebaseUid: faker.random.alphaNumeric(32),
+    notificationToken: undefined,
     imgUrlProfileSmall: faker.internet.url(),
     imgUrlProfileLarge: faker.internet.url(),
     imgUrlCover: faker.internet.url(),
