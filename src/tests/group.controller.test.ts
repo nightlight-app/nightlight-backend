@@ -438,13 +438,27 @@ describe('testing group actions', () => {
       });
   });
 
-  it('should return group information after group expires', done => {
+  it('should return no group information (400) after group expires', done => {
     chai
       .request(server)
       .get('/groups/')
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(400);
+        done();
+      });
+  });
+
+  it('should check if user currentGroup is undefined after expiration', done => {
+    chai
+      .request(server)
+      .get('/users/')
+      .query({ userId: userIdMain })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users[0].currentGroup).to.be.undefined;
+        expect(res.body.users[0].invitedGroups).to.not.include(groupId);
+        expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
