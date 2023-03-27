@@ -7,6 +7,7 @@ import { REACTION_EMOJIS } from '../utils/constants';
 import { Emoji, encodeEmoji } from '../utils/venue.utils';
 import { addReactionExpireJob } from '../queue/jobs';
 import { nightlightQueue } from '../queue/setup/queue.setup';
+import { verifyKeys, KeyValidationType } from '../utils/validation.utils';
 
 /**
  * Create a new venue
@@ -15,7 +16,14 @@ import { nightlightQueue } from '../queue/setup/queue.setup';
  * @return {Promise} - A promise that resolves when the venue is successfully created or failed to create
  */
 export const createVenue = async (req: Request, res: Response) => {
-  const newVenue = new Venue(req.body);
+  const venue = req.body;
+
+  const validationError = verifyKeys(venue, KeyValidationType.VENUES);
+  if (validationError !== '') {
+    return res.status(400).send({ message: validationError });
+  }
+
+  const newVenue = new Venue(venue);
 
   try {
     await newVenue.save();

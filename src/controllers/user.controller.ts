@@ -9,6 +9,7 @@ import streamifier from 'streamifier';
 import { IMAGE_UPLOAD_OPTIONS } from '../utils/constants';
 import { sendNotifications } from '../utils/notification.utils';
 import { NotificationType } from '../interfaces/Notification.interface';
+import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
 
 /**
  * Creates a new user in the database based on the information provided in the request body.
@@ -17,7 +18,14 @@ import { NotificationType } from '../interfaces/Notification.interface';
  * @returns {User} Returns status code 201 and an object containing success message and user object if user creation is successful. Otherwise, returns an error status with appropriate message.
  */
 export const createUser = async (req: Request, res: Response) => {
-  const newUser = new User(req.body);
+  const user = req.body;
+
+  const validationError = verifyKeys(user, KeyValidationType.USERS);
+  if (validationError !== '') {
+    return res.status(400).send({ message: validationError });
+  }
+
+  const newUser = new User(user);
 
   try {
     // add the user to the database

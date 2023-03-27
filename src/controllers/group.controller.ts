@@ -6,6 +6,7 @@ import User from '../models/User.model';
 import { addGroupExpireJob } from '../queue/jobs';
 import { inviteUsersToGroup } from '../utils/group.utils';
 import { sendNotifications } from '../utils/notification.utils';
+import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
 
 /**
  * Creates a new group and adds it to the database.
@@ -15,9 +16,15 @@ import { sendNotifications } from '../utils/notification.utils';
  */
 export const createGroup = async (req: Request, res: Response) => {
   const userId = req.query.userId as string;
+  const group = req.body;
+
+  const validationError = verifyKeys(group, KeyValidationType.GROUPS);
+  if (validationError !== '') {
+    return res.status(400).send({ message: validationError });
+  }
 
   // create a new group from the request body
-  const newGroup = new Group(req.body);
+  const newGroup = new Group(group);
 
   try {
     // check if user id is valid

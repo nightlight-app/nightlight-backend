@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { sendNotificationToUser } from '../utils/notification.utils';
 import Notification from '../models/Notification.model';
 import { MongoNotification } from '../interfaces/Notification.interface';
+import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
 
 /**
  * Retrieves all notifications for a given user.
@@ -48,16 +49,14 @@ export const addNotificationsToDatabase = async (
   res: Response
 ) => {
   // check if all required fields are present
-  if (
-    !req.body.userIds ||
-    !req.body.title ||
-    !req.body.body ||
-    !req.body.data ||
-    req.body.delay === undefined
-  ) {
-    return res.status(500).send({
-      message: 'Missing required fields to create notification for database.',
-    });
+  const notification = req.body;
+
+  const validationError = verifyKeys(
+    notification,
+    KeyValidationType.NOTIFICATIONS
+  );
+  if (validationError !== '') {
+    return res.status(400).send({ message: validationError });
   }
 
   // check if delay is a positive number
@@ -69,16 +68,16 @@ export const addNotificationsToDatabase = async (
 
   try {
     // Javascript will not wait for promises to resolve in a for loop or mapping, so we must collect all the promises
-    const promises = req.body.userIds.map(async (id: string) => {
+    const promises = notification.userIds.map(async (id: string) => {
       // check if current user id is valid
       if (mongoose.Types.ObjectId.isValid(id)) {
         // add notification to database via utils function
         await sendNotificationToUser({
           userId: id,
-          title: req.body.title,
-          body: req.body.body,
-          data: req.body.data,
-          delay: req.body.delay,
+          title: notification.title,
+          body: notification.body,
+          data: notification.data,
+          delay: notification.delay,
         } as MongoNotification);
       }
     });

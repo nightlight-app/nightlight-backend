@@ -9,8 +9,6 @@ export const REACTION_EMOJIS = ['🔥', '⚠️', '🛡', '💩', '🎉'];
  * The necessary keys for a user object
  */
 export const USER_KEYS = [
-  '__v',
-  '_id',
   'email',
   'firebaseUid',
   'firstName',
@@ -46,8 +44,6 @@ export const USER_KEYS_ALL = [
  * The necessary keys for a group object
  */
 export const GROUP_KEYS = [
-  '__v',
-  '_id',
   'name',
   'members',
   'invitedMembers',
@@ -72,7 +68,7 @@ export const GROUP_KEYS_ALL = [
 /**
  * The necessary keys for a venue object
  */
-export const VENUE_KEYS = ['__v', '_id', 'name', 'address', 'location'];
+export const VENUE_KEYS = ['name', 'address', 'location'];
 
 /**
  * All possible keys for a venue object
@@ -89,14 +85,7 @@ export const VENUE_KEYS_ALL = [
 /**
  * The necessary keys for a notification object
  */
-export const NOTIFICATION_KEYS = [
-  '__v',
-  '_id',
-  'userId',
-  'title',
-  'body',
-  'data',
-];
+export const NOTIFICATION_KEYS = ['title', 'body', 'data'];
 
 /**
  * All possible keys for a notification object
@@ -105,6 +94,7 @@ export const NOTIFICATION_KEYS_ALL = [
   '__v',
   '_id',
   'userId',
+  'userIds',
   'title',
   'body',
   'data',

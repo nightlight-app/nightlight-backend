@@ -131,7 +131,7 @@ describe('test notification controller', () => {
 });
 
 describe('test notification controller errors', () => {
-  it('should return error when sending notification with bad data (missing title) via POST /notifications', done => {
+  it('should return 400 error when sending notification with bad data (missing title) via POST /notifications', done => {
     chai
       .request(server)
       .post('/notifications')
@@ -142,15 +142,13 @@ describe('test notification controller errors', () => {
         delay: 0,
       })
       .then(res => {
-        expect(res).to.have.status(500);
-        expect(res.body.message).to.equal(
-          'Missing required fields to create notification for database.'
-        );
+        expect(res).to.have.status(400);
+        expect(res.body.message).to.equal('Missing keys: title. ');
         done();
       });
   });
 
-  it('should return error when sending notification with bad data (missing data) via POST /notifications', done => {
+  it('should return 400 error when sending notification with bad data (missing data) via POST /notifications', done => {
     chai
       .request(server)
       .post('/notifications')
@@ -161,10 +159,8 @@ describe('test notification controller errors', () => {
         delay: 0,
       })
       .then(res => {
-        expect(res).to.have.status(500);
-        expect(res.body.message).to.equal(
-          'Missing required fields to create notification for database.'
-        );
+        expect(res).to.have.status(400);
+        expect(res.body.message).to.equal('Missing keys: data. ');
         done();
       });
   });

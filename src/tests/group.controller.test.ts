@@ -488,14 +488,14 @@ describe('testing group errors', () => {
       });
   });
 
-  it('should return a 500 status for POST /groups/ with incorrectly formatted data', done => {
+  it('should return a 400 status for POST /groups/ with incorrectly formatted data', done => {
     chai
       .request(server)
       .post('/groups/')
       .query({ userId: userId })
       .send({ data: { message: 'This is incorrect' } })
       .then(res => {
-        expect(res).to.have.status(500);
+        expect(res).to.have.status(400);
         done();
       });
   });

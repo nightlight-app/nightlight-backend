@@ -479,7 +479,6 @@ describe('testing User Error', () => {
       .get('/users/')
       .query({ userId: 'FAKEID' })
       .then(res => {
-        console.log(res.body);
         expect(res).to.have.status(400);
         done();
       });
@@ -510,13 +509,13 @@ describe('testing User Error', () => {
       });
   });
 
-  it('should return a 500 status code for POST request with incorrectly formatted data', done => {
+  it('should return a 400 status code for POST request with incorrectly formatted data', done => {
     chai
       .request(server)
       .post('/users/')
       .send({ data: { message: 'This is incorrect' } })
       .then(res => {
-        expect(res).to.have.status(500);
+        expect(res).to.have.status(400);
         done();
       });
   });

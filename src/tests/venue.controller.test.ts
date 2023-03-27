@@ -529,13 +529,13 @@ describe('testing venue errors', () => {
       });
   });
 
-  it('should return 500 if data is incorrectly formatted via POST /venues/', done => {
+  it('should return 400 if data is incorrectly formatted via POST /venues/', done => {
     chai
       .request(server)
       .post('/venues/')
       .send({ data: { message: 'This is incorrect' } })
       .then(res => {
-        expect(res).to.have.status(500);
+        expect(res).to.have.status(400);
         done();
       });
   });
