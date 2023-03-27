@@ -773,7 +773,7 @@ export const uploadProfileImg = async (req: Request, res: Response) => {
   // pass everything to multer upload so we can retrieve the image from req.file
   upload(req, res, async err => {
     if (err instanceof MulterError || err) {
-      return res.status(500).send({ message: err?.message });
+      throw new Error(err)
     }
 
     const userId = req.params?.userId;
@@ -829,6 +829,7 @@ export const uploadProfileImg = async (req: Request, res: Response) => {
 
       return res.status(200).send({ message: 'Successfully uploaded image!' });
     } catch (error: any) {
+      console.error('[Cloudinary] Error uploading image: ', error);
       return res.status(500).send({ message: error?.message });
     }
   });
