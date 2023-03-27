@@ -45,13 +45,13 @@ export const createUser = async (req: Request, res: Response) => {
 };
 
 /**
- * Retrieves a user's data based on their userId or firebaseUid and returns it as an object.
+ * Retrieves a list of users' data based on their userIds or firebaseUids and returns it as a list of objects.
  * @param {Request} req - Express request object containing the query parameters, including the userId or firebaseUid.
  * @param {Response} res - Express response object used to send the response back to the client.
- * @returns {Object} Returns status code 200 and an object containing a success message and the targetUser object if successful.
+ * @returns {Object[]} Returns status code 200 and an object containing a success message and list of targetUsers objects if successful.
  * Otherwise, returns an error status with an appropriate message.
  */
-export const getUser = async (req: Request, res: Response) => {
+export const getUsers = async (req: Request, res: Response) => {
   const userIds = req.query.userId as string;
   const firebaseUids = req.query.firebaseUid as string;
 

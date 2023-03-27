@@ -1,7 +1,7 @@
 import express from 'express';
 import {
   createUser,
-  getUser,
+  getUsers,
   deleteUser,
   updateUser,
   saveGroup,
@@ -23,7 +23,7 @@ const usersRouter = express.Router();
 
 /* User Controller */
 usersRouter.post('/', createUser);
-usersRouter.get('/', getUser);
+usersRouter.get('/', getUsers);
 usersRouter.get('/:userId/friends', getFriends);
 usersRouter.delete('/:userId', deleteUser);
 usersRouter.patch('/:userId', updateUser);
