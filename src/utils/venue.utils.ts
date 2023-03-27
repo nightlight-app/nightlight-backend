@@ -1,4 +1,5 @@
-import { Emoji } from './types';
+// Type for the emoji reaction options
+export type Emoji = '🔥' | '⚠️' | '🛡' | '💩' | '🎉';
 
 /**
  * Array of emoji reactions {text: emoji}

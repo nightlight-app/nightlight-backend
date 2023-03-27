@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import User from '../models/User.model';
+import { sendNotifications } from './notification.utils';
 
 /**
  * Adds the groupId to the invitedGroups array of the user document
@@ -26,7 +27,7 @@ export const inviteUsersToGroup = (
   } catch (error: any) {
     return {
       status: 500,
-      message: 'Error inviting users to group',
+      message: 'Group created successfully, error inviting users to group.',
     };
   }
 };

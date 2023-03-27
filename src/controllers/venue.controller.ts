@@ -4,10 +4,10 @@ import mongoose from 'mongoose';
 import { Venue as VenueInterface } from '../interfaces/Venue.interface';
 import Venue from '../models/Venue.model';
 import { REACTION_EMOJIS } from '../utils/constants';
-import { encodeEmoji } from '../utils/venue.utils';
+import { Emoji, encodeEmoji } from '../utils/venue.utils';
 import { addReactionExpireJob } from '../queue/jobs';
-import { Emoji } from '../utils/types';
 import { nightlightQueue } from '../queue/setup/queue.setup';
+import { verifyKeys, KeyValidationType } from '../utils/validation.utils';
 
 /**
  * Create a new venue
@@ -16,7 +16,14 @@ import { nightlightQueue } from '../queue/setup/queue.setup';
  * @return {Promise} - A promise that resolves when the venue is successfully created or failed to create
  */
 export const createVenue = async (req: Request, res: Response) => {
-  const newVenue = new Venue(req.body);
+  const venue = req.body;
+
+  const validationError = verifyKeys(venue, KeyValidationType.VENUES);
+  if (validationError !== '') {
+    return res.status(400).send({ message: validationError });
+  }
+
+  const newVenue = new Venue(venue);
 
   try {
     await newVenue.save();
@@ -225,15 +232,19 @@ export const addReactionToVenue = async (req: Request, res: Response) => {
         .send({ message: 'Failed to react to venue, queue error!' });
     }
 
-    const result = await Venue.findByIdAndUpdate(venueId, {
-      $push: {
-        reactions: {
-          userId: userId,
-          emoji: emoji,
-          queueId: job?.id,
+    const result = await Venue.findByIdAndUpdate(
+      venueId,
+      {
+        $push: {
+          reactions: {
+            userId: userId,
+            emoji: emoji,
+            queueId: job?.id,
+          },
         },
       },
-    });
+      { new: true }
+    );
 
     if (result === null) {
       nightlightQueue.remove(job.id);
@@ -241,7 +252,7 @@ export const addReactionToVenue = async (req: Request, res: Response) => {
     }
     return res
       .status(200)
-      .send({ message: 'Successfully added reaction to Venue!' });
+      .send({ message: 'Successfully added reaction to Venue!', body: result });
   } catch (error: any) {
     return res.status(500).send({ message: error.message });
   }

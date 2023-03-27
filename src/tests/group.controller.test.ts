@@ -3,15 +3,15 @@ import createServer from '../server';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import {
-  GROUP_KEYS,
+  GROUP_KEYS_TEST,
   TEST_GROUP2,
   TEST_USER_1,
   TEST_USER_2,
   TEST_USER_3,
   TEST_USER_4,
   TEST_USER_5,
-  USER_KEYS,
-} from './testData';
+  USER_KEYS_TEST,
+} from './data/testData';
 import { ObjectId } from 'mongodb';
 import { Server } from 'http';
 import { nightlightQueue } from '../queue/setup/queue.setup';
@@ -50,7 +50,7 @@ describe('testing group actions', () => {
       .then(res => {
         userIdFriend1 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -64,7 +64,7 @@ describe('testing group actions', () => {
       .then(res => {
         userIdFriend2 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -78,7 +78,7 @@ describe('testing group actions', () => {
       .then(res => {
         userIdFriend3 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -92,7 +92,7 @@ describe('testing group actions', () => {
       .then(res => {
         userIdFriend4 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -106,13 +106,27 @@ describe('testing group actions', () => {
       .then(res => {
         userIdFriend5 = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
+        done();
+      });
+  });
+
+  let userIdFriend6: string;
+  it('should create user5 via POST /users/ (friend5)', done => {
+    chai
+      .request(server)
+      .post('/users/')
+      .send(TEST_USER_5)
+      .then(res => {
+        userIdFriend6 = res.body.user._id;
+        expect(res).to.have.status(201);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
 
   let userIdMain: string;
-  it('should create main user with 5 friends via POST /users/', done => {
+  it('should create main user with 6 friends via POST /users/', done => {
     chai
       .request(server)
       .post('/users/')
@@ -124,12 +138,13 @@ describe('testing group actions', () => {
           userIdFriend3,
           userIdFriend4,
           userIdFriend5,
+          userIdFriend6,
         ],
       })
       .then(res => {
         userIdMain = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -148,7 +163,7 @@ describe('testing group actions', () => {
       .then(res => {
         groupId = res.body.group._id;
         expect(res).to.have.status(200);
-        expect(res.body.group).to.have.keys(GROUP_KEYS);
+        expect(res.body.group).to.have.keys(GROUP_KEYS_TEST);
         done();
       });
   });
@@ -160,7 +175,7 @@ describe('testing group actions', () => {
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.group).to.have.keys(GROUP_KEYS);
+        expect(res.body.group).to.have.keys(GROUP_KEYS_TEST);
         expect(res.body.group.members).to.include(userIdMain);
         expect(res.body.group.invitedMembers).to.include(userIdFriend1);
         expect(res.body.group.invitedMembers).to.include(userIdFriend2);
@@ -176,8 +191,8 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend1 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS);
-        expect(res.body.user.invitedGroups).to.include(groupId);
+        expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
+        expect(res.body.users[0].invitedGroups).to.include(groupId);
         done();
       });
   });
@@ -189,8 +204,8 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend2 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS);
-        expect(res.body.user.invitedGroups).to.include(groupId);
+        expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
+        expect(res.body.users[0].invitedGroups).to.include(groupId);
         done();
       });
   });
@@ -202,17 +217,30 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend5 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys(USER_KEYS);
-        expect(res.body.user.invitedGroups).to.include(groupId);
+        expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
+        expect(res.body.users[0].invitedGroups).to.include(groupId);
         done();
       });
   });
 
-  it('should invite a new member to a group via PATCH /group/{groupId}/inviteMembers', done => {
+  it('should invite a new member to a group via PATCH /group/{groupId}/inviteMembers (friend3)', done => {
     chai
       .request(server)
       .patch(`/groups/${groupId}/inviteMembers`)
+      .query({ userId: userIdMain })
       .send([userIdFriend3])
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('should invite a new member to a group via PATCH /group/{groupId}/inviteMembers (friend6)', done => {
+    chai
+      .request(server)
+      .patch(`/groups/${groupId}/inviteMembers`)
+      .query({ userId: userIdMain })
+      .send([userIdFriend6])
       .then(res => {
         expect(res).to.have.status(200);
         done();
@@ -226,13 +254,14 @@ describe('testing group actions', () => {
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.group).to.have.keys(GROUP_KEYS);
+        expect(res.body.group).to.have.keys(GROUP_KEYS_TEST);
         expect(res.body.group.members).to.include(userIdMain);
         expect(res.body.group.invitedMembers).to.include(userIdFriend1);
         expect(res.body.group.invitedMembers).to.include(userIdFriend2);
         expect(res.body.group.invitedMembers).to.include(userIdFriend3);
         expect(res.body.group.invitedMembers).to.not.include(userIdFriend4);
         expect(res.body.group.invitedMembers).to.include(userIdFriend5);
+        expect(res.body.group.invitedMembers).to.include(userIdFriend6);
         done();
       });
   });
@@ -249,6 +278,18 @@ describe('testing group actions', () => {
       });
   });
 
+  it('should decline a member invitation via PATCH /users/${userId}/declineGroupInvitation (friend6)', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userIdFriend6}/declineGroupInvitation`)
+      .query({ groupId: groupId })
+      .send()
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
   it('should get a group by id after member invitation removed via GET /group/{groupId}', done => {
     chai
       .request(server)
@@ -256,12 +297,13 @@ describe('testing group actions', () => {
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.group).to.have.keys(GROUP_KEYS);
+        expect(res.body.group).to.have.keys(GROUP_KEYS_TEST);
         expect(res.body.group.members).to.include(userIdMain);
         expect(res.body.group.invitedMembers).to.include(userIdFriend1);
         expect(res.body.group.invitedMembers).to.include(userIdFriend2);
         expect(res.body.group.invitedMembers).to.not.include(userIdFriend3);
         expect(res.body.group.invitedMembers).to.not.include(userIdFriend4);
+        expect(res.body.group.invitedMembers).to.not.include(userIdFriend6);
         expect(res.body.group.invitedMembers).to.include(userIdFriend5);
         done();
       });
@@ -297,7 +339,7 @@ describe('testing group actions', () => {
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.group).to.have.keys(GROUP_KEYS);
+        expect(res.body.group).to.have.keys(GROUP_KEYS_TEST);
         expect(res.body.group.members).to.include(userIdMain);
         expect(res.body.group.members).to.include(userIdFriend2);
         expect(res.body.group.members).to.include(userIdFriend5);
@@ -313,9 +355,12 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend5 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys([...USER_KEYS, 'currentGroup']);
-        expect(res.body.user.invitedGroups).to.have.length(0);
-        expect(res.body.user.currentGroup).to.equal(groupId);
+        expect(res.body.users[0]).to.have.keys([
+          ...USER_KEYS_TEST,
+          'currentGroup',
+        ]);
+        expect(res.body.users[0].invitedGroups).to.have.length(0);
+        expect(res.body.users[0].currentGroup).to.equal(groupId);
         done();
       });
   });
@@ -338,9 +383,9 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend5 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys([...USER_KEYS]);
-        expect(res.body.user.invitedGroups).to.have.length(0);
-        expect(res.body.user.currentGroup).to.be.undefined;
+        expect(res.body.users[0]).to.have.keys([...USER_KEYS_TEST]);
+        expect(res.body.users[0].invitedGroups).to.have.length(0);
+        expect(res.body.users[0].currentGroup).to.be.undefined;
         done();
       });
   });
@@ -353,7 +398,7 @@ describe('testing group actions', () => {
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.group).to.have.keys(GROUP_KEYS);
+        expect(res.body.group).to.have.keys(GROUP_KEYS_TEST);
         expect(res.body.group.members).to.include(userIdMain);
         expect(res.body.group.members).to.include(userIdFriend2);
         expect(res.body.group.members).to.not.include(userIdFriend5);
@@ -369,9 +414,12 @@ describe('testing group actions', () => {
       .query({ userId: userIdFriend2 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.user).to.have.keys([...USER_KEYS, 'currentGroup']);
-        expect(res.body.user.invitedGroups).to.have.length(0);
-        expect(res.body.user.currentGroup).to.equal(groupId);
+        expect(res.body.users[0]).to.have.keys([
+          ...USER_KEYS_TEST,
+          'currentGroup',
+        ]);
+        expect(res.body.users[0].invitedGroups).to.have.length(0);
+        expect(res.body.users[0].currentGroup).to.equal(groupId);
         done();
       });
   });
@@ -383,20 +431,34 @@ describe('testing group actions', () => {
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.group).to.have.keys(GROUP_KEYS);
+        expect(res.body.group).to.have.keys(GROUP_KEYS_TEST);
         setTimeout(function () {
           done();
         }, 6000);
       });
   });
 
-  it('should return group information after group expires', done => {
+  it('should return no group information (400) after group expires', done => {
     chai
       .request(server)
       .get('/groups/')
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(400);
+        done();
+      });
+  });
+
+  it('should check if user currentGroup is undefined after expiration', done => {
+    chai
+      .request(server)
+      .get('/users/')
+      .query({ userId: userIdMain })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users[0].currentGroup).to.be.undefined;
+        expect(res.body.users[0].invitedGroups).to.not.include(groupId);
+        expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -412,7 +474,7 @@ describe('testing group errors', () => {
       .then(res => {
         userId = res.body.user._id;
         expect(res).to.have.status(201);
-        expect(res.body.user).to.have.keys(USER_KEYS);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
         done();
       });
   });
@@ -440,14 +502,14 @@ describe('testing group errors', () => {
       });
   });
 
-  it('should return a 500 status for POST /groups/ with incorrectly formatted data', done => {
+  it('should return a 400 status for POST /groups/ with incorrectly formatted data', done => {
     chai
       .request(server)
       .post('/groups/')
       .query({ userId: userId })
       .send({ data: { message: 'This is incorrect' } })
       .then(res => {
-        expect(res).to.have.status(500);
+        expect(res).to.have.status(400);
         done();
       });
   });
