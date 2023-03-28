@@ -763,8 +763,6 @@ export const removeNotificationToken = async (req: Request, res: Response) => {
 /**
  * Adds an emergency contact to a given user's list of contacts.
  *
- * @function
- * @async
  * @param {Request} req - The Express request object containing the user ID and contact information.
  * @param {Response} res - The Express response object to modify with success or error messages.
  * @returns {Promise} A Promise that resolves when the contact has been added or rejects with an error.
@@ -780,7 +778,7 @@ export const addEmergencyContact = async (req: Request, res: Response) => {
 
   const validationError = verifyKeys(
     emergencyContact,
-    KeyValidationType.EMERGENCY_CONTACT
+    KeyValidationType.EMERGENCY_CONTACTS
   );
   if (validationError !== '') {
     return res.status(400).send({ message: validationError });
@@ -793,6 +791,8 @@ export const addEmergencyContact = async (req: Request, res: Response) => {
         $push: { emergencyContacts: emergencyContact },
       }
     );
+
+    console.log(targetUser);
 
     // Check if the user exists
     if (targetUser === null) {

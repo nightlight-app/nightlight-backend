@@ -17,6 +17,7 @@ import {
   removeNotificationToken,
   removeFriend,
   declineGroupInvitation,
+  addEmergencyContact,
 } from '../controllers/user.controller';
 
 const usersRouter = express.Router();
@@ -38,6 +39,7 @@ usersRouter.patch('/:userId/declineFriendRequest', declineFriendRequest);
 usersRouter.patch('/:userId/removeFriend', removeFriend);
 usersRouter.patch('/:userId/addNotificationToken', addNotificationToken);
 usersRouter.patch('/:userId/removeNotificationToken', removeNotificationToken);
+usersRouter.patch('/:userId/addEmergencyContact', addEmergencyContact);
 usersRouter.patch('/:userId/uploadProfileImg', uploadProfileImg);
 
 export = usersRouter;

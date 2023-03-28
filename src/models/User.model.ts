@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import { EmergencyContact } from '../interfaces/User.interface';
 
 /**
  * Represents the schema for a user in the database.
@@ -21,6 +22,7 @@ import mongoose, { Schema } from 'mongoose';
  * @property {[mongoose.Types.ObjectId]} [invitedGroups] - The IDs of the groups the user has been invited to.
  * @property {LastActive} [lastActive] - Object containing the location of the user's last activity and the time of that activity.
  * @property {[SavedGroup]} [savedGroups] - The saved groups of the user.
+ * @property {[EmergencyContact]} [emergencyContacts] - The emergency contacts of the user.
  */
 const userSchema = new mongoose.Schema({
   firebaseUid: {
@@ -97,6 +99,12 @@ const userSchema = new mongoose.Schema({
           ref: 'User',
         },
       ],
+    },
+  ],
+  emergencyContacts: [
+    {
+      name: String,
+      phone: String,
     },
   ],
 });

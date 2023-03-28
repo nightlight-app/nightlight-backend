@@ -5,6 +5,7 @@ import chaiHttp from 'chai-http';
 import {
   SAVED_GROUP,
   SAVED_GROUP_KEYS,
+  TEST_EMERGENCY_CONTACT,
   TEST_USER_1,
   TEST_USER_2,
   TEST_USER_3,
@@ -111,6 +112,38 @@ describe('testing user actions', () => {
       .send()
       .then(res => {
         expect(res).to.have.status(200);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should add an emergency contact via PATCH /users/{userId}/addEmergencyContact', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId}/addEmergencyContact`)
+      .send(TEST_EMERGENCY_CONTACT)
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should get user to verify emergency contact via GET /users/', done => {
+    chai
+      .request(server)
+      .get(`/users/`)
+      .query({ userId: userId })
+      .then(res => {
+        console.log(res.body.users[0]);
+        expect(res).to.have.status(200);
+        expect(res.body.users[0].emergencyContacts[0]).to.not.be.undefined;
+        expect(res.body.users[0].emergencyContacts[0].name).to.equal(
+          TEST_EMERGENCY_CONTACT.name
+        );
+        expect(res.body.users[0].emergencyContacts[0].phone).to.equal(
+          TEST_EMERGENCY_CONTACT.phone
+        );
         done();
       })
       .catch(err => done(err));
