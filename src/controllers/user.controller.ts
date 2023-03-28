@@ -804,12 +804,10 @@ export const addEmergencyContact = async (req: Request, res: Response) => {
       });
     }
 
-    return res
-      .status(200)
-      .send({
-        message: 'Successfully added emergency contact!',
-        emergencyContact: { ...emergencyContact, _id: generatedId },
-      });
+    return res.status(200).send({
+      message: 'Successfully added emergency contact!',
+      emergencyContact: { ...emergencyContact, _id: generatedId },
+    });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }
@@ -853,6 +851,62 @@ export const removeEmergencyContact = async (req: Request, res: Response) => {
     return res
       .status(200)
       .send({ message: 'Successfully added emergency contact!' });
+  } catch (error: any) {
+    return res.status(500).send({ message: error?.message });
+  }
+};
+
+/**
+ * Adds an emergency contact to a given user's list of contacts.
+ *
+ * @param {Request} req - The Express request object containing the user ID and contact information.
+ * @param {Response} res - The Express response object to modify with success or error messages.
+ * @returns {Promise} A Promise that resolves when the contact has been added or rejects with an error.
+ */
+export const updateEmergencyContact = async (req: Request, res: Response) => {
+  const userId = req.params?.userId;
+  const emergencyContactId = req.query?.emergencyContactId as string;
+  const emergencyContact = req.body;
+
+  const validationError = verifyKeys(
+    emergencyContact,
+    KeyValidationType.EMERGENCY_CONTACTS
+  );
+  if (validationError !== '') {
+    return res.status(400).send({ message: validationError });
+  }
+
+  const updateEmergencyContact = {
+    ...emergencyContact,
+    _id: emergencyContactId,
+  };
+
+  // Check if the provided userId is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  // Check if the emergency contact is valid
+  if (!mongoose.Types.ObjectId.isValid(emergencyContactId)) {
+    return res.status(400).send({ message: 'Invalid emergency contact ID!' });
+  }
+
+  try {
+    const targetUser = await User.findOneAndUpdate(
+      { _id: userId, 'emergencyContacts._id': emergencyContactId },
+      { $set: { 'emergencyContacts.$': updateEmergencyContact } },
+      { new: true }
+    );
+
+    // Check if the user exists
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    return res.status(200).send({
+      message: 'Successfully added emergency contact!',
+      targetUser: targetUser,
+    });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }

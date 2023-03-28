@@ -19,6 +19,7 @@ import {
   declineGroupInvitation,
   addEmergencyContact,
   removeEmergencyContact,
+  updateEmergencyContact,
 } from '../controllers/user.controller';
 
 const usersRouter = express.Router();
@@ -42,6 +43,7 @@ usersRouter.patch('/:userId/addNotificationToken', addNotificationToken);
 usersRouter.patch('/:userId/removeNotificationToken', removeNotificationToken);
 usersRouter.patch('/:userId/addEmergencyContact', addEmergencyContact);
 usersRouter.patch('/:userId/removeEmergencyContact', removeEmergencyContact);
+usersRouter.patch('/:userId/updateEmergencyContact', updateEmergencyContact);
 usersRouter.patch('/:userId/uploadProfileImg', uploadProfileImg);
 
 export = usersRouter;
