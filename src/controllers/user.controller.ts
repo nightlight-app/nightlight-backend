@@ -761,6 +761,53 @@ export const removeNotificationToken = async (req: Request, res: Response) => {
 };
 
 /**
+ * Adds an emergency contact to a given user's list of contacts.
+ *
+ * @function
+ * @async
+ * @param {Request} req - The Express request object containing the user ID and contact information.
+ * @param {Response} res - The Express response object to modify with success or error messages.
+ * @returns {Promise} A Promise that resolves when the contact has been added or rejects with an error.
+ */
+export const addEmergencyContact = async (req: Request, res: Response) => {
+  const userId = req.params?.userId;
+  const emergencyContact = req.body;
+
+  // Check if the provided userId is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  const validationError = verifyKeys(
+    emergencyContact,
+    KeyValidationType.EMERGENCY_CONTACT
+  );
+  if (validationError !== '') {
+    return res.status(400).send({ message: validationError });
+  }
+
+  try {
+    const targetUser = await User.findByIdAndUpdate(
+      { _id: userId },
+      {
+        $push: { emergencyContacts: emergencyContact },
+      }
+    );
+
+    // Check if the user exists
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    return res
+      .status(200)
+      .send({ message: 'Successfully added emergency contact!' });
+  } catch (error: any) {
+    return res.status(500).send({ message: error?.message });
+  }
+};
+
+/**
  * Uploads a profile image for the user with the specified userId to cloudinary
  * and updates the user's field to point to the new image.
  *
@@ -773,7 +820,7 @@ export const uploadProfileImg = async (req: Request, res: Response) => {
   // pass everything to multer upload so we can retrieve the image from req.file
   upload(req, res, async err => {
     if (err instanceof MulterError || err) {
-      throw new Error(err)
+      throw new Error(err);
     }
 
     const userId = req.params?.userId;

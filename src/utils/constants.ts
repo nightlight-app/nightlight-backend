@@ -38,6 +38,7 @@ export const USER_KEYS_ALL = [
   'savedGroups',
   'notificationToken',
   'currentGroup',
+  'emergencyContacts',
 ];
 
 /**
@@ -100,6 +101,11 @@ export const NOTIFICATION_KEYS_ALL = [
   'data',
   'delay',
 ];
+
+/**
+ * The necessary keys for an emergency contact object
+ */
+export const EMERGENCY_CONTACT_KEYS = ['name', 'phone'];
 
 /**
  * The name of the queue
