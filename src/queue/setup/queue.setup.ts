@@ -6,7 +6,7 @@ import { JobsList, NightlightQueueJob } from '../jobs.interface';
 // Define the connection options for the queue
 const queueOptions = {
   connection: new Redis({
-    host: process.env.REDIS_HOST || 'localhost',
+    host: process.env.REDIS_HOST || 'redis',
     port: parseInt(process.env.REDIS_PORT || '6379'),
   }),
 };
