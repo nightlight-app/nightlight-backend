@@ -20,6 +20,7 @@ import {
   addEmergencyContact,
   removeEmergencyContact,
   updateEmergencyContact,
+  getEmergencyContacts,
 } from '../controllers/user.controller';
 
 const usersRouter = express.Router();
@@ -28,6 +29,7 @@ const usersRouter = express.Router();
 usersRouter.post('/', createUser);
 usersRouter.get('/', getUsers);
 usersRouter.get('/:userId/friends', getFriends);
+usersRouter.get('/:userId/emergencyContacts', getEmergencyContacts);
 usersRouter.delete('/:userId', deleteUser);
 usersRouter.patch('/:userId', updateUser);
 usersRouter.patch('/:userId/saveGroup', saveGroup);

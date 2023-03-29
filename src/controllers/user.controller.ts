@@ -913,6 +913,38 @@ export const updateEmergencyContact = async (req: Request, res: Response) => {
 };
 
 /**
+ * Retrieves the emergency contacts associated with a given user ID.
+ *
+ * @param {Request} req - The request object containing the user ID as a parameter.
+ * @param {Response} res - The response object to be sent back containing the emergency contacts associated with the provided user ID.
+ * @returns {Promise} Returns a Promise that resolves when the emergency contacts have been successfully retrieved and sent in the response object.
+ */
+export const getEmergencyContacts = async (req: Request, res: Response) => {
+  const userId = req.params?.userId;
+
+  // Check if the provided userId is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  try {
+    const targetUser = await User.findById(userId);
+
+    // Check if the user exists
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    return res.status(200).send({
+      message: 'Successfully found emergency contacts!',
+      emergencyContacts: targetUser.emergencyContacts,
+    });
+  } catch (error: any) {
+    return res.status(500).send({ message: error?.message });
+  }
+};
+
+/**
  * Uploads a profile image for the user with the specified userId to cloudinary
  * and updates the user's field to point to the new image.
  *

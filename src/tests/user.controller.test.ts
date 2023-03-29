@@ -181,6 +181,18 @@ describe('testing user actions', () => {
       .catch(err => done(err));
   });
 
+  it('should get emergency contacts via GET /users/{userId}/getEmergencyContacts', done => {
+    chai
+      .request(server)
+      .get(`/users/${userId}/emergencyContacts`)
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.emergencyContacts).to.have.length(1);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
   it('should remove an emergency contact via PATCH /users/{userId}/removeEmergencyContact', done => {
     chai
       .request(server)
