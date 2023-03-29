@@ -10,8 +10,11 @@ connectMongoDB();
 // Configure Cloudinary
 configureCloudinary();
 
+// Set up Bull Board when running in production
+const shouldRunBullBoard = true;
+
 // Create the server
-const httpServer = createServer({ shouldRunBullBoard: true });
+const httpServer = createServer({ shouldRunBullBoard });
 
 // Create the socket.io server
 const io = new Server(httpServer);
@@ -25,6 +28,12 @@ httpServer.listen(process.env.SERVER_PORT, () => {
   console.log(
     `Express server is listening on port ${process.env.SERVER_PORT}!`
   );
+
+  if (shouldRunBullBoard) {
+    console.log(
+      `Bull-board is available at: http://localhost:${process.env.SERVER_PORT}/bull-board`
+    );
+  }
 });
 
 // Export the server instance to allow use elsewhere

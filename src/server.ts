@@ -44,12 +44,7 @@ const createServer = ({
     console.log('SETTING UP BULL BOARD', process.env.ENVIRONMENT);
     const adapter = createBullBoardAdapter();
     app.use('/bull-board', adapter.getRouter());
-    app.listen(process.env.QUEUE_PORT, () => {
-      console.log(`Example app listening on port ${process.env.QUEUE_PORT}`);
-      console.log(
-        `Bull-board is available at: http://localhost:${process.env.QUEUE_PORT}/bull-board`
-      );
-    });
+    console.log('BULL BOARD SET UP');
   }
 
   // Routers
