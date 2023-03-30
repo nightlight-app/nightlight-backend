@@ -1,8 +1,18 @@
-version: "3.2"
+version: '3.2'
 services:
   redis:
     container_name: nightlight-redis
-    image: redis:6
+    image: redis
     restart: always
     ports:
       - 6379:6379
+  backend:
+    container_name: nightlight-backend
+    image: nightlightapp/nightlight-backend
+    restart: always
+    ports:
+      - 6060:6060
+    links:
+      - redis:redis
+    depends_on:
+      - redis
