@@ -17,4 +17,4 @@ COPY . .
 
 # Expose .env SERVER_PORT
 EXPOSE 6060
-CMD [ "npm", "run", "start:server", "&", "npm", "run", "start:worker" ]
+CMD [ "npm", "run", "express", "&", "npm", "run", "worker" ]
