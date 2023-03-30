@@ -41,7 +41,7 @@ Then run the tests
 npm run test
 ```
 
-**Note: Make sure MONGODB_URI is pointing to our test db!**
+**Note: Make sure MONGODB_URI is pointing to our test db when running tests!**
 
 # Models
 
