@@ -9,7 +9,7 @@ import { expireGroup, expireReaction } from '../workers';
  */
 const workerOptions: WorkerOptions = {
   connection: {
-    host: process.env.REDIS_HOST || 'redis',
+    host: process.env.REDIS_HOST || 'localhost',
     port: parseInt(process.env.REDIS_PORT || '6379'),
   },
 };
