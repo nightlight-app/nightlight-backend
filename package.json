@@ -6,13 +6,12 @@
   "description": "Backend for the nightlight mobile application Express, MongoDB, Mongoose, and Node.",
   "main": "src/server.ts",
   "scripts": {
-    "start": "npm-run-all -p start:redis start:worker start:server",
+    "start": "docker compose up",
     "start:test": "npm-run-all -p start:redis start:worker",
     "worker": "ts-node src/queue/setup/workers.setup.ts",
     "dev": "nodemon src/index.ts",
     "build": "rm -rf build/ && prettier --write src/ && tsc",
     "format": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
-    "start:redis": "docker compose up",
     "start:worker": "npm run worker",
     "start:server": "nodemon src/index.ts",
     "seed": "nyc mocha --exit --timeout 8000 -r ts-node/register src/tests/seed.test.ts",
@@ -52,8 +51,7 @@
     "socket.io": "^4.5.4",
     "streamifier": "^0.1.1",
     "supertest": "^6.3.3",
-    "ts-node": "^10.9.1",
-    "ttab": "^0.8.0"
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
     "@types/multer": "^1.4.7",
