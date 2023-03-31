@@ -55,8 +55,6 @@ jobs:
     steps:
       # Install azure-cli
       - uses: elstudio/action-install-azure-cli@v1
-      # Now run whatever steps require the `az` command line utility
-      - uses: azure/webapps-deploy@v2
       # for example
       - name: Checkout
         uses: actions/checkout@v2
@@ -70,6 +68,7 @@ jobs:
           context: .
           push: false
           tags: nightlight/nightlight-backend:${{ github.sha }}
+
       - name: Update Azure Container Instance
         run: |
           az container create --resource-group nightlight-app --name nightlight-backend --image nightlight/nightlight-backend:latest --restart-policy Never --dns-name-label nightlight
