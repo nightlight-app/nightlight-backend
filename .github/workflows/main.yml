@@ -48,3 +48,24 @@ jobs:
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
           ENVIRONMENT: development
+
+  build-and-push-to-acr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build and tag Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: false
+          tags: nightlight.azurecr.io/nightlight-backend:latest
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: nightlight.azurecr.io
+          username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+      - name: Push Docker image to Azure Container Registry
+        run: |
+          docker push nightlight.azurecr.io/nightlight-backend:latest
