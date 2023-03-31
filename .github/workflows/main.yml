@@ -65,6 +65,11 @@ jobs:
           context: .
           push: false
           tags: nightlight/nightlight-backend:${{ github.sha }}
+
+      - name: Install Azure CLI
+        run: |
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+          az extension add --name azure-cli-ml
       - name: Update Azure Container Instance
         uses: azure/aci-update@v1
         with:
