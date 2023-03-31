@@ -50,7 +50,6 @@ jobs:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
           ENVIRONMENT: development
 
-  jobs:
   deploy-to-aci:
     runs-on: ubuntu-latest
     steps:
