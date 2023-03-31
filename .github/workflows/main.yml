@@ -55,6 +55,10 @@ jobs:
     steps:
       # Install azure-cli
       - uses: elstudio/action-install-azure-cli@v1
+      - name: Install Azure CLI
+        run: |
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+          az extension add --name azure-cli-ml
       # for example
       - name: Checkout
         uses: actions/checkout@v2
