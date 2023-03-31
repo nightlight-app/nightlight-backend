@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - Deployment
   pull_request:
     branches:
       - main
@@ -49,23 +50,25 @@ jobs:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
           ENVIRONMENT: development
 
-  build-and-push-to-acr:
+  jobs:
+  deploy-to-aci:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Build and tag Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           push: false
-          tags: nightlight.azurecr.io/nightlight-backend:latest
-      - name: Login to Azure Container Registry
-        uses: azure/docker-login@v1
+          tags: nightlight/nightlight-backend:${{ github.sha }}
+      - name: Update Azure Container Instance
+        uses: azure/aci-update@v1
         with:
-          login-server: nightlight.azurecr.io
-          username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-      - name: Push Docker image to Azure Container Registry
-        run: |
-          docker push nightlight.azurecr.io/nightlight-backend:latest
+          resource-group: my-resource-group
+          name: my-container-instance
+          image: nightlight/nightlight-backend:${{ github.sha }}
