@@ -71,8 +71,5 @@ jobs:
           curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
           az extension add --name azure-cli-ml
       - name: Update Azure Container Instance
-        uses: azure/aci-update@v1
-        with:
-          resource-group: my-resource-group
-          name: my-container-instance
-          image: nightlight/nightlight-backend:${{ github.sha }}
+        run: |
+          az container create --resource-group nightlight-app --name nightlight-backend --image nightlight/nightlight-backend:latest --restart-policy Never --dns-name-label nightlight
