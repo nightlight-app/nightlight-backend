@@ -2,20 +2,29 @@
 
 ## High level description
 
-Backend for the nightlight app. It is a RESTful API built with Node.js and Express.js. It uses MongoDB as its database. It implements a messaging queue for delay actions and expiring data.
+**Backend for the nightlight app:**
 
-Our `docker-compose.yml` spins up two containers:
+- Node.js + Express.js for RESTful API
+- MongoDB for database
+- SocketIO for group location sharing
+- Messaging queue for delay actions and expiring data.
+
+**Our `docker-compose.yml` spins up two containers:**
 
 1. a redis service, which uses an image pulled from [docker hub](https://hub.docker.com/_/redis).
 2. our express + worker, which uses an image pulled from our private registry.
 
-The `main` branch is configured for CD to automatically re-build our image on [Azure Container Registry (ACR)](https://learn.microsoft.com/en-us/azure/container-registry/), which is then automatically pulled from our [Azure Container Apps (ACA)](https://learn.microsoft.com/en-us/azure/container-apps/) and deployed at `Application Url` (get this from Azure):
+**CI/CD:**
+
+- The `main` branch is configured for CD to automatically re-build our image on [Azure Container Registry (ACR)](https://learn.microsoft.com/en-us/azure/container-registry/), which is then automatically pulled from our [Azure Container Apps (ACA)](https://learn.microsoft.com/en-us/azure/container-apps/) and deployed at `Application Url`.
 
 <p align="center">
 <img width="600" src="https://i.imgur.com/7M1unXM.png">
 </p>
 
-## Instructions for running
+- It is preferable to use the deployed backend URL (see Application Url under our Azure Container App), rather than pull the image from Azure Container Registry, unless you are making changes to the backend, in which case read below.
+
+<!-- ## Instructions for running
 
 Make sure you have [installed Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-macos)
 
@@ -45,7 +54,7 @@ docker pull nightlight.azurecr.io/nightlight-backend
 
 ```
 docker compose up
-```
+``` -->
 
 ## Instructions for local development
 
