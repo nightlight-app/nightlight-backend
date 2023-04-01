@@ -9,16 +9,25 @@ Our `docker-compose.yml` spins up two containers:
 
 ## Instructions for running
 
-First, login to our docker hub account to gain access to our private docker image using our Personal Access Token (see notion's \_) :
+Make sure you have [installed Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-macos)
+
+First, login to our private Azure Container Registry (ACR) called `nightlight` (see Azure > Container Registry "nightlight" > Settings > Access keys for password): 
 
 ```
-docker login -u nightlightapp
+az acr login --name nightlight
 ```
+
+Get the password from Azure: 
+
+<p align="center">
+<img width="800" alt="Screen Shot 2023-04-01 at 3 32 21 PM" src="https://user-images.githubusercontent.com/58854510/229312774-86875a09-89f3-4c84-8a1d-f89fb7392d6e.png">
+
+</p>
 
 Once logged in, pull our image
 
 ```
-docker pull nightlightapp/nightlight-backend:latest
+docker pull nightlight.azurecr.io/nightlight-backend
 ```
 
 Run our backend
