@@ -769,15 +769,10 @@ export const removeNotificationToken = async (req: Request, res: Response) => {
  */
 export const addEmergencyContact = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
-  const emergencyContactId = req.body;
+  const emergencyContact = req.body;
 
   // Check if the user ID was provided
   if (!userId) {
-    return res.status(400).send({ message: 'No user ID provided!' });
-  }
-
-  // Check if the emergency contact ID was provided
-  if (!emergencyContactId) {
     return res.status(400).send({ message: 'No user ID provided!' });
   }
 
@@ -790,7 +785,7 @@ export const addEmergencyContact = async (req: Request, res: Response) => {
 
   // Check if the emergency contact is valid
   const validationError = verifyKeys(
-    emergencyContactId,
+    emergencyContact,
     KeyValidationType.EMERGENCY_CONTACTS
   );
   if (validationError !== '') {
@@ -809,7 +804,7 @@ export const addEmergencyContact = async (req: Request, res: Response) => {
 
   // Check if the emergency contact already exists
   const duplicateExists = targetUser.emergencyContacts.some(
-    contact => contact.phone === emergencyContactId.phone
+    contact => contact.phone === emergencyContact.phone
   );
 
   // Check if the emergency contact already exists
@@ -828,7 +823,7 @@ export const addEmergencyContact = async (req: Request, res: Response) => {
       { _id: userId },
       {
         $push: {
-          emergencyContacts: { ...emergencyContactId, _id: generatedId },
+          emergencyContacts: { ...emergencyContact, _id: generatedId },
         },
       },
       { new: true }
@@ -843,7 +838,7 @@ export const addEmergencyContact = async (req: Request, res: Response) => {
 
     return res.status(200).send({
       message: 'Successfully added emergency contact!',
-      emergencyContact: { ...emergencyContactId, _id: generatedId },
+      emergencyContact: { ...emergencyContact, _id: generatedId },
     });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
