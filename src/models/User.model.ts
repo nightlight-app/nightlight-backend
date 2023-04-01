@@ -103,6 +103,7 @@ const userSchema = new mongoose.Schema({
   ],
   emergencyContacts: [
     {
+      _id: Schema.Types.ObjectId,
       name: String,
       phone: String,
     },
