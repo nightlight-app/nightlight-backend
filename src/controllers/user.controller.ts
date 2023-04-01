@@ -397,27 +397,33 @@ export const leaveGroup = async (req: Request, res: Response) => {
 
   try {
     // Remove userId from members in group
-    const targetGroup = await Group.findByIdAndUpdate(
-      groupId,
-      {
-        $pull: { members: userId },
-      },
-      { new: true }
-    );
+    const targetGroup = await Group.findByIdAndUpdate(groupId, {
+      $pull: { members: userId },
+    });
 
     if (targetGroup === null) {
       // Check if the group exists
       return res.status(400).send({ message: 'Group does not exist!' });
     }
 
+    /*
+     * If there are less than 2 members left in the group, delete the group
+     * Else, remove groupId from currentGroup of user
+     */
     if (targetGroup?.members.length <= 2) {
       // If there are less than 2 members left in the group, delete the group
       await Group.findByIdAndDelete(groupId);
 
       // Remove groupId from currentGroup of all members
-      await User.findByIdAndUpdate(
-        { _id: targetGroup.members },
+      await User.updateMany(
+        { _id: { $in: targetGroup.members } },
         { currentGroup: undefined }
+      );
+
+      // Remove groupId from invitedGroups of all members since the group has been deleted
+      await User.updateMany(
+        { _id: { $in: targetGroup.invitedMembers } },
+        { $pull: { invitedGroups: groupId } }
       );
 
       // Send notifications to all members that the group has been deleted
@@ -446,6 +452,7 @@ export const leaveGroup = async (req: Request, res: Response) => {
 
     return res.status(200).send({ message: 'Successfully left group!' });
   } catch (error: any) {
+    console.log(error.message);
     return res.status(500).send({ message: error.message });
   }
 };
