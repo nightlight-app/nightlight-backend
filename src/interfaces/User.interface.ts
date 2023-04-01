@@ -49,7 +49,7 @@ export interface User {
  * Represents an emergency contact with a name and phone number.
  * @interface EmergencyContact
  *
- * @property {mongoose.Types.ObjectId} _id - Optional ID of the emergency contact.
+ * @property {mongoose.Types.ObjectId} _id - ID of the emergency contact.
  * @property {string} name - Name of the emergency contact.
  * @property {string} phone - Phone number of the emergency contact.
  */
