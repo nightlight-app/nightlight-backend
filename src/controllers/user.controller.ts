@@ -819,7 +819,7 @@ export const addEmergencyContact = async (req: Request, res: Response) => {
 
   try {
     // Find the user in the database and add the emergency contact to their account
-    const targetUser = await User.findByIdAndUpdate(
+    const targetUpdatedUser = await User.findByIdAndUpdate(
       { _id: userId },
       {
         $push: {
@@ -830,7 +830,7 @@ export const addEmergencyContact = async (req: Request, res: Response) => {
     );
 
     // Check if the user exists
-    if (targetUser === null) {
+    if (targetUpdatedUser === null) {
       return res.status(400).send({
         message: 'User does not exist!',
       });
