@@ -5,6 +5,7 @@ import chaiHttp from 'chai-http';
 import {
   SAVED_GROUP,
   SAVED_GROUP_KEYS,
+  TEST_EMERGENCY_CONTACT,
   TEST_USER_1,
   TEST_USER_2,
   TEST_USER_3,
@@ -111,6 +112,107 @@ describe('testing user actions', () => {
       .send()
       .then(res => {
         expect(res).to.have.status(200);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  let emergencyContactId: string;
+  it('should add an emergency contact via PATCH /users/{userId}/addEmergencyContact', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId}/addEmergencyContact`)
+      .send(TEST_EMERGENCY_CONTACT)
+      .then(res => {
+        emergencyContactId = res.body.emergencyContact._id;
+        expect(res).to.have.status(200);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should get user to verify emergency contact via GET /users/', done => {
+    chai
+      .request(server)
+      .get(`/users/`)
+      .query({ userId: userId })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users[0].emergencyContacts[0]).to.not.be.undefined;
+        expect(res.body.users[0].emergencyContacts[0].name).to.equal(
+          TEST_EMERGENCY_CONTACT.name
+        );
+        expect(res.body.users[0].emergencyContacts[0].phone).to.equal(
+          TEST_EMERGENCY_CONTACT.phone
+        );
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should update an emergency contact via PATCH /users/{userId}/updateEmergencyContact', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId}/updateEmergencyContact`)
+      .query({ emergencyContactId: emergencyContactId })
+      .send({ name: 'Test User', phone: '+14567891023' })
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should get user to verify update emergency contact via GET /users/', done => {
+    chai
+      .request(server)
+      .get(`/users/`)
+      .query({ userId: userId })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users[0].emergencyContacts[0].name).to.equal(
+          'Test User'
+        );
+        expect(res.body.users[0].emergencyContacts[0].phone).to.equal(
+          '+14567891023'
+        );
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should get emergency contacts via GET /users/{userId}/getEmergencyContacts', done => {
+    chai
+      .request(server)
+      .get(`/users/${userId}/emergencyContacts`)
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.emergencyContacts).to.have.length(1);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should remove an emergency contact via PATCH /users/{userId}/removeEmergencyContact', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId}/removeEmergencyContact`)
+      .query({ emergencyContactId: emergencyContactId })
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should get user to verify emergency contact delete via GET /users/', done => {
+    chai
+      .request(server)
+      .get(`/users/`)
+      .query({ userId: userId })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users[0].emergencyContacts).to.have.length(0);
         done();
       })
       .catch(err => done(err));

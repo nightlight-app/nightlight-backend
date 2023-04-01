@@ -7,7 +7,7 @@ import {
   NotificationType,
 } from '../../interfaces/Notification.interface';
 import { SavedGroup } from '../../interfaces/SavedGroup.interface';
-import { User } from '../../interfaces/User.interface';
+import { EmergencyContact, User } from '../../interfaces/User.interface';
 import { Venue, VenueReaction } from '../../interfaces/Venue.interface';
 import { REACTION_EMOJIS } from '../../utils/constants';
 import { Emoji } from '../../utils/venue.utils';
@@ -230,6 +230,12 @@ export const TEST_NOTIFICATION: MongoNotification = {
   delay: 0,
 };
 
+/* Emergency Contact */
+export const TEST_EMERGENCY_CONTACT: EmergencyContact = {
+  name: 'John Doe',
+  phone: '+11234567890',
+};
+
 /* Reactions */
 export const createTestReaction = (userId: string | number, emoji: Emoji) => {
   return {
@@ -257,6 +263,7 @@ export const USER_KEYS_TEST = [
   'phone',
   'lastActive',
   'savedGroups',
+  'emergencyContacts',
 ];
 
 export const GROUP_KEYS_TEST = [
