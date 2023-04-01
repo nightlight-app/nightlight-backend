@@ -54,7 +54,7 @@ export interface User {
  * @property {string} phone - Phone number of the emergency contact.
  */
 export interface EmergencyContact {
-  _id?: mongoose.Types.ObjectId;
+  _id: mongoose.Types.ObjectId;
   name: string;
   phone: string;
 }
