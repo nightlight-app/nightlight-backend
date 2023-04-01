@@ -1,59 +1,88 @@
-# nightlight (backend)
+# nightlight-backend
 
-This is the backend for the nightlight app. It is a RESTful API built with Node.js and Express.js. It uses MongoDB as its database. It implements a messaging queue for delay actions and expiring data.
+## High level description
+
+Backend for the nightlight app. It is a RESTful API built with Node.js and Express.js. It uses MongoDB as its database. It implements a messaging queue for delay actions and expiring data.
 
 Our `docker-compose.yml` spins up two containers:
 
-1. a redis service, which uses an image pulled from [https://hub.docker.com/\_/redis](https://hub.docker.com/_/redis)
-2. our express + worker, which uses an image pulled from [https://hub.docker.com/repository/docker/nightlightapp/nightlight-backend/general](https://hub.docker.com/repository/docker/nightlightapp/nightlight-backend/general) (private)
+1. a redis service, which uses an image pulled from [docker hub](https://hub.docker.com/_/redis).
+2. our express + worker, which uses an image pulled from our private registry.
+
+The `main` branch is configured for CD to automatically re-build our image on [Azure Container Registry (ACR)](https://learn.microsoft.com/en-us/azure/container-registry/), which is then automatically pulled from our [Azure Container Apps (ACA)](https://learn.microsoft.com/en-us/azure/container-apps/) and deployed at `Application Url` (get this from Azure):
+
+<p align="center">
+<img width="600" src="https://i.imgur.com/7M1unXM.png">
+</p>
 
 ## Instructions for running
 
 Make sure you have [installed Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-macos)
 
-First, login to our Azure account (use Microsoft credentials)
+1. First, login to our Azure account (use Microsoft credentials)
+
 ```
 az login
 ```
 
-Then, login to our private Azure Container Registry (ACR) called `nightlight` (see Azure > Container Registry "nightlight" > Settings > Access keys for password): 
+2. Login to our private Azure Container Registry (ACR) called `nightlight` (see Azure > Container Registry "nightlight" > Settings > Access keys for password):
 
 ```
 az acr login --name nightlight
 ```
 
-Get the password from Azure: 
-
 <p align="center">
 <img width="800" alt="Screen Shot 2023-04-01 at 3 32 21 PM" src="https://user-images.githubusercontent.com/58854510/229312774-86875a09-89f3-4c84-8a1d-f89fb7392d6e.png">
-
 </p>
 
-Once logged in, pull our image
+3. Once logged in, pull our image
 
 ```
 docker pull nightlight.azurecr.io/nightlight-backend
 ```
 
-Run our backend
+4. Run our backend
 
 ```
 docker compose up
 ```
 
+## Instructions for local development
+
+When developing on a separate branch, you would ideally:
+
+1. Write code ✨
+2. Build the image locally
+
+```
+docker build . -t nightlight.azurecr.io/nightlight-backend --no-cache
+```
+
+3. Run container locally
+
+```
+docker compose up
+```
+
+4. See it work!
+
 ## Instructions for running tests
 
-Run redis and worker in the background
+_Tests are not run through Docker, so you do not need to spin up Docker._
+
+1. Run redis and worker in the background
 
 ```
 npm run start:test
 ```
 
-Then run the tests
+2. Then run the tests
 
 ```
 npm run test
 ```
+
+3. Smile while you see the tests pass! _(hopefully)_
 
 **Note: Make sure MONGODB_URI is pointing to our test db when running tests!**
 
