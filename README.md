@@ -11,7 +11,12 @@ Our `docker-compose.yml` spins up two containers:
 
 Make sure you have [installed Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-macos)
 
-First, login to our private Azure Container Registry (ACR) called `nightlight` (see Azure > Container Registry "nightlight" > Settings > Access keys for password): 
+First, login to our Azure account (use Microsoft credentials)
+```
+az login
+```
+
+Then, login to our private Azure Container Registry (ACR) called `nightlight` (see Azure > Container Registry "nightlight" > Settings > Access keys for password): 
 
 ```
 az acr login --name nightlight
