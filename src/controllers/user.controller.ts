@@ -863,7 +863,9 @@ export const removeEmergencyContact = async (req: Request, res: Response) => {
 
   // Check if the emergency contact ID was provided
   if (!emergencyContactId) {
-    return res.status(400).send({ message: 'No user ID provided!' });
+    return res
+      .status(400)
+      .send({ message: 'No emergency contact ID provided!' });
   }
 
   // Check if the provided userId is valid
@@ -918,7 +920,9 @@ export const updateEmergencyContact = async (req: Request, res: Response) => {
 
   // Check if the emergency contact ID was provided
   if (!emergencyContactId) {
-    return res.status(400).send({ message: 'No user ID provided!' });
+    return res
+      .status(400)
+      .send({ message: 'No emergency contact ID provided!' });
   }
 
   // Check if the emergency contact is valid
