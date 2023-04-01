@@ -397,23 +397,51 @@ export const leaveGroup = async (req: Request, res: Response) => {
 
   try {
     // Remove userId from members in group
-    const targetGroup = await Group.findByIdAndUpdate(groupId, {
-      $pull: { members: userId },
-    });
+    const targetGroup = await Group.findByIdAndUpdate(
+      groupId,
+      {
+        $pull: { members: userId },
+      },
+      { new: true }
+    );
 
-    // Check if the group exists
     if (targetGroup === null) {
+      // Check if the group exists
       return res.status(400).send({ message: 'Group does not exist!' });
     }
 
-    // Remove groupId from currentGroup of user
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      currentGroup: undefined,
-    });
+    if (targetGroup?.members.length <= 2) {
+      // If there are less than 2 members left in the group, delete the group
+      await Group.findByIdAndDelete(groupId);
 
-    // Check if the user exists
-    if (targetUser === null) {
-      return res.status(400).send({ message: 'User does not exist!' });
+      // Remove groupId from currentGroup of all members
+      await User.findByIdAndUpdate(
+        { _id: targetGroup.members },
+        { currentGroup: undefined }
+      );
+
+      // Send notifications to all members that the group has been deleted
+      sendNotifications(
+        [
+          ...targetGroup.members
+            .map(objectId => objectId.toString())
+            .filter(id => id !== userId),
+        ],
+        'Group deleted 😢',
+        'Your group has been deleted due to lack of members.',
+        { notificationType: NotificationType.groupDeleted },
+        false
+      );
+    } else {
+      // Remove groupId from currentGroup of user
+      const targetUser = await User.findByIdAndUpdate(userId, {
+        currentGroup: undefined,
+      });
+
+      // Check if the user exists
+      if (targetUser === null) {
+        return res.status(400).send({ message: 'User does not exist!' });
+      }
     }
 
     return res.status(200).send({ message: 'Successfully left group!' });
