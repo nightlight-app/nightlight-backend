@@ -130,8 +130,8 @@ describe('testing group actions', () => {
     chai
       .request(server)
       .post('/users/')
-      .send(TEST_USER_3)
-      .query({
+      .send({
+        ...TEST_USER_3,
         friends: [
           userIdFriend1,
           userIdFriend2,
@@ -554,8 +554,8 @@ describe('testing group deletion after less than 2 members', () => {
     chai
       .request(server)
       .post('/users/')
-      .send(TEST_USER_3)
-      .query({
+      .send({
+        ...TEST_USER_3,
         friends: [
           userIdFriend1,
           userIdFriend2,
