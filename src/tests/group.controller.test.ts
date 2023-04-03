@@ -690,7 +690,7 @@ describe('testing group deletion after less than 2 members', () => {
       });
   });
 
-  it('should accept group invitation and add member to group (userIdFriend5)', done => {
+  it('should accept group invitation and add member to group (userIdFriend1)', done => {
     chai
       .request(server)
       .patch(`/users/${userIdFriend1}/acceptGroupInvitation`)
@@ -701,7 +701,7 @@ describe('testing group deletion after less than 2 members', () => {
       });
   });
 
-  it('should accept group invitation and add member to group (userIdFriend5)', done => {
+  it('should accept group invitation and add member to group (userIdFriend2)', done => {
     chai
       .request(server)
       .patch(`/users/${userIdFriend2}/acceptGroupInvitation`)
@@ -712,7 +712,7 @@ describe('testing group deletion after less than 2 members', () => {
       });
   });
 
-  it('should accept group invitation and add member to group (userIdFriend5)', done => {
+  it('should accept group invitation and add member to group (userIdFriend3)', done => {
     chai
       .request(server)
       .patch(`/users/${userIdFriend3}/acceptGroupInvitation`)
@@ -723,7 +723,7 @@ describe('testing group deletion after less than 2 members', () => {
       });
   });
 
-  it('should allow user to leave group (userIdFriend5)', done => {
+  it('should allow user to leave group (userIdFriend1)', done => {
     chai
       .request(server)
       .patch(`/users/${userIdFriend1}/leaveGroup`)
@@ -734,7 +734,7 @@ describe('testing group deletion after less than 2 members', () => {
       });
   });
 
-  it('should return user information after leaving group (userIdFriend5)', done => {
+  it('should return user information after leaving group (userIdFriend1)', done => {
     chai
       .request(server)
       .get(`/users/`)
@@ -748,7 +748,7 @@ describe('testing group deletion after less than 2 members', () => {
       });
   });
 
-  it('should allow user to leave group (userIdFriend5)', done => {
+  it('should allow user to leave group (userIdFriend2)', done => {
     chai
       .request(server)
       .patch(`/users/${userIdFriend2}/leaveGroup`)
@@ -759,7 +759,7 @@ describe('testing group deletion after less than 2 members', () => {
       });
   });
 
-  it('should return user information after leaving group (userIdFriend5)', done => {
+  it('should return user information after leaving group (userIdFriend2)', done => {
     chai
       .request(server)
       .get(`/users/`)
@@ -773,7 +773,7 @@ describe('testing group deletion after less than 2 members', () => {
       });
   });
 
-  it('should allow user to leave group (userIdFriend5)', done => {
+  it('should allow user to leave group (userIdFriend3)', done => {
     chai
       .request(server)
       .patch(`/users/${userIdFriend3}/leaveGroup`)
@@ -784,7 +784,7 @@ describe('testing group deletion after less than 2 members', () => {
       });
   });
 
-  it('should return user information after leaving group (userIdFriend5)', done => {
+  it('should return user information after leaving group (userIdFriend3)', done => {
     chai
       .request(server)
       .get(`/users/`)
