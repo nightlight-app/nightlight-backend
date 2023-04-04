@@ -627,6 +627,7 @@ describe('testing user search', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users).to.have.length(1);
+        expect(res.body.users[0].notificationToken).to.be.undefined;
         done();
       })
       .catch(err => done(err));
@@ -640,6 +641,8 @@ describe('testing user search', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users).to.have.length(2);
+        expect(res.body.users[0].notificationToken).to.be.undefined;
+        expect(res.body.users[1].notificationToken).to.be.undefined;
         done();
       })
       .catch(err => done(err));
@@ -653,6 +656,7 @@ describe('testing user search', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users).to.have.length(1);
+        expect(res.body.users[0].notificationToken).to.be.undefined;
         done();
       })
       .catch(err => done(err));

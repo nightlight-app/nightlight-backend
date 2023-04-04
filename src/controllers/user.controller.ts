@@ -113,19 +113,36 @@ export const searchUsers = async (req: Request, res: Response) => {
   const queryString = req.query.query as string;
   const count = Number(req.query.count as string);
   const page = Number(req.query.page as string);
+
+  // Check if the query string is provided
+  if (!count) {
+    return res.status(400).send({ message: 'No count provided!' });
+  }
+
+  // Check if the query string is provided
+  if (!page) {
+    return res.status(400).send({ message: 'No page provided!' });
+  }
+
+  // Calculate the number of users to skip
   const skip = (page - 1) * count;
 
+  // Check if the query string is provided
   if (queryString === undefined) {
     return res.status(400).send({ message: 'No query string provided!' });
   }
 
   try {
-    const users = await User.find({
-      $or: [
-        { firstName: { $regex: '^' + queryString, $options: 'i' } },
-        { lastName: { $regex: '^' + queryString, $options: 'i' } },
-      ],
-    })
+    // Find the user in the database and omit the notificationToken from the response
+    const users = await User.find(
+      {
+        $or: [
+          { firstName: { $regex: '^' + queryString, $options: 'i' } },
+          { lastName: { $regex: '^' + queryString, $options: 'i' } },
+        ],
+      },
+      { notificationToken: 0 }
+    )
       .skip(skip)
       .limit(count);
 
