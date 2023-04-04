@@ -369,7 +369,10 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
         ' ' +
         targetUser.lastName +
         ' has joined your group.',
-      { notificationType: NotificationType.groupInviteAccepted },
+      {
+        notificationType: NotificationType.groupInviteAccepted,
+        sentDateTime: new Date(),
+      },
       true
     );
 
@@ -425,7 +428,10 @@ export const declineGroupInvitation = async (req: Request, res: Response) => {
         ' ' +
         targetUser.lastName +
         ' rejected invitation to group.',
-      { notificationType: NotificationType.groupInviteDeclined },
+      {
+        notificationType: NotificationType.groupInviteDeclined,
+        sentDateTime: new Date(),
+      },
       false
     );
 
@@ -497,7 +503,10 @@ export const leaveGroup = async (req: Request, res: Response) => {
         ],
         'Group deleted 😢',
         'Your group has been deleted due to lack of members.',
-        { notificationType: NotificationType.groupDeleted },
+        {
+          notificationType: NotificationType.groupDeleted,
+          sentDateTime: new Date(),
+        },
         false
       );
     } else {
@@ -612,7 +621,10 @@ export const requestFriend = async (req: Request, res: Response) => {
         ' ' +
         targetUser.lastName +
         ' has sent you a friend request.',
-      { notificationType: NotificationType.friendRequest },
+      {
+        notificationType: NotificationType.friendRequest,
+        sentDateTime: new Date(),
+      },
       true
     );
 
@@ -675,7 +687,10 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
         ' ' +
         targetUser.lastName +
         ' has accepted your friend request.',
-      { notificationType: NotificationType.friendRequestAccepted },
+      {
+        notificationType: NotificationType.friendRequestAccepted,
+        sentDateTime: new Date(),
+      },
       false
     );
 
@@ -736,7 +751,10 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
         ' ' +
         targetFriend.lastName +
         ' has declined your friend request.',
-      { notificationType: NotificationType.friendRequestDeclined },
+      {
+        notificationType: NotificationType.friendRequestDeclined,
+        sentDateTime: new Date(),
+      },
       false
     );
 

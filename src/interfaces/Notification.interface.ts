@@ -48,6 +48,7 @@ export interface ExpoNotification {
  */
 export interface NotificationData {
   notificationType: string;
+  sentDateTime: Date;
 }
 
 /**
