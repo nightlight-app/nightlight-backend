@@ -37,6 +37,9 @@ export const addReactionExpireJob = async (
   emoji: Emoji,
   delay: number
 ) => {
+  // override delay if environment is test
+  if (process.env.ENVIRONMENT === 'test') delay = 3000;
+
   try {
     const job = await nightlightQueue.add(
       'reactionExpire',
