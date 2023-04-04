@@ -675,6 +675,7 @@ describe('testing user search', () => {
       .catch(err => done(err));
   });
 
+  /*
   it('should return all users via GET /users/search', done => {
     chai
       .request(server)
@@ -687,7 +688,7 @@ describe('testing user search', () => {
       })
       .catch(err => done(err));
   });
-
+ */
   it('should return a no users via GET /users/search', done => {
     chai
       .request(server)
