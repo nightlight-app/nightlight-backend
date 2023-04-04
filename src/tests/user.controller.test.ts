@@ -675,6 +675,19 @@ describe('testing user search', () => {
       .catch(err => done(err));
   });
 
+  it('should return all users via GET /users/search', done => {
+    chai
+      .request(server)
+      .get('/users/search')
+      .query({ query: '', count: 10, page: 1 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users).to.have.length(9);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
   it('should return a no users via GET /users/search', done => {
     chai
       .request(server)
