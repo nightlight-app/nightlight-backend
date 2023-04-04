@@ -8,6 +8,7 @@
  */
 export const useTestingDatabase = () => {
   if (process.env.MONGODB_URI)
+    // replace the last part of the URI with 'test'
     return process.env.MONGODB_URI.replace(/\/[^/]+$/, '/test');
   else return process.env.MONGODB_URI || '';
 };

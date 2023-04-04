@@ -31,7 +31,7 @@ export const expireGroup = async (groupId: string) => {
       await User.updateMany(
         { _id: targetGroup.invitedMembers },
         {
-          $pull: { invitedGroups: new ObjectId(groupId) },
+          $pull: { invitedGroups: groupId },
         }
       );
     }
