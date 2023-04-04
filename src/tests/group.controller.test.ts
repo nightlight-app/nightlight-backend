@@ -15,6 +15,10 @@ import {
 import { ObjectId } from 'mongodb';
 import { Server } from 'http';
 import { nightlightQueue } from '../queue/setup/queue.setup';
+import Group from '../models/Group.model';
+import User from '../models/User.model';
+import Venue from '../models/Venue.model';
+import Notification from '../models/Notification.model';
 
 require('dotenv').config();
 
@@ -38,6 +42,10 @@ before(async () => {
   await connectToMongo();
   server = app.listen(6060);
   await nightlightQueue.drain();
+  await User.deleteMany({});
+  await Group.deleteMany({});
+  await Venue.deleteMany({});
+  await Notification.deleteMany({});
 });
 
 describe('testing group actions', () => {

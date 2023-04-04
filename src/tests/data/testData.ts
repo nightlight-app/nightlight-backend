@@ -184,6 +184,63 @@ export const TEST_USER_5: User = {
   savedGroups: [TEST_SAVED_GROUP_3, TEST_SAVED_GROUP_4],
 };
 
+export const SEARCH_USER_1: User = {
+  firebaseUid: 'FAKEUSERID1',
+  notificationToken: undefined,
+  imgUrlProfileSmall: 'www.smallProfileImage1.com',
+  imgUrlProfileLarge: 'www.largeProfileImage1.com',
+  imgUrlCover: 'www.coverImage1.com',
+  firstName: 'Ethan',
+  lastName: 'Ratnofsky',
+  email: 'er1@gmail.com',
+  phone: '+11234567890',
+  birthday: new Date(),
+  currentGroup: undefined,
+  invitedGroups: undefined,
+  friends: [],
+  friendRequests: [],
+  lastActive: TEST_LAST_ACTIVE_1,
+  savedGroups: [TEST_SAVED_GROUP_1, TEST_SAVED_GROUP_2],
+};
+
+export const SEARCH_USER_2: User = {
+  firebaseUid: 'FAKEUSERID1',
+  notificationToken: undefined,
+  imgUrlProfileSmall: 'www.smallProfileImage1.com',
+  imgUrlProfileLarge: 'www.largeProfileImage1.com',
+  imgUrlCover: 'www.coverImage1.com',
+  firstName: 'Ethan',
+  lastName: 'Thomas',
+  email: 'er2@gmail.com',
+  phone: '+11234567890',
+  birthday: new Date(),
+  currentGroup: undefined,
+  invitedGroups: undefined,
+  friends: [],
+  friendRequests: [],
+  lastActive: TEST_LAST_ACTIVE_1,
+  savedGroups: [TEST_SAVED_GROUP_1, TEST_SAVED_GROUP_2],
+};
+
+export const SEARCH_USER_3: User = {
+  firebaseUid: 'FAKEUSERID1',
+  notificationToken: undefined,
+  imgUrlProfileSmall: 'www.smallProfileImage1.com',
+  imgUrlProfileLarge: 'www.largeProfileImage1.com',
+  imgUrlCover: 'www.coverImage1.com',
+  firstName: 'Zi',
+  lastName: 'Teoh',
+  email: 'zt1@gmail.com',
+  phone: '+11234567890',
+  birthday: new Date(),
+  currentGroup: undefined,
+  invitedGroups: undefined,
+  friends: [],
+  friendRequests: [],
+  lastActive: TEST_LAST_ACTIVE_1,
+  savedGroups: [TEST_SAVED_GROUP_1, TEST_SAVED_GROUP_2],
+};
+
 /* Groups */
 export const TEST_GROUP1: Group = {
   name: 'Our group',

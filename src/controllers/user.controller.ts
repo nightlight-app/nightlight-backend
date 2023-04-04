@@ -103,6 +103,36 @@ export const getUsers = async (req: Request, res: Response) => {
 };
 
 /**
+ * Searches for users based on the provided query string and returns a list of users that match the query.
+ *
+ * @param {Request} req - Express request object containing the query parameters, including the query string.
+ * @param {Response} res - Express response object used to send the response back to the client.
+ * @returns {Object<User[]>} Returns status code 200 and an object containing a success message and list of users that match the query string if successful.
+ */
+export const searchUsers = async (req: Request, res: Response) => {
+  const queryString = req.query.query as string;
+
+  if (queryString === undefined) {
+    return res.status(400).send({ message: 'No query string provided!' });
+  }
+
+  try {
+    const users = await User.find({
+      $or: [
+        { firstName: { $regex: '^' + queryString, $options: 'i' } },
+        { lastName: { $regex: '^' + queryString, $options: 'i' } },
+      ],
+    });
+
+    return res
+      .status(200)
+      .send({ message: 'Successfully found users!', users: users });
+  } catch (error: any) {
+    return res.status(500).send({ message: error?.message });
+  }
+};
+
+/**
  * Deletes a user matching the provided userId parameter from the database.
  * @param {Request} req - Express request object containing the parameters, including the userId.
  * @param {Response} res - Express response object used to send the response back to the client.
