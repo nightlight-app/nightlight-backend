@@ -18,6 +18,7 @@ import Group from '../models/Group.model';
 import Venue from '../models/Venue.model';
 import { Server } from 'http';
 import Notification from '../models/Notification.model';
+import { useTestingDatabase } from './mongodb.utils';
 require('dotenv').config();
 
 chai.use(chaiHttp);
@@ -28,7 +29,7 @@ let server: Server;
 
 const connectToMongo = async (): Promise<void> => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || '', {
+    await mongoose.connect(useTestingDatabase(), {
       useNewUrlParser: true,
     } as ConnectOptions);
   } catch (error) {

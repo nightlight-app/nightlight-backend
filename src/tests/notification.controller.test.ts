@@ -5,6 +5,7 @@ import chaiHttp from 'chai-http';
 import { Server } from 'http';
 import { ObjectId } from 'mongodb';
 import { TEST_USER_2 } from './data/testData';
+import { useTestingDatabase } from './mongodb.utils';
 require('dotenv').config();
 
 chai.use(chaiHttp);
@@ -15,7 +16,7 @@ let server: Server;
 
 const connectToMongo = async (): Promise<void> => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || '', {
+    await mongoose.connect(useTestingDatabase(), {
       useNewUrlParser: true,
     } as ConnectOptions);
   } catch (error) {

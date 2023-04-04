@@ -15,6 +15,7 @@ import {
 import { ObjectId } from 'mongodb';
 import { Server } from 'http';
 import { nightlightQueue } from '../queue/setup/queue.setup';
+import { useTestingDatabase } from './mongodb.utils';
 
 require('dotenv').config();
 
@@ -26,7 +27,7 @@ let server: Server;
 
 const connectToMongo = async (): Promise<void> => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || '', {
+    await mongoose.connect(useTestingDatabase(), {
       useNewUrlParser: true,
     } as ConnectOptions);
   } catch (error) {
@@ -394,7 +395,6 @@ describe('testing group actions', () => {
     chai
       .request(server)
       .get('/groups/')
-      .query({ groupId: groupId })
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
