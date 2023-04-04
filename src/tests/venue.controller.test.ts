@@ -3,7 +3,6 @@ import createServer from '../server';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import {
-  createTestReaction,
   REACTION_KEYS_TEST,
   TEST_USER_1,
   TEST_VENUE,
@@ -11,10 +10,13 @@ import {
   VENUE_KEYS_TEST,
 } from './data/testData';
 import { ObjectId } from 'mongodb';
-import { decodeEmoji } from '../utils/venue.utils';
 import { Server } from 'http';
 import { nightlightQueue } from '../queue/setup/queue.setup';
 import { useTestingDatabase } from './mongodb.utils';
+import Group from '../models/Group.model';
+import User from '../models/User.model';
+import Venue from '../models/Venue.model';
+import Notification from '../models/Notification.model';
 
 require('dotenv').config();
 
@@ -37,6 +39,10 @@ const connectToMongo = async (): Promise<void> => {
 before(async () => {
   await connectToMongo();
   server = app.listen(6061);
+  await User.deleteMany({});
+  await Group.deleteMany({});
+  await Venue.deleteMany({});
+  await Notification.deleteMany({});
   await nightlightQueue.drain();
 });
 

@@ -5,6 +5,9 @@ import chaiHttp from 'chai-http';
 import {
   SAVED_GROUP,
   SAVED_GROUP_KEYS,
+  SEARCH_USER_1,
+  SEARCH_USER_2,
+  SEARCH_USER_3,
   TEST_EMERGENCY_CONTACT,
   TEST_USER_1,
   TEST_USER_2,
@@ -17,6 +20,10 @@ import {
 import { ObjectId } from 'mongodb';
 import { Server } from 'http';
 import { useTestingDatabase } from './mongodb.utils';
+import Group from '../models/Group.model';
+import User from '../models/User.model';
+import Venue from '../models/Venue.model';
+import Notification from '../models/Notification.model';
 
 require('dotenv').config();
 
@@ -39,6 +46,10 @@ const connectToMongo = async (): Promise<void> => {
 before(async () => {
   await connectToMongo();
   server = app.listen(6062);
+  await User.deleteMany({});
+  await Group.deleteMany({});
+  await Venue.deleteMany({});
+  await Notification.deleteMany({});
 });
 
 /* USER TESTS */
@@ -557,6 +568,142 @@ describe('testing friend requests', () => {
         expect(res.body.friends).to.have.length(0);
         done();
       });
+  });
+});
+
+describe('testing user search', () => {
+  it('should delete all users via mongoose', done => {
+    User.deleteMany({}).then(() => done());
+  });
+
+  it('should create a new user via POST /users', done => {
+    chai
+      .request(server)
+      .post('/users/')
+      .send(SEARCH_USER_1)
+      .then(res => {
+        const user = res.body.user;
+        expect(res).to.have.status(201);
+        expect(user).to.be.an('object');
+        expect(user).to.have.property('_id');
+        expect(user.email).to.equal(SEARCH_USER_1.email);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should create a new user via POST /users', done => {
+    chai
+      .request(server)
+      .post('/users/')
+      .send(SEARCH_USER_2)
+      .then(res => {
+        const user = res.body.user;
+        expect(res).to.have.status(201);
+        expect(user).to.be.an('object');
+        expect(user).to.have.property('_id');
+        expect(user.email).to.equal(SEARCH_USER_2.email);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should create a new user via POST /users', done => {
+    chai
+      .request(server)
+      .post('/users/')
+      .send(SEARCH_USER_3)
+      .then(res => {
+        const user = res.body.user;
+        expect(res).to.have.status(201);
+        expect(user).to.be.an('object');
+        expect(user).to.have.property('_id');
+        expect(user.email).to.equal(SEARCH_USER_3.email);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should return a single user via GET /users/search', done => {
+    chai
+      .request(server)
+      .get('/users/search')
+      .query({ query: 'Zi', count: 10, page: 1 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users).to.have.length(1);
+        expect(res.body.users[0].notificationToken).to.be.undefined;
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should return a list of users via GET /users/search', done => {
+    chai
+      .request(server)
+      .get('/users/search')
+      .query({ query: 'Eth', count: 10, page: 1 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users).to.have.length(2);
+        expect(res.body.users[0].notificationToken).to.be.undefined;
+        expect(res.body.users[1].notificationToken).to.be.undefined;
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should return one user via GET /users/search', done => {
+    chai
+      .request(server)
+      .get('/users/search')
+      .query({ query: 'Rat', count: 10, page: 1 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users).to.have.length(1);
+        expect(res.body.users[0].notificationToken).to.be.undefined;
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should return no users via GET /users/search', done => {
+    chai
+      .request(server)
+      .get('/users/search')
+      .query({ query: 'Rat', count: 10, page: 2 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users).to.have.length(0);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should return all users via GET /users/search', done => {
+    chai
+      .request(server)
+      .get('/users/search')
+      .query({ query: '', count: 100, page: 1 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users).to.have.length(3);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should return a no users via GET /users/search', done => {
+    chai
+      .request(server)
+      .get('/users/search')
+      .query({ query: 'TestTestFake', count: 10, page: 1 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users).to.have.length(0);
+        done();
+      })
+      .catch(err => done(err));
   });
 });
 

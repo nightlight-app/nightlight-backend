@@ -26,6 +26,12 @@ export const createGroup = async (req: Request, res: Response) => {
   // create a new group from the request body
   const newGroup = new Group(group);
 
+  if (newGroup.invitedMembers.length === 0) {
+    return res
+      .status(400)
+      .send({ message: 'Group must have at least one invited member!' });
+  }
+
   try {
     // check if user id is valid
     if (!mongoose.Types.ObjectId.isValid(userId)) {

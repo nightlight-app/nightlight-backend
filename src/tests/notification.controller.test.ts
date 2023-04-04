@@ -6,6 +6,10 @@ import { Server } from 'http';
 import { ObjectId } from 'mongodb';
 import { TEST_USER_2 } from './data/testData';
 import { useTestingDatabase } from './mongodb.utils';
+import Group from '../models/Group.model';
+import User from '../models/User.model';
+import Venue from '../models/Venue.model';
+import Notification from '../models/Notification.model';
 require('dotenv').config();
 
 chai.use(chaiHttp);
@@ -27,6 +31,10 @@ const connectToMongo = async (): Promise<void> => {
 before(async () => {
   await connectToMongo();
   server = app.listen(6065);
+  await User.deleteMany({});
+  await Group.deleteMany({});
+  await Venue.deleteMany({});
+  await Notification.deleteMany({});
 });
 
 /* NOTIFICATION TESTS */

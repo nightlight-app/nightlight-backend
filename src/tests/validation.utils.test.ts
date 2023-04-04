@@ -1,15 +1,4 @@
 import { assert } from 'chai';
-import { User } from '../interfaces/User.interface';
-import {
-  GROUP_KEYS,
-  GROUP_KEYS_ALL,
-  NOTIFICATION_KEYS,
-  NOTIFICATION_KEYS_ALL,
-  USER_KEYS,
-  USER_KEYS_ALL,
-  VENUE_KEYS,
-  VENUE_KEYS_ALL,
-} from '../utils/constants';
 import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
 import {
   TEST_GROUP1,

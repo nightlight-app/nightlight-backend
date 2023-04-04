@@ -103,6 +103,68 @@ export const getUsers = async (req: Request, res: Response) => {
 };
 
 /**
+ * Searches for users based on the provided query string and returns a list of users that match the query.
+ *
+ * @param {Request} req - Express request object containing the query parameters, including the query string.
+ * @param {Response} res - Express response object used to send the response back to the client.
+ * @returns {Object<User[]>} Returns status code 200 and an object containing a success message and list of users that match the query string if successful.
+ */
+export const searchUsers = async (req: Request, res: Response) => {
+  const queryString = req.query.query as string;
+  const count = Number(req.query.count as string);
+  const page = Number(req.query.page as string);
+
+  // Check if the query string is provided
+  if (!count) {
+    return res.status(400).send({ message: 'No count provided!' });
+  }
+
+  // Check if the query string is provided
+  if (!page) {
+    return res.status(400).send({ message: 'No page provided!' });
+  }
+
+  // Calculate the number of users to skip
+  const skip = (page - 1) * count;
+
+  // Check if the query string is provided
+  if (queryString === undefined) {
+    return res.status(400).send({ message: 'No query string provided!' });
+  }
+
+  try {
+    let users;
+
+    if (queryString === '') {
+      // Select count number of random users from the database and omit the notificationToken from the response
+      users = await User.aggregate([
+        { $sample: { size: count } },
+        { $project: { notificationToken: 0 } },
+      ]);
+    } else {
+      // Find the user in the database and omit the notificationToken from the response
+      users = await User.find(
+        {
+          $or: [
+            { firstName: { $regex: '^' + queryString, $options: 'i' } },
+            { lastName: { $regex: '^' + queryString, $options: 'i' } },
+          ],
+        },
+        { notificationToken: 0 }
+      )
+        .skip(skip)
+        .limit(count);
+    }
+
+    return res
+      .status(200)
+      .send({ message: 'Successfully found users!', users: users });
+  } catch (error: any) {
+    return res.status(500).send({ message: error?.message });
+  }
+};
+
+/**
  * Deletes a user matching the provided userId parameter from the database.
  * @param {Request} req - Express request object containing the parameters, including the userId.
  * @param {Response} res - Express response object used to send the response back to the client.
@@ -401,23 +463,58 @@ export const leaveGroup = async (req: Request, res: Response) => {
       $pull: { members: userId },
     });
 
-    // Check if the group exists
     if (targetGroup === null) {
+      // Check if the group exists
       return res.status(400).send({ message: 'Group does not exist!' });
     }
 
-    // Remove groupId from currentGroup of user
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      currentGroup: undefined,
-    });
+    /*
+     * If there are less than 2 members left in the group, delete the group
+     * Else, remove groupId from currentGroup of user
+     */
+    if (targetGroup?.members.length <= 2) {
+      // If there are less than 2 members left in the group, delete the group
+      await Group.findByIdAndDelete(groupId);
 
-    // Check if the user exists
-    if (targetUser === null) {
-      return res.status(400).send({ message: 'User does not exist!' });
+      // Remove groupId from currentGroup of all members
+      await User.updateMany(
+        { _id: { $in: targetGroup.members } },
+        { currentGroup: undefined }
+      );
+
+      // Remove groupId from invitedGroups of all members since the group has been deleted
+      await User.updateMany(
+        { _id: { $in: targetGroup.invitedMembers } },
+        { $pull: { invitedGroups: groupId } }
+      );
+
+      // Send notifications to all members that the group has been deleted
+      sendNotifications(
+        [
+          ...targetGroup.members
+            .map(objectId => objectId.toString())
+            .filter(id => id !== userId),
+        ],
+        'Group deleted 😢',
+        'Your group has been deleted due to lack of members.',
+        { notificationType: NotificationType.groupDeleted },
+        false
+      );
+    } else {
+      // Remove groupId from currentGroup of user
+      const targetUser = await User.findByIdAndUpdate(userId, {
+        currentGroup: undefined,
+      });
+
+      // Check if the user exists
+      if (targetUser === null) {
+        return res.status(400).send({ message: 'User does not exist!' });
+      }
     }
 
     return res.status(200).send({ message: 'Successfully left group!' });
   } catch (error: any) {
+    console.log(error.message);
     return res.status(500).send({ message: error.message });
   }
 };
