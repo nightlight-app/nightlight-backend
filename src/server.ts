@@ -24,7 +24,6 @@ const createServer = ({
   app.use(cors()); // Enable CORS
 
   // Initialize Firebase app
-  console.log('OOOOOOOOOOOOOOOOOOOo');
   if (!admin.apps.length) {
     console.log('INITIALIZING FIREBASE APP');
     admin.initializeApp({
