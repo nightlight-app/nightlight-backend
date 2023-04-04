@@ -111,6 +111,9 @@ export const getUsers = async (req: Request, res: Response) => {
  */
 export const searchUsers = async (req: Request, res: Response) => {
   const queryString = req.query.query as string;
+  const count = Number(req.query.count as string);
+  const page = Number(req.query.page as string);
+  const skip = (page - 1) * count;
 
   if (queryString === undefined) {
     return res.status(400).send({ message: 'No query string provided!' });
@@ -122,7 +125,9 @@ export const searchUsers = async (req: Request, res: Response) => {
         { firstName: { $regex: '^' + queryString, $options: 'i' } },
         { lastName: { $regex: '^' + queryString, $options: 'i' } },
       ],
-    });
+    })
+      .skip(skip)
+      .limit(count);
 
     return res
       .status(200)

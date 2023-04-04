@@ -623,7 +623,7 @@ describe('testing user search', () => {
     chai
       .request(server)
       .get('/users/search')
-      .query({ query: 'Zi' })
+      .query({ query: 'Zi', count: 10, page: 1 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users).to.have.length(1);
@@ -636,7 +636,7 @@ describe('testing user search', () => {
     chai
       .request(server)
       .get('/users/search')
-      .query({ query: 'Eth' })
+      .query({ query: 'Eth', count: 10, page: 1 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users).to.have.length(2);
@@ -649,10 +649,23 @@ describe('testing user search', () => {
     chai
       .request(server)
       .get('/users/search')
-      .query({ query: 'Rat' })
+      .query({ query: 'Rat', count: 10, page: 1 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users).to.have.length(1);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should return no users via GET /users/search', done => {
+    chai
+      .request(server)
+      .get('/users/search')
+      .query({ query: 'Rat', count: 10, page: 2 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users).to.have.length(0);
         done();
       })
       .catch(err => done(err));
@@ -662,7 +675,7 @@ describe('testing user search', () => {
     chai
       .request(server)
       .get('/users/search')
-      .query({ query: 'TestTestFake' })
+      .query({ query: 'TestTestFake', count: 10, page: 1 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users).to.have.length(0);
