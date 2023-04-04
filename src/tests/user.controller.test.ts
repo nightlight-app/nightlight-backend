@@ -571,6 +571,10 @@ describe('testing friend requests', () => {
 });
 
 describe('testing user search', () => {
+  it('should delete all users via mongoose', done => {
+    User.deleteMany({}).then(() => done());
+  });
+
   it('should create a new user via POST /users', done => {
     chai
       .request(server)
@@ -675,20 +679,19 @@ describe('testing user search', () => {
       .catch(err => done(err));
   });
 
-  /*
   it('should return all users via GET /users/search', done => {
     chai
       .request(server)
       .get('/users/search')
-      .query({ query: '', count: 10, page: 1 })
+      .query({ query: '', count: 100, page: 1 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.users).to.have.length(9);
+        expect(res.body.users).to.have.length(3);
         done();
       })
       .catch(err => done(err));
   });
- */
+
   it('should return a no users via GET /users/search', done => {
     chai
       .request(server)

@@ -133,18 +133,28 @@ export const searchUsers = async (req: Request, res: Response) => {
   }
 
   try {
-    // Find the user in the database and omit the notificationToken from the response
-    const users = await User.find(
-      {
-        $or: [
-          { firstName: { $regex: '^' + queryString, $options: 'i' } },
-          { lastName: { $regex: '^' + queryString, $options: 'i' } },
-        ],
-      },
-      { notificationToken: 0 }
-    )
-      .skip(skip)
-      .limit(count);
+    let users;
+
+    if (queryString === '') {
+      // Select count number of random users from the database and omit the notificationToken from the response
+      users = await User.aggregate([
+        { $sample: { size: count } },
+        { $project: { notificationToken: 0 } },
+      ]);
+    } else {
+      // Find the user in the database and omit the notificationToken from the response
+      users = await User.find(
+        {
+          $or: [
+            { firstName: { $regex: '^' + queryString, $options: 'i' } },
+            { lastName: { $regex: '^' + queryString, $options: 'i' } },
+          ],
+        },
+        { notificationToken: 0 }
+      )
+        .skip(skip)
+        .limit(count);
+    }
 
     return res
       .status(200)
