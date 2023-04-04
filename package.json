@@ -7,7 +7,7 @@
   "main": "src/server.ts",
   "scripts": {
     "start": "docker compose up",
-    "start:test": "npm-run-all -p redis worker",
+    "start:test": "ENVIRONMENT=test npm-run-all -p redis worker",
     "redis": "docker-compose up redis",
     "worker": "ts-node src/queue/setup/workers.setup.ts",
     "express": "nodemon src/index.ts",
