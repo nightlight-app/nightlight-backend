@@ -57,6 +57,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isEmergency: {
+    type: Boolean,
+    required: true,
+  },
   birthday: {
     type: Date,
   },

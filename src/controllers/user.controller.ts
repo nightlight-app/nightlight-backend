@@ -1107,6 +1107,44 @@ export const getEmergencyContacts = async (req: Request, res: Response) => {
   }
 };
 
+export const activateEmergency = async (req: Request, res: Response) => {
+  const userId = req.params.userId as string;
+
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the provided userId is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  const targetUser = await User.findById(userId);
+
+  // Check if the user exists
+  if (targetUser === null) {
+    return res.status(400).send({ message: 'User does not exist!' });
+  }
+
+  const targetGroup = await Group.findById(targetUser.currentGroup);
+
+  // Check if the group exists
+  if (targetGroup === null) {
+    return res.status(400).send({ message: 'Group does not exist!' });
+  }
+
+  try {
+    // change the user document so that "isEmergency" is true
+    await User.updateMany({ _id: targetGroup.members }, { isEmergency: true });
+
+    // send notifications to users in group
+    // TODO: send an SMS to all emergency contacts
+  } catch (error: any) {
+    return res.status(500).send({ message: error?.message });
+  }
+};
+
 /**
  * Uploads a profile image for the user with the specified userId to cloudinary
  * and updates the user's field to point to the new image.
