@@ -10,8 +10,8 @@ import mongoose, { Schema } from 'mongoose';
  * @property {Object} expectedDestination - Expected latitude and longitude of the destination.
  * @property {number} expectedDestination.latitude - Latitude of the expected destination.
  * @property {number} expectedDestination.longitude - Longitude of the expected destination.
- * @property {Date} creationDatetime - Date when the group is created, required.
- * @property {Date} expirationDatetime - Date when the group will expire, required.
+ * @property {String} creationDatetime - Date (in UTC) when the group is created, required.
+ * @property {String} expirationDatetime - Date (in UTC) when the group will expire, required.
  */
 const groupSchema = new mongoose.Schema({
   name: {
@@ -37,11 +37,11 @@ const groupSchema = new mongoose.Schema({
     longitude: Number,
   },
   creationDatetime: {
-    type: Date,
+    type: String,
     required: true,
   },
   expirationDatetime: {
-    type: Date,
+    type: String,
     required: true,
   },
 });

@@ -15,7 +15,7 @@ import { EmergencyContact } from '../interfaces/User.interface';
  * @property {String} lastName - The last name of the user, required.
  * @property {String} email - The email address of the user, required.
  * @property {String} phone - The phone number of the user, required.
- * @property {Date} birthday - The date of birth of the user, required.
+ * @property {String} birthday - The date of birth (UTC) of the user.
  * @property {[mongoose.Types.ObjectId]} [friends] - The IDs of the friends of the user.
  * @property {[mongoose.Types.ObjectId]} [friendRequests] - The IDs of the users who have sent friendship requests to the user.
  * @property {mongoose.Types.ObjectId} [currentGroup] - The ID of the current group the user is in.
@@ -58,7 +58,7 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   birthday: {
-    type: Date,
+    type: String,
   },
   friends: [
     {
@@ -87,7 +87,7 @@ const userSchema = new mongoose.Schema({
       latitude: Number,
       longitude: Number,
     },
-    time: Date,
+    time: String,
   },
   savedGroups: [
     {

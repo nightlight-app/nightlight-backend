@@ -8,8 +8,8 @@ import mongoose from 'mongoose';
  * @param {string} name - The name of the group.
  * @param {mongoose.Types.ObjectId[]} members - An array containing the IDs of the members belonging to the group.
  * @param {mongoose.Types.ObjectId[]} invitedMembers - An array containing the IDs of the members who have been invited to the group.
- * @param {Date} creationDatetime - A Date object representing when this group was created.
- * @param {Date} expirationDatetime - A Date object representing when this group is set to expire.
+ * @param {String} creationDatetime - A Date string (UTC) representing when this group was created.
+ * @param {String} expirationDatetime - A Date string (UTC) representing when this group is set to expire.
  * @param {{latitude: number, longitude: number}} expectedDestination - An object consisting of latitude and longitude values indicating the expected destination for the group.
  */
 export interface Group {
@@ -17,8 +17,8 @@ export interface Group {
   name: string;
   members: mongoose.Types.ObjectId[];
   invitedMembers: mongoose.Types.ObjectId[];
-  creationDatetime: Date;
-  expirationDatetime: Date;
+  creationDatetime: String;
+  expirationDatetime: String;
   expectedDestination?: {
     latitude: number;
     longitude: number;

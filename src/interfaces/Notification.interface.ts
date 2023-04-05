@@ -45,9 +45,11 @@ export interface ExpoNotification {
  *
  * @interface
  * @property {string} notificationType - The type of notification.
+ * @property {string} sentDateTime - The date and time the notification was sent.
  */
 export interface NotificationData {
   notificationType: string;
+  sentDateTime: string;
 }
 
 /**
