@@ -19,6 +19,7 @@ import {
 } from './data/testData';
 import { ObjectId } from 'mongodb';
 import { Server } from 'http';
+import { useTestingDatabase } from '../../src/config/mongodb.config';
 import Group from '../models/Group.model';
 import User from '../models/User.model';
 import Venue from '../models/Venue.model';
@@ -34,7 +35,7 @@ let server: Server;
 
 const connectToMongo = async (): Promise<void> => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || '', {
+    await mongoose.connect(useTestingDatabase(), {
       useNewUrlParser: true,
     } as ConnectOptions);
   } catch (error) {

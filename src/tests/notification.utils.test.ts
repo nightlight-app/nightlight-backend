@@ -7,13 +7,14 @@ import {
 } from '../utils/notification.utils';
 import { ObjectId } from 'mongodb';
 import { NOTIFICATION_KEYS_TEST } from './data/testData';
+import { useTestingDatabase } from '../../src/config/mongodb.config';
 require('dotenv').config();
 
 chai.should();
 
 const connectToMongo = async (): Promise<void> => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || '', {
+    await mongoose.connect(useTestingDatabase(), {
       useNewUrlParser: true,
     } as ConnectOptions);
   } catch (error) {

@@ -8,6 +8,9 @@ import { nightlightQueue } from './setup/queue.setup';
  * @returns {Promise} - A promise that resolves when the job has been added to the queue.
  */
 export const addGroupExpireJob = async (groupId: string, delay: number) => {
+  // override delay if environment is test
+  if (process.env.ENVIRONMENT === 'test') delay = 3000;
+
   try {
     await nightlightQueue.add(
       'groupExpire',
@@ -34,6 +37,9 @@ export const addReactionExpireJob = async (
   emoji: Emoji,
   delay: number
 ) => {
+  // override delay if environment is test
+  if (process.env.ENVIRONMENT === 'test') delay = 3000;
+
   try {
     const job = await nightlightQueue.add(
       'reactionExpire',

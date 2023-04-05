@@ -19,10 +19,19 @@ export const expireGroup = async (groupId: string) => {
     }
 
     if (targetGroup.members && targetGroup.members.length > 0) {
-      const result = await User.updateMany(
+      // remove group id from all members who have joined the group
+      await User.updateMany(
         { _id: targetGroup.members },
         {
           currentGroup: undefined,
+        }
+      );
+
+      // remove group id from all invited members who have not joined the group
+      await User.updateMany(
+        { _id: targetGroup.invitedMembers },
+        {
+          $pull: { invitedGroups: groupId },
         }
       );
     }

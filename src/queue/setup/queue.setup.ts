@@ -3,10 +3,15 @@ import Redis from 'ioredis';
 import { NIGHTLIGHT_QUEUE } from '../../utils/constants';
 import { JobsList, NightlightQueueJob } from '../jobs.interface';
 
+let redisHost = process.env.REDIS_HOST || '';
+
+// Use localhost for testing because server is not run in docker
+if (process.env.ENVIRONMENT === 'test') redisHost = 'localhost';
+
 // Define the connection options for the queue
 const queueOptions = {
   connection: new Redis({
-    host: process.env.REDIS_HOST || 'localhost',
+    host: redisHost,
     port: parseInt(process.env.REDIS_PORT || '6379'),
   }),
 };

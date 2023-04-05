@@ -7,6 +7,7 @@ import { addGroupExpireJob } from '../queue/jobs';
 import { inviteUsersToGroup } from '../utils/group.utils';
 import { sendNotifications } from '../utils/notification.utils';
 import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
+import { GROUP_EXPIRY_DURATION } from '../utils/constants';
 
 /**
  * Creates a new group and adds it to the database.
@@ -66,7 +67,7 @@ export const createGroup = async (req: Request, res: Response) => {
     const result = inviteUsersToGroup(newGroup._id, newGroup.invitedMembers);
 
     // add the group to the expire queue
-    addGroupExpireJob(newGroup._id.toString(), 3000);
+    addGroupExpireJob(newGroup._id.toString(), GROUP_EXPIRY_DURATION);
 
     // convert all user ids to strings for notification sending
     const stringIds = newGroup.invitedMembers.map(id => id.toString());

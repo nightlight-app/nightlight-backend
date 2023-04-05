@@ -32,7 +32,12 @@ const createServer = ({
   }
 
   // Authenticate Firebase token
-  if (process.env.ENVIRONMENT !== 'development') {
+  if (
+    !(
+      process.env.ENVIRONMENT === 'development' ||
+      process.env.ENVIRONMENT === 'test'
+    )
+  ) {
     app.use(authenticateFirebaseToken); // Authenticate Firebase token
   }
 
