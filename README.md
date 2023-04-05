@@ -112,7 +112,7 @@ npm run test
     "lastName": string,
     "email": string,
     "phone": string,
-    "birthday": Date,
+    "birthday": string,
     "currentGroup": mongoose.Types.ObjectId | undefined,
     "friends": mongoose.Types.ObjectId[],
     "friendRequests": mongoose.Types.ObjectId[],
@@ -121,7 +121,7 @@ npm run test
         "latitude": Number,
         "longitude": Number,
         },
-        "time": Date,
+        "time": string,
     },
     "savedGroups": [{
         "name": String,
@@ -142,8 +142,8 @@ npm run test
         "latitude": Number,
         "longitide": Number,
     },
-    "creationDatetime": Date,
-    "expirationDatetime": Date,
+    "creationDatetime": String,
+    "expirationDatetime": String,
 }
 ```
 
@@ -157,7 +157,7 @@ npm run test
     "reactions": [{
         userId: String,
         emoji: String,
-        date: Date
+        date: String
     }]
 }
 ```

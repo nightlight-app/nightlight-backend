@@ -15,7 +15,7 @@ export const createUser = (
   currentGroup?: mongoose.Types.ObjectId,
   invitedGroups?: mongoose.Types.ObjectId[],
   friends?: mongoose.Types.ObjectId[]
-) => {
+): User => {
   return {
     firebaseUid: faker.random.alphaNumeric(32),
     notificationToken: undefined,
@@ -28,7 +28,7 @@ export const createUser = (
     phone: faker.phone.number(),
     birthday: new Date(
       faker.date.between('1990-01-01T00:00:00.000Z', '2001-01-01T00:00:00.000Z')
-    ),
+    ).toUTCString(),
     currentGroup: currentGroup,
     invitedGroups: invitedGroups,
     friends: friends || ([] as mongoose.Types.ObjectId[]),
@@ -43,10 +43,10 @@ export const createUser = (
           '1990-01-01T00:00:00.000Z',
           '2001-01-01T00:00:00.000Z'
         )
-      ),
+      ).toUTCString(),
     },
     savedGroups: [],
-  } as User;
+  };
 };
 
 /**
