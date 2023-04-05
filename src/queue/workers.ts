@@ -33,7 +33,7 @@ export const expireGroup = async (groupId: string) => {
       'Your group has expired. We hope you had a safe night!',
       {
         notificationType: NotificationType.groupExpired,
-        sentDateTime: new Date(),
+        sentDateTime: new Date().toUTCString(),
       },
       false
     );
