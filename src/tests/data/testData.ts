@@ -18,7 +18,7 @@ const TEST_LAST_ACTIVE_1: LastActive = {
     latitude: 12.8758393,
     longitude: 95.7584833,
   },
-  time: new Date(),
+  time: new Date().toUTCString(),
 } as LastActive;
 
 const TEST_SAVED_GROUP_1: SavedGroup = {
@@ -49,7 +49,7 @@ export const TEST_USER_1: User = {
   lastName: 'Doe1',
   email: 'john.doe1@gmail.com',
   phone: '+11234567890',
-  birthday: new Date(),
+  birthday: new Date().toUTCString(),
   currentGroup: undefined,
   invitedGroups: undefined,
   friends: [],
@@ -81,7 +81,7 @@ const TEST_LAST_ACTIVE_2: LastActive = {
     latitude: 42.8758393,
     longitude: 35.7584833,
   },
-  time: new Date(),
+  time: new Date().toUTCString(),
 } as LastActive;
 
 const TEST_SAVED_GROUP_3: SavedGroup = {
@@ -112,7 +112,7 @@ export const TEST_USER_2: User = {
   lastName: 'Hemingway2',
   email: 'john.doe2@gmail.com',
   phone: '+11234567890',
-  birthday: new Date(),
+  birthday: new Date().toUTCString(),
   currentGroup: undefined,
   invitedGroups: undefined,
   friends: [
@@ -134,7 +134,7 @@ export const TEST_USER_3: User = {
   lastName: 'Hemingway3',
   email: 'john3.doe@gmail.com',
   phone: '+11234567890',
-  birthday: new Date(),
+  birthday: new Date().toUTCString(),
   currentGroup: undefined,
   invitedGroups: undefined,
   friends: [
@@ -156,7 +156,7 @@ export const TEST_USER_4: User = {
   lastName: 'Hemingway4',
   email: 'john4.doe@gmail.com',
   phone: '+11234567890',
-  birthday: new Date(),
+  birthday: new Date().toUTCString(),
   currentGroup: undefined,
   invitedGroups: undefined,
   friends: [],
@@ -175,7 +175,7 @@ export const TEST_USER_5: User = {
   lastName: 'Hemingway5',
   email: 'john5.doe@gmail.com',
   phone: '+11234567890',
-  birthday: new Date(),
+  birthday: new Date().toUTCString(),
   currentGroup: undefined,
   invitedGroups: undefined,
   friends: [],
@@ -194,7 +194,7 @@ export const SEARCH_USER_1: User = {
   lastName: 'Ratnofsky',
   email: 'er1@gmail.com',
   phone: '+11234567890',
-  birthday: new Date(),
+  birthday: new Date().toUTCString(),
   currentGroup: undefined,
   invitedGroups: undefined,
   friends: [],
@@ -213,7 +213,7 @@ export const SEARCH_USER_2: User = {
   lastName: 'Thomas',
   email: 'er2@gmail.com',
   phone: '+11234567890',
-  birthday: new Date(),
+  birthday: new Date().toUTCString(),
   currentGroup: undefined,
   invitedGroups: undefined,
   friends: [],
@@ -232,7 +232,7 @@ export const SEARCH_USER_3: User = {
   lastName: 'Teoh',
   email: 'zt1@gmail.com',
   phone: '+11234567890',
-  birthday: new Date(),
+  birthday: new Date().toUTCString(),
   currentGroup: undefined,
   invitedGroups: undefined,
   friends: [],
@@ -252,16 +252,16 @@ export const TEST_GROUP1: Group = {
     new mongoose.Types.ObjectId(5),
     new mongoose.Types.ObjectId(65264),
   ],
-  creationDatetime: new Date(),
-  expirationDatetime: new Date(),
+  creationDatetime: new Date().toUTCString(),
+  expirationDatetime: new Date().toUTCString(),
 };
 
 export const TEST_GROUP2: Group = {
   name: 'Second group',
   members: [],
   invitedMembers: [],
-  creationDatetime: new Date(),
-  expirationDatetime: new Date(),
+  creationDatetime: new Date().toUTCString(),
+  expirationDatetime: new Date().toUTCString(),
 };
 
 /* Venues */

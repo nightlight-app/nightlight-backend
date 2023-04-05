@@ -371,7 +371,7 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
         ' has joined your group.',
       {
         notificationType: NotificationType.groupInviteAccepted,
-        sentDateTime: new Date(),
+        sentDateTime: new Date().toUTCString(),
       },
       true
     );
@@ -430,7 +430,7 @@ export const declineGroupInvitation = async (req: Request, res: Response) => {
         ' rejected invitation to group.',
       {
         notificationType: NotificationType.groupInviteDeclined,
-        sentDateTime: new Date(),
+        sentDateTime: new Date().toUTCString(),
       },
       false
     );
@@ -505,7 +505,7 @@ export const leaveGroup = async (req: Request, res: Response) => {
         'Your group has been deleted due to lack of members.',
         {
           notificationType: NotificationType.groupDeleted,
-          sentDateTime: new Date(),
+          sentDateTime: new Date().toUTCString(),
         },
         false
       );
@@ -623,7 +623,7 @@ export const requestFriend = async (req: Request, res: Response) => {
         ' has sent you a friend request.',
       {
         notificationType: NotificationType.friendRequest,
-        sentDateTime: new Date(),
+        sentDateTime: new Date().toUTCString(),
       },
       true
     );
@@ -689,7 +689,7 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
         ' has accepted your friend request.',
       {
         notificationType: NotificationType.friendRequestAccepted,
-        sentDateTime: new Date(),
+        sentDateTime: new Date().toUTCString(),
       },
       false
     );
@@ -753,7 +753,7 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
         ' has declined your friend request.',
       {
         notificationType: NotificationType.friendRequestDeclined,
-        sentDateTime: new Date(),
+        sentDateTime: new Date().toUTCString(),
       },
       false
     );
