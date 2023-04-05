@@ -12,7 +12,7 @@ import {
 import { ObjectId } from 'mongodb';
 import { Server } from 'http';
 import { nightlightQueue } from '../queue/setup/queue.setup';
-import { useTestingDatabase } from './mongodb.utils';
+import { useTestingDatabase } from '../../src/config/mongodb.config';
 import Group from '../models/Group.model';
 import User from '../models/User.model';
 import Venue from '../models/Venue.model';

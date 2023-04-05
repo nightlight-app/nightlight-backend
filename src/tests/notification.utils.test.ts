@@ -7,7 +7,7 @@ import {
 } from '../utils/notification.utils';
 import { ObjectId } from 'mongodb';
 import { NOTIFICATION_KEYS_TEST } from './data/testData';
-import { useTestingDatabase } from './mongodb.utils';
+import { useTestingDatabase } from '../../src/config/mongodb.config';
 require('dotenv').config();
 
 chai.should();

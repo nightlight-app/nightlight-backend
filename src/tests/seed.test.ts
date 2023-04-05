@@ -18,7 +18,7 @@ import Group from '../models/Group.model';
 import Venue from '../models/Venue.model';
 import { Server } from 'http';
 import Notification from '../models/Notification.model';
-import { useTestingDatabase } from './mongodb.utils';
+import { useTestingDatabase } from '../../src/config/mongodb.config';
 require('dotenv').config();
 
 chai.use(chaiHttp);
