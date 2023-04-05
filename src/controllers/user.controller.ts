@@ -1130,6 +1130,7 @@ export const activateEmergency = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Find the user in the database
   const targetUser = await User.findById(userId);
 
   // Check if the user exists
@@ -1202,6 +1203,7 @@ export const deactivateEmergency = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Find the user in the database
   const targetUser = await User.findById(userId);
 
   // Check if the user exists
