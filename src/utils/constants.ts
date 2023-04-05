@@ -1,6 +1,12 @@
 import { ServiceAccount } from 'firebase-admin';
 
 /**
+ * Expiry duration of jobs in the queue
+ */
+export const GROUP_EXPIRY_DURATION = 1000 * 60 * 60 * 12; // 12 hours
+export const REACTION_EXPIRY_DURATION = 1000 * 60 * 60 * 24 * 30; // 30 days
+
+/**
  * Emoji reaction options
  */
 export const REACTION_EMOJIS = ['🔥', '⚠️', '🛡', '💩', '🎉'];

@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import { Venue as VenueInterface } from '../interfaces/Venue.interface';
 import Venue from '../models/Venue.model';
-import { REACTION_EMOJIS } from '../utils/constants';
+import { REACTION_EMOJIS, REACTION_EXPIRY_DURATION } from '../utils/constants';
 import { Emoji, encodeEmoji } from '../utils/venue.utils';
 import { addReactionExpireJob } from '../queue/jobs';
 import { nightlightQueue } from '../queue/setup/queue.setup';
@@ -224,7 +224,12 @@ export const addReactionToVenue = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'Invalid user ID!' });
     }
 
-    const job = await addReactionExpireJob(userId, venueId, emoji, 3000);
+    const job = await addReactionExpireJob(
+      userId,
+      venueId,
+      emoji,
+      REACTION_EXPIRY_DURATION
+    );
 
     if (job === null || job?.id === undefined) {
       return res
