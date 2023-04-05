@@ -1107,6 +1107,16 @@ export const getEmergencyContacts = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Activates the emergency for the specified user in their current group.
+ * This sets the "isEmergency" property to true for all members in the group,
+ * sends notifications to all users in the group (excluding the user who activated the emergency),
+ * and send an SMS to all emergency contacts (TODO).
+ *
+ * @param {Request} req - The HTTP request object containing the user ID in the params.
+ * @param {Response} res - The HTTP response object used to send a status code and message.
+ * @returns {Promise} A Promise object representing the completion of the activation process.
+ */
 export const activateEmergency = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
 
@@ -1127,6 +1137,11 @@ export const activateEmergency = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'User does not exist!' });
   }
 
+  // Check if user is in a group
+  if (!targetUser.currentGroup) {
+    return res.status(400).send({ message: 'User is not in an active group!' });
+  }
+
   const targetGroup = await Group.findById(targetUser.currentGroup);
 
   // Check if the group exists
@@ -1139,7 +1154,98 @@ export const activateEmergency = async (req: Request, res: Response) => {
     await User.updateMany({ _id: targetGroup.members }, { isEmergency: true });
 
     // send notifications to users in group
-    // TODO: send an SMS to all emergency contacts
+    sendNotifications(
+      [
+        ...targetGroup.members
+          .map(objectId => objectId.toString())
+          .filter(id => id !== userId),
+      ],
+      '🚨 Emergency! 🚨',
+      targetUser.firstName +
+        ' ' +
+        targetUser.lastName +
+        ' has activated an emergency‼️',
+      { notificationType: NotificationType.deactivateEmergency },
+      true
+    );
+
+    // TODO LATER: send an SMS to all emergency contacts
+
+    return res
+      .status(200)
+      .send({ message: 'Successfully activated emergency!' });
+  } catch (error: any) {
+    return res.status(500).send({ message: error?.message });
+  }
+};
+
+/**
+ * Deactivates the emergency for the specified user in their current group.
+ * This sets the "isEmergency" property to false for all members in the group,
+ * sends notifications to all users in the group (excluding the user who deactivated the emergency),
+ * and send an SMS to all emergency contacts (TODO).
+ *
+ * @param {Request} req - The HTTP request object containing the user ID in the params.
+ * @param {Response} res - The HTTP response object used to send a status code and message.
+ * @returns {Promise} A Promise object representing the completion of the deactivation process.
+ */
+export const deactivateEmergency = async (req: Request, res: Response) => {
+  const userId = req.params.userId as string;
+
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the provided userId is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  const targetUser = await User.findById(userId);
+
+  // Check if the user exists
+  if (targetUser === null) {
+    return res.status(400).send({ message: 'User does not exist!' });
+  }
+
+  // Check if user is in a group
+  if (!targetUser.currentGroup) {
+    return res.status(400).send({ message: 'User is not in an active group!' });
+  }
+
+  const targetGroup = await Group.findById(targetUser.currentGroup);
+
+  // Check if the group exists
+  if (targetGroup === null) {
+    return res.status(400).send({ message: 'Group does not exist!' });
+  }
+
+  try {
+    // change the user document so that "isEmergency" is true
+    await User.updateMany({ _id: targetGroup.members }, { isEmergency: true });
+
+    // send notifications to users in group
+    sendNotifications(
+      [
+        ...targetGroup.members
+          .map(objectId => objectId.toString())
+          .filter(id => id !== userId),
+      ],
+      'Emergency deactivated ✅',
+      targetUser.firstName +
+        ' ' +
+        targetUser.lastName +
+        ' has deactivated the emergency.',
+      { notificationType: NotificationType.activateEmergency },
+      true
+    );
+
+    // TODO LATER: send an SMS to all emergency contacts
+
+    return res
+      .status(200)
+      .send({ message: 'Successfully activated emergency!' });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }

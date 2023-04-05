@@ -65,6 +65,8 @@ export enum NotificationType {
   groupInviteDeclined = 'groupInviteDeclined',
   groupExpired = 'groupExpired',
   groupDeleted = 'groupDeleted',
+  activateEmergency = 'activateEmergency',
+  deactivateEmergency = 'deactivateEmergency',
 }
 
 /**
