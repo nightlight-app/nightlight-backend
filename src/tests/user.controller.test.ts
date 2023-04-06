@@ -182,9 +182,7 @@ describe('testing user actions', () => {
       .query({ userId: userId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.users[0].emergencyContacts[0].name).to.equal(
-          'Test User'
-        );
+        expect(res.body.users[0].emergencyContacts[0].name).to.equal('Test User');
         expect(res.body.users[0].emergencyContacts[0].phone).to.equal(
           '+14567891023'
         );

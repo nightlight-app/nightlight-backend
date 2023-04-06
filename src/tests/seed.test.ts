@@ -72,10 +72,7 @@ describe('seed database for prod', () => {
         .then(res => {
           userIds.push(new mongoose.Types.ObjectId(res.body.user._id));
           expect(res).to.have.status(201);
-          expect(res.body.user).to.have.keys([
-            ...USER_KEYS_TEST,
-            'currentGroup',
-          ]);
+          expect(res.body.user).to.have.keys([...USER_KEYS_TEST, 'currentGroup']);
           done();
         });
     });
@@ -122,10 +119,7 @@ describe('seed database for prod', () => {
       chai
         .request(server)
         .patch(
-          '/users/' +
-            userIds.pop() +
-            '/acceptGroupInvitation/?groupId=' +
-            groupId
+          '/users/' + userIds.pop() + '/acceptGroupInvitation/?groupId=' + groupId
         )
         .send()
         .then(res => {

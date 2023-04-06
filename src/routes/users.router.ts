@@ -36,7 +36,7 @@ usersRouter.delete('/:userId', deleteUser);
 usersRouter.patch('/:userId', updateUser);
 usersRouter.patch('/:userId/save-group', saveGroup);
 usersRouter.patch('/:userId/delete-saved-group', deleteSavedGroup);
-usersRouter.patch('/:userId/accept-iroup-invitation', acceptGroupInvitation);
+usersRouter.patch('/:userId/accept-group-invitation', acceptGroupInvitation);
 usersRouter.patch('/:userId/decline-group-invitation', declineGroupInvitation);
 usersRouter.patch('/:userId/leave-group', leaveGroup);
 usersRouter.patch('/:userId/request-friend', requestFriend);

@@ -25,9 +25,7 @@ locationService.initialize();
 
 // Start the server
 httpServer.listen(process.env.SERVER_PORT, () => {
-  console.log(
-    `Express server is listening on port ${process.env.SERVER_PORT}!`
-  );
+  console.log(`Express server is listening on port ${process.env.SERVER_PORT}!`);
 
   if (shouldRunBullBoard) {
     console.log(

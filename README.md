@@ -225,9 +225,7 @@ fetch(url, {
 Push notifications are sent to the user in the following function, which uses the expo push notifications service that handles the architecture and security relate to apple push notification services (APNS):
 
 ```tsx
-export const sendNotificationToExpo = async (
-  notification: ExpoNotification
-) => {
+export const sendNotificationToExpo = async (notification: ExpoNotification) => {
   // code
 };
 ```

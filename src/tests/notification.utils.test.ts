@@ -124,11 +124,7 @@ describe('test notification utils errors', () => {
 
   it('should send notifications to the valid IDs in the array and ignore the invalid ones via POST /notifications', done => {
     sendNotifications(
-      [
-        new ObjectId(123456).toString(),
-        'BAD ID',
-        new ObjectId(26373).toString(),
-      ],
+      [new ObjectId(123456).toString(), 'BAD ID', new ObjectId(26373).toString()],
       'Test Title',
       'Test Body',
       { notificationType: 'test', sentDateTime: new Date().toUTCString() },
