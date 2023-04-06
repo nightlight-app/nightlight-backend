@@ -119,7 +119,10 @@ describe('seed database for prod', () => {
       chai
         .request(server)
         .patch(
-          '/users/' + userIds.pop() + '/acceptGroupInvitation/?groupId=' + groupId
+          '/users/' +
+            userIds.pop() +
+            '/accept-group-invitation/?groupId=' +
+            groupId
         )
         .send()
         .then(res => {
