@@ -1138,37 +1138,34 @@ export const activateEmergency = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'User does not exist!' });
   }
 
-  // Check if user is in a group
-  if (!targetUser.currentGroup) {
-    return res.status(400).send({ message: 'User is not in an active group!' });
-  }
-
-  const targetGroup = await Group.findById(targetUser.currentGroup);
-
-  // Check if the group exists
-  if (targetGroup === null) {
-    return res.status(400).send({ message: 'Group does not exist!' });
-  }
-
   try {
     // change the user document so that "isEmergency" is true
-    await User.updateMany({ _id: targetGroup.members }, { isEmergency: true });
+    await User.findByIdAndUpdate({ _id: userId }, { isEmergency: true });
 
-    // send notifications to users in group
-    sendNotifications(
-      [
-        ...targetGroup.members
-          .map(objectId => objectId.toString())
-          .filter(id => id !== userId),
-      ],
-      '🚨 Emergency! 🚨',
-      targetUser.firstName +
-        ' ' +
-        targetUser.lastName +
-        ' has activated an emergency‼️',
-      { notificationType: NotificationType.deactivateEmergency },
-      true
-    );
+    // If the user is in a group, send notifications to all users in the group
+    if (targetUser.currentGroup) {
+      const targetGroup = await Group.findById(targetUser.currentGroup);
+
+      // Check if the group exists
+      if (targetGroup === null) {
+        return res.status(400).send({ message: 'Group does not exist!' });
+      }
+      // send notifications to users in group
+      sendNotifications(
+        [
+          ...targetGroup.members
+            .map(objectId => objectId.toString())
+            .filter(id => id !== userId),
+        ],
+        '🚨 Emergency! 🚨',
+        targetUser.firstName +
+          ' ' +
+          targetUser.lastName +
+          ' has activated an emergency‼️',
+        { notificationType: NotificationType.deactivateEmergency },
+        true
+      );
+    }
 
     // TODO LATER: send an SMS to all emergency contacts
 
@@ -1211,37 +1208,35 @@ export const deactivateEmergency = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'User does not exist!' });
   }
 
-  // Check if user is in a group
-  if (!targetUser.currentGroup) {
-    return res.status(400).send({ message: 'User is not in an active group!' });
-  }
-
-  const targetGroup = await Group.findById(targetUser.currentGroup);
-
-  // Check if the group exists
-  if (targetGroup === null) {
-    return res.status(400).send({ message: 'Group does not exist!' });
-  }
-
   try {
     // change the user document so that "isEmergency" is true
-    await User.updateMany({ _id: targetGroup.members }, { isEmergency: true });
+    await User.findByIdAndUpdate({ _id: userId }, { isEmergency: false });
 
-    // send notifications to users in group
-    sendNotifications(
-      [
-        ...targetGroup.members
-          .map(objectId => objectId.toString())
-          .filter(id => id !== userId),
-      ],
-      'Emergency deactivated ✅',
-      targetUser.firstName +
-        ' ' +
-        targetUser.lastName +
-        ' has deactivated the emergency.',
-      { notificationType: NotificationType.activateEmergency },
-      true
-    );
+    // If the user is in a group, send notifications to all users in the group
+    if (targetUser.currentGroup) {
+      const targetGroup = await Group.findById(targetUser.currentGroup);
+
+      // Check if the group exists
+      if (targetGroup === null) {
+        return res.status(400).send({ message: 'Group does not exist!' });
+      }
+
+      // send notifications to users in group
+      sendNotifications(
+        [
+          ...targetGroup.members
+            .map(objectId => objectId.toString())
+            .filter(id => id !== userId),
+        ],
+        'Emergency deactivated ✅',
+        targetUser.firstName +
+          ' ' +
+          targetUser.lastName +
+          ' has deactivated the emergency.',
+        { notificationType: NotificationType.activateEmergency },
+        true
+      );
+    }
 
     // TODO LATER: send an SMS to all emergency contacts
 
