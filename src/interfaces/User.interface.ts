@@ -36,7 +36,7 @@ export interface User {
   email: string;
   phone: string;
   isEmergency: boolean;
-  birthday?: Date;
+  birthday?: string;
   currentGroup?: mongoose.Types.ObjectId;
   invitedGroups?: mongoose.Types.ObjectId[];
   friends?: mongoose.Types.ObjectId[];
