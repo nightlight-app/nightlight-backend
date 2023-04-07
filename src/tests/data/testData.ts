@@ -18,7 +18,7 @@ const TEST_LAST_ACTIVE_1: LastActive = {
     latitude: 12.8758393,
     longitude: 95.7584833,
   },
-  time: new Date(),
+  time: new Date().toUTCString(),
 } as LastActive;
 
 const TEST_SAVED_GROUP_1: SavedGroup = {
@@ -82,7 +82,7 @@ const TEST_LAST_ACTIVE_2: LastActive = {
     latitude: 42.8758393,
     longitude: 35.7584833,
   },
-  time: new Date(),
+  time: new Date().toUTCString(),
 } as LastActive;
 
 const TEST_SAVED_GROUP_3: SavedGroup = {
@@ -260,16 +260,16 @@ export const TEST_GROUP1: Group = {
     new mongoose.Types.ObjectId(5),
     new mongoose.Types.ObjectId(65264),
   ],
-  creationDatetime: new Date(),
-  expirationDatetime: new Date(),
+  creationDatetime: new Date().toUTCString(),
+  expirationDatetime: new Date().toUTCString(),
 };
 
 export const TEST_GROUP2: Group = {
   name: 'Second group',
   members: [],
   invitedMembers: [],
-  creationDatetime: new Date(),
-  expirationDatetime: new Date(),
+  creationDatetime: new Date().toUTCString(),
+  expirationDatetime: new Date().toUTCString(),
 };
 
 /* Venues */

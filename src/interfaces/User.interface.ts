@@ -16,7 +16,7 @@ import { SavedGroup } from './SavedGroup.interface';
  * @property {string} lastName - Last name of the user.
  * @property {string} email - Email address of the user.
  * @property {number} phone - Phone number of the user. **Note:** Currently stored as a string.
- * @property {Date} birthday - Date of birth of the user.
+ * @property {string} birthday - Date in string (UTC) of birth of the user.
  * @property {mongoose.Types.ObjectId} currentGroup - ID of the group that the user is currently in.
  * @property {mongoose.Types.ObjectId[]} invitedGroups - IDs of groups to which the user has been invited.
  * @property {mongoose.Types.ObjectId[]} friends - IDs of other users who the user added as friends.

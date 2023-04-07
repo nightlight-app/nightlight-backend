@@ -80,7 +80,10 @@ export const createGroup = async (req: Request, res: Response) => {
         ' ' +
         targetUser.lastName +
         ' has invited you to join their group.',
-      { notificationType: NotificationType.groupInvite },
+      {
+        notificationType: NotificationType.groupInvite,
+        sentDateTime: new Date().toUTCString(),
+      },
       true
     );
 
@@ -214,7 +217,10 @@ export const inviteMembersToExistingGroup = async (
           ' ' +
           targetUser.lastName +
           ' has invited you to join their group.',
-        { notificationType: NotificationType.groupInvite },
+        {
+          notificationType: NotificationType.groupInvite,
+          sentDateTime: new Date().toUTCString(),
+        },
         true
       );
     }

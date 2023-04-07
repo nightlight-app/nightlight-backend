@@ -40,7 +40,10 @@ export const expireGroup = async (groupId: string) => {
       [...targetGroup.members.map(objectId => objectId.toString())],
       'Group expired! 👋',
       'Your group has expired. We hope you had a safe night!',
-      { notificationType: NotificationType.groupExpired },
+      {
+        notificationType: NotificationType.groupExpired,
+        sentDateTime: new Date().toUTCString(),
+      },
       false
     );
   } catch (error: any) {
