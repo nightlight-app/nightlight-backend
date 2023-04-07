@@ -593,8 +593,10 @@ export const requestFriend = async (req: Request, res: Response) => {
   }
 
   try {
-    // Find the user in the database
-    const targetUser = await User.findById(userId);
+    // Find the user in the database and add the friendId to their sentFriendRequests
+    const targetUser = await User.findByIdAndUpdate(userId, {
+      $push: { sentFriendRequests: friendId },
+    });
 
     // Check if the user exists
     if (targetUser === null) {
@@ -672,6 +674,7 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
 
     // Find the friend in the database and add the userId to their friend array
     const targetFriendUser = await User.findByIdAndUpdate(friendId, {
+      $pull: { sentFriendRequests: userId },
       $push: { friends: userId },
     });
 
@@ -725,7 +728,9 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
 
   try {
     // Find the friend user in the database
-    const targetFriend = await User.findById(friendId);
+    const targetFriend = await User.findByIdAndUpdate(friendId, {
+      $pull: { sentFriendRequests: userId },
+    });
 
     // Check if the friend exists
     if (targetFriend === null) {

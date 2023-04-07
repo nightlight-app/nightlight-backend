@@ -36,6 +36,7 @@ export const USER_KEYS_ALL = [
   'birthday',
   'friends',
   'friendRequests',
+  'sentFriendRequests',
   'imgUrlCover',
   'imgUrlProfileLarge',
   'imgUrlProfileSmall',
