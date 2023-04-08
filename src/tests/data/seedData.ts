@@ -26,6 +26,7 @@ export const createUser = (
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     phone: faker.phone.number(),
+    isEmergency: false,
     birthday: new Date(
       faker.date.between('1990-01-01T00:00:00.000Z', '2001-01-01T00:00:00.000Z')
     ).toUTCString(),
