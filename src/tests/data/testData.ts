@@ -352,6 +352,17 @@ export const NOTIFICATION_KEYS_TEST = [
   'delay',
 ];
 
+export const PING_KEYS_TEST = [
+  '__v',
+  '_id',
+  'senderId',
+  'recipientId',
+  'message',
+  'sentDatetime',
+  'expirationDatetime',
+  'reactions',
+];
+
 export const REACTION_KEYS_TEST = ['count', 'didReact'];
 
 export const VENUE_KEYS_EMOJIS_TEST = [...REACTION_EMOJIS];

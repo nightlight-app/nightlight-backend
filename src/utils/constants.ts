@@ -109,6 +109,20 @@ export const NOTIFICATION_KEYS_ALL = [
 ];
 
 /**
+ * The necessary keys for a ping object
+ */
+export const PING_KEYS_ALL = [
+  '__v',
+  '_id',
+  'senderId',
+  'recipientId',
+  'message',
+  'sentDatetime',
+  'expirationDatetime',
+  'reactions',
+];
+
+/**
  * The necessary keys for an emergency contact object
  */
 export const EMERGENCY_CONTACT_KEYS = ['name', 'phone'];
