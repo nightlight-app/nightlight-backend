@@ -41,6 +41,7 @@ export interface User {
   invitedGroups?: mongoose.Types.ObjectId[];
   friends?: mongoose.Types.ObjectId[];
   friendRequests?: mongoose.Types.ObjectId[];
+  sentFriendRequests?: mongoose.Types.ObjectId[];
   lastActive?: LastActive;
   savedGroups?: SavedGroup[];
   emergencyContacts?: EmergencyContact[];

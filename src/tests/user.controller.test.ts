@@ -489,6 +489,7 @@ describe('testing friend requests', () => {
       });
   });
 
+  // Test remove friend request
   it('should send a friend request via PATCH /users/:userId/requestFriend', done => {
     chai
       .request(server)
@@ -515,6 +516,58 @@ describe('testing friend requests', () => {
       .catch(err => done(err));
   });
 
+  it('should remove a friend request via PATCH /users/:userId/removeFriendRequest', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId3}/removeFriendRequest`)
+      .query({ friendId: userId2 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('should fetch a user via GET to check friend requests /users/?userId={userId}', done => {
+    chai
+      .request(server)
+      .get(`/users/`)
+      .query({ userId: userId2 })
+      .then(res => {
+        const user = res.body.users[0];
+        expect(res).to.have.status(200);
+        expect(user._id).to.equal(userId2);
+        expect(user.friendRequests).to.have.length(1);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should resend a friend request via PATCH /users/:userId/requestFriend', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId3}/requestFriend`)
+      .query({ friendId: userId2 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('should fetch a user via GET to check sent friend requests /users/?userId={userId}', done => {
+    chai
+      .request(server)
+      .get(`/users/`)
+      .query({ userId: userId3 })
+      .then(res => {
+        const user = res.body.users[0];
+        expect(res).to.have.status(200);
+        expect(user.sentFriendRequests[0]).to.equal(userId2);
+        expect(user.sentFriendRequests).to.have.length(1);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
   it('should accept a friend request via PATCH /users/:userId/acceptFriendRequest', done => {
     chai
       .request(server)
@@ -536,6 +589,20 @@ describe('testing friend requests', () => {
         expect(res).to.have.status(200);
         expect(user._id).to.equal(userId2);
         expect(user.friendRequests).to.have.length(1);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should fetch a user via GET to check sent friend requests after accept /users/?userId={userId}', done => {
+    chai
+      .request(server)
+      .get(`/users/`)
+      .query({ userId: userId1 })
+      .then(res => {
+        const user = res.body.users[0];
+        expect(res).to.have.status(200);
+        expect(user.sentFriendRequests).to.have.length(0);
         done();
       })
       .catch(err => done(err));
