@@ -22,6 +22,7 @@ import {
   updateEmergencyContact,
   getEmergencyContacts,
   searchUsers,
+  removeFriendRequest,
   activateEmergency,
   deactivateEmergency,
 } from '../controllers/user.controller';
@@ -44,6 +45,7 @@ usersRouter.patch('/:userId/leaveGroup', leaveGroup);
 usersRouter.patch('/:userId/requestFriend', requestFriend);
 usersRouter.patch('/:userId/acceptFriendRequest', acceptFriendRequest);
 usersRouter.patch('/:userId/declineFriendRequest', declineFriendRequest);
+usersRouter.patch('/:userId/removeFriendRequest', removeFriendRequest);
 usersRouter.patch('/:userId/removeFriend', removeFriend);
 usersRouter.patch('/:userId/addNotificationToken', addNotificationToken);
 usersRouter.patch('/:userId/removeNotificationToken', removeNotificationToken);

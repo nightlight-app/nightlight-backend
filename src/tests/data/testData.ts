@@ -320,6 +320,7 @@ export const USER_KEYS_TEST = [
   'firstName',
   'friends',
   'friendRequests',
+  'sentFriendRequests',
   'imgUrlCover',
   'imgUrlProfileLarge',
   'imgUrlProfileSmall',

@@ -593,8 +593,10 @@ export const requestFriend = async (req: Request, res: Response) => {
   }
 
   try {
-    // Find the user in the database
-    const targetUser = await User.findById(userId);
+    // Find the user in the database and add the friendId to their sentFriendRequests
+    const targetUser = await User.findByIdAndUpdate(userId, {
+      $push: { sentFriendRequests: friendId },
+    });
 
     // Check if the user exists
     if (targetUser === null) {
@@ -638,7 +640,7 @@ export const requestFriend = async (req: Request, res: Response) => {
 
 /**
  * Accepts friend request and adds the new friend to user's friends list while removing the request from
- * friendRequests list.
+ * friendRequests list. Also adds the user to the friend's friends list and updates the sentFriendRequests list.
  * @param {Request} req - Express Request object
  * @param {Response} res - Express Response object
  * @returns {Promise} Returns success message on successful addition of friend, otherwise returns an error message
@@ -672,6 +674,7 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
 
     // Find the friend in the database and add the userId to their friend array
     const targetFriendUser = await User.findByIdAndUpdate(friendId, {
+      $pull: { sentFriendRequests: userId },
       $push: { friends: userId },
     });
 
@@ -703,7 +706,8 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
 };
 
 /**
- * Accepts a friend request for a user by updating both their friends and friendRequests arrays.
+ * Declines a friend request for a user by updating both their friends and friendRequests arrays.
+ * Also updates the friend's friends and sentFriendRequests arrays.
  * @param {Request} req - the Request object containing userId in the params and friendId in the query
  * @param {Response} res - the Response object sent back to the client
  * @returns {Promise} Returns either an error response with a 400 or 500 status code and a message,
@@ -725,7 +729,9 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
 
   try {
     // Find the friend user in the database
-    const targetFriend = await User.findById(friendId);
+    const targetFriend = await User.findByIdAndUpdate(friendId, {
+      $pull: { sentFriendRequests: userId },
+    });
 
     // Check if the friend exists
     if (targetFriend === null) {
@@ -761,6 +767,56 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
     return res
       .status(200)
       .send({ message: 'Successfully declined friend request!' });
+  } catch (error: any) {
+    return res.status(500).send({ message: error?.message });
+  }
+};
+
+/**
+ * Removes a friend request from a user's sentFriendRequests array and the friend's friendRequests array.
+ * @param {Request} req - the Request object containing userId in the params and friendId in the query
+ * @param {Response} res - the Response object sent back to the client
+ * @returns {Promise} Returns either an error response with a 400 or 500 status code and a message,
+ * or a success response with a 200 status code and a message
+ */
+export const removeFriendRequest = async (req: Request, res: Response) => {
+  const userId = req.params.userId as string;
+  const friendId = req.query.friendId as string;
+
+  // Check if the provided userId is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  // Check if the provided friendId is valid
+  if (!mongoose.Types.ObjectId.isValid(friendId)) {
+    return res.status(400).send({ message: 'Invalid friend ID!' });
+  }
+
+  try {
+    // Find the friend user in the database
+    const targetFriend = await User.findByIdAndUpdate(friendId, {
+      $pull: { friendRequests: userId },
+    });
+
+    // Check if the friend exists
+    if (targetFriend === null) {
+      return res
+        .status(400)
+        .send({ message: 'User requesting does not exist!' });
+    }
+
+    // Find the user in the database and remove the friendId from their friendRequests array
+    const targetUser = await User.findByIdAndUpdate(userId, {
+      $pull: { sentFriendRequests: friendId },
+    });
+
+    // Check if the user exists
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    res.status(200).send({ message: 'Successfully removed friend request!' });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }
