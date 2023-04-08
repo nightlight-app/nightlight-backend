@@ -23,6 +23,8 @@ import {
   getEmergencyContacts,
   searchUsers,
   removeFriendRequest,
+  activateEmergency,
+  deactivateEmergency,
 } from '../controllers/user.controller';
 
 const usersRouter = express.Router();
@@ -50,6 +52,8 @@ usersRouter.patch('/:userId/removeNotificationToken', removeNotificationToken);
 usersRouter.patch('/:userId/addEmergencyContact', addEmergencyContact);
 usersRouter.patch('/:userId/removeEmergencyContact', removeEmergencyContact);
 usersRouter.patch('/:userId/updateEmergencyContact', updateEmergencyContact);
+usersRouter.patch('/:userId/activateEmergency', activateEmergency);
+usersRouter.patch('/:userId/deactivateEmergency', deactivateEmergency);
 usersRouter.patch('/:userId/uploadProfileImg', uploadProfileImg);
 
 export = usersRouter;

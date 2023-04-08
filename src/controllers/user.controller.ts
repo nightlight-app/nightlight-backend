@@ -1182,6 +1182,156 @@ export const getEmergencyContacts = async (req: Request, res: Response) => {
 };
 
 /**
+ * Activates the emergency for the specified user in their current group.
+ * This sets the "isEmergency" property to true for a specific user,
+ * sends notifications to all users in the group (excluding the user who activated the emergency),
+ * and send an SMS to all emergency contacts (TODO).
+ *
+ * @param {Request} req - The HTTP request object containing the user ID in the params.
+ * @param {Response} res - The HTTP response object used to send a status code and message.
+ * @returns {Promise} A Promise object representing the completion of the activation process.
+ */
+export const activateEmergency = async (req: Request, res: Response) => {
+  const userId = req.params.userId as string;
+
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the provided userId is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  try {
+    // Find the user in the database
+    const targetUser = await User.findById(userId);
+
+    // Check if the user exists
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    // change the user document so that "isEmergency" is true
+    await User.findByIdAndUpdate(userId, { isEmergency: true });
+
+    // If the user is in a group, send notifications to all users in the group
+    if (targetUser.currentGroup) {
+      const targetGroup = await Group.findById(targetUser.currentGroup);
+
+      // Check if the group exists
+      if (targetGroup === null) {
+        return res.status(400).send({ message: 'Group does not exist!' });
+      }
+
+      // send notifications to users in group
+      sendNotifications(
+        [
+          ...targetGroup.members
+            .map(objectId => objectId.toString())
+            // exclude the user who activated the emergency
+            .filter(id => id !== userId),
+        ],
+        '🚨 Emergency! 🚨',
+        targetUser.firstName +
+          ' ' +
+          targetUser.lastName +
+          ' has activated an emergency‼️',
+        {
+          notificationType: NotificationType.activateEmergency,
+          sentDateTime: new Date().toUTCString(),
+        },
+        true
+      );
+    }
+
+    // TODO LATER: send an SMS to all emergency contacts
+
+    return res
+      .status(200)
+      .send({ message: 'Successfully activated emergency!' });
+  } catch (error: any) {
+    return res.status(500).send({ message: error?.message });
+  }
+};
+
+/**
+ * Deactivates the emergency for the specified user in their current group.
+ * This sets the "isEmergency" property to false for a specific user,
+ * sends notifications to all users in the group (excluding the user who deactivated the emergency),
+ * and send an SMS to all emergency contacts (TODO).
+ *
+ * @param {Request} req - The HTTP request object containing the user ID in the params.
+ * @param {Response} res - The HTTP response object used to send a status code and message.
+ * @returns {Promise} A Promise object representing the completion of the deactivation process.
+ */
+export const deactivateEmergency = async (req: Request, res: Response) => {
+  const userId = req.params.userId as string;
+
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the provided userId is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  try {
+    // Find the user in the database
+    const targetUser = await User.findById(userId);
+
+    // Check if the user exists
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    // change the user document so that "isEmergency" is true
+    await User.findByIdAndUpdate(userId, { isEmergency: false });
+
+    // If the user is in a group, send notifications to all users in the group
+    if (targetUser.currentGroup) {
+      const targetGroup = await Group.findById(targetUser.currentGroup);
+
+      // Check if the group exists
+      if (targetGroup === null) {
+        return res.status(400).send({ message: 'Group does not exist!' });
+      }
+
+      // send notifications to users in group
+      sendNotifications(
+        [
+          ...targetGroup.members
+            .map(objectId => objectId.toString())
+            // exclude the user who deactivated the emergency
+            .filter(id => id !== userId),
+        ],
+        'Emergency deactivated ✅',
+        targetUser.firstName +
+          ' ' +
+          targetUser.lastName +
+          ' has deactivated the emergency.',
+        {
+          notificationType: NotificationType.deactivateEmergency,
+          sentDateTime: new Date().toUTCString(),
+        },
+        true
+      );
+    }
+
+    // TODO LATER: send an SMS to all emergency contacts
+
+    return res
+      .status(200)
+      .send({ message: 'Successfully activated emergency!' });
+  } catch (error: any) {
+    return res.status(500).send({ message: error?.message });
+  }
+};
+
+/**
  * Uploads a profile image for the user with the specified userId to cloudinary
  * and updates the user's field to point to the new image.
  *

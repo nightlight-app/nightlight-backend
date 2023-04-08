@@ -20,6 +20,7 @@ export const USER_KEYS = [
   'firstName',
   'lastName',
   'phone',
+  'isEmergency',
 ];
 
 /**
@@ -33,6 +34,7 @@ export const USER_KEYS_ALL = [
   'firstName',
   'lastName',
   'phone',
+  'isEmergency',
   'birthday',
   'friends',
   'friendRequests',
