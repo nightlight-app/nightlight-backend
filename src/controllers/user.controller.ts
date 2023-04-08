@@ -640,7 +640,7 @@ export const requestFriend = async (req: Request, res: Response) => {
 
 /**
  * Accepts friend request and adds the new friend to user's friends list while removing the request from
- * friendRequests list.
+ * friendRequests list. Also adds the user to the friend's friends list and updates the sentFriendRequests list.
  * @param {Request} req - Express Request object
  * @param {Response} res - Express Response object
  * @returns {Promise} Returns success message on successful addition of friend, otherwise returns an error message
@@ -706,7 +706,8 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
 };
 
 /**
- * Accepts a friend request for a user by updating both their friends and friendRequests arrays.
+ * Declines a friend request for a user by updating both their friends and friendRequests arrays.
+ * Also updates the friend's friends and sentFriendRequests arrays.
  * @param {Request} req - the Request object containing userId in the params and friendId in the query
  * @param {Response} res - the Response object sent back to the client
  * @returns {Promise} Returns either an error response with a 400 or 500 status code and a message,
@@ -771,6 +772,13 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Removes a friend request from a user's sentFriendRequests array and the friend's friendRequests array.
+ * @param {Request} req - the Request object containing userId in the params and friendId in the query
+ * @param {Response} res - the Response object sent back to the client
+ * @returns {Promise} Returns either an error response with a 400 or 500 status code and a message,
+ * or a success response with a 200 status code and a message
+ */
 export const removeFriendRequest = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const friendId = req.query.friendId as string;
