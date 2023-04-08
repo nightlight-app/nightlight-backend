@@ -27,16 +27,18 @@ export const verifyKeys = (obj: any, keys: string[][]): String => {
   const allKeys = keys[1];
 
   const missingKeys = mandatoryKeys.filter(
-    key => !obj.hasOwnProperty(key) || !obj[key]
+    key => !obj.hasOwnProperty(key) || obj[key] === undefined
   );
   const extraKeys = Object.keys(obj).filter(key => !allKeys.includes(key));
   const missingKeysString =
     missingKeys.length > 0
       ? 'Missing keys: ' + missingKeys.join(', ') + '. '
       : '';
+
   const extraKeysString =
     extraKeys.length > 0 ? 'Extra keys: ' + extraKeys.join(', ') + '.' : '';
 
+  console.log(missingKeysString + extraKeysString);
   return missingKeysString + extraKeysString;
 };
 

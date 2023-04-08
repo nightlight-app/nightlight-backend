@@ -230,6 +230,59 @@ describe('testing user actions', () => {
       .catch(err => done(err));
   });
 
+  it('should activate an emergency for a user via PATCH /users/{userId}/activateEmergency', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId}/activateEmergency`)
+      .then(res => {
+        expect(res).to.have.status(200);
+
+        done();
+      })
+      .catch(err => {
+        done(err);
+      });
+  });
+
+  it('should get user to verify emergency contact delete via GET /users/', done => {
+    chai
+      .request(server)
+      .get(`/users/`)
+      .query({ userId: userId })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users[0].isEmergency).to.equal(true);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should deactivate an emergency for a user via PATCH /users/{userId}/activateEmergency', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId}/deactivateEmergency`)
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should get user to verify emergency contact delete via GET /users/', done => {
+    chai
+      .request(server)
+      .get(`/users/`)
+      .query({ userId: userId })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users[0].isEmergency).to.equal(false);
+        done();
+      })
+      .catch(err => {
+        done(err);
+      });
+  });
+
   it('should delete a user via DELETE /users/{userId}', done => {
     chai
       .request(server)
