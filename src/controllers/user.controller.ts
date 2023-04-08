@@ -771,6 +771,49 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
   }
 };
 
+export const removeFriendRequest = async (req: Request, res: Response) => {
+  const userId = req.params.userId as string;
+  const friendId = req.query.friendId as string;
+
+  // Check if the provided userId is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  // Check if the provided friendId is valid
+  if (!mongoose.Types.ObjectId.isValid(friendId)) {
+    return res.status(400).send({ message: 'Invalid friend ID!' });
+  }
+
+  try {
+    // Find the friend user in the database
+    const targetFriend = await User.findByIdAndUpdate(friendId, {
+      $pull: { friendRequests: userId },
+    });
+
+    // Check if the friend exists
+    if (targetFriend === null) {
+      return res
+        .status(400)
+        .send({ message: 'User requesting does not exist!' });
+    }
+
+    // Find the user in the database and remove the friendId from their friendRequests array
+    const targetUser = await User.findByIdAndUpdate(userId, {
+      $pull: { sentFriendRequests: friendId },
+    });
+
+    // Check if the user exists
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    res.status(200).send({ message: 'Successfully removed friend request!' });
+  } catch (error: any) {
+    return res.status(500).send({ message: error?.message });
+  }
+};
+
 /**
  * Removes a friend from a user's friend list.
  * @param {Request} req - The HTTP request object containing the user ID and friend ID to remove.
