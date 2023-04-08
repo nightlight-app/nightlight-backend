@@ -114,6 +114,16 @@ export const NOTIFICATION_KEYS_ALL = [
 /**
  * The necessary keys for a ping object
  */
+export const PING_KEYS = [
+  'senderId',
+  'recipientId',
+  'message',
+  'expirationDatetime',
+];
+
+/**
+ * All keys for a ping object
+ */
 export const PING_KEYS_ALL = [
   '__v',
   '_id',
@@ -122,7 +132,7 @@ export const PING_KEYS_ALL = [
   'message',
   'sentDatetime',
   'expirationDatetime',
-  'reactions',
+  'status',
 ];
 
 /**

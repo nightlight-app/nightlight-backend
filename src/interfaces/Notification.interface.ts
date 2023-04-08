@@ -69,6 +69,9 @@ export enum NotificationType {
   groupDeleted = 'groupDeleted',
   activateEmergency = 'activateEmergency',
   deactivateEmergency = 'deactivateEmergency',
+  pingExpiredRecipient = 'pingExpiredRecipient',
+  pingExpiredSender = 'pingExpiredSender',
+  pingReceived = 'pingReceived',
 }
 
 /**

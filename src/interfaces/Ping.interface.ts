@@ -18,4 +18,5 @@ export interface Ping {
   message: string;
   sentDateTime: string;
   expirationDateTime: string;
+  status: string;
 }

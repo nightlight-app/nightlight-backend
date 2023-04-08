@@ -20,6 +20,7 @@ import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
 export const createUser = async (req: Request, res: Response) => {
   const user = req.body;
 
+  // Verify that the user object has all the necessary keys
   const validationError = verifyKeys(user, KeyValidationType.USERS);
   if (validationError !== '') {
     return res.status(400).send({ message: validationError });

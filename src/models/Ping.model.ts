@@ -23,6 +23,10 @@ const pingSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  status: {
+    type: String,
+    required: true,
+  },
 });
 
 const Ping = mongoose.model('Ping', pingSchema);

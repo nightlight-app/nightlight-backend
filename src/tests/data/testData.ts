@@ -370,7 +370,7 @@ export const PING_KEYS_TEST = [
   'message',
   'sentDatetime',
   'expirationDatetime',
-  'reactions',
+  'status',
 ];
 
 export const REACTION_KEYS_TEST = ['count', 'didReact'];
