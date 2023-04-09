@@ -11,6 +11,7 @@ import { credential } from 'firebase-admin';
 import admin from 'firebase-admin';
 import { FIREBASE_ADMIN_CONFIG } from './utils/constants';
 import { authenticateFirebaseToken } from './middleware/auth.middleware';
+import pingsRouter from './routes/pings.router';
 
 const createServer = ({
   shouldRunBullBoard = true,
@@ -58,6 +59,7 @@ const createServer = ({
   app.use('/users', usersRouter);
   app.use('/venues', venuesRouter);
   app.use('/notifications', notificationsRouter);
+  app.use('/pings', pingsRouter);
 
   // Create the server
   return http.createServer(app);

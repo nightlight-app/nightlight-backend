@@ -19,7 +19,7 @@ const pingSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  expirationDateTime: {
+  expirationDatetime: {
     type: String,
     required: true,
   },
