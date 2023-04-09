@@ -68,7 +68,7 @@ export const addPingExpireJob = async (pingId: string, delay: number) => {
   if (process.env.ENVIRONMENT === 'test') delay = 3000;
 
   try {
-    await nightlightQueue.add(
+    const job = await nightlightQueue.add(
       'pingExpire',
       {
         type: 'pingExpire',
@@ -76,6 +76,8 @@ export const addPingExpireJob = async (pingId: string, delay: number) => {
       },
       { delay: delay, removeOnComplete: true, removeOnFail: true }
     );
+
+    return job;
   } catch (error: any) {
     console.log(error.message);
   }
