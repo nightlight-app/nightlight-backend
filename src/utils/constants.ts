@@ -48,6 +48,8 @@ export const USER_KEYS_ALL = [
   'notificationToken',
   'currentGroup',
   'emergencyContacts',
+  'sentPings',
+  'receivedPings',
 ];
 
 /**

@@ -331,6 +331,8 @@ export const USER_KEYS_TEST = [
   'lastActive',
   'savedGroups',
   'emergencyContacts',
+  'sentPings',
+  'receivedPings',
 ];
 
 export const GROUP_KEYS_TEST = [
