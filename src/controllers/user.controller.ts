@@ -88,7 +88,9 @@ export const getUsers = async (req: Request, res: Response) => {
         [queryType]: idList,
       },
       { notificationToken: 0 }
-    );
+    )
+      .populate('sentPings')
+      .populate('receivedPings');
 
     // Check if the user exists
     if (targetUsers.length === 0 || !targetUsers) {

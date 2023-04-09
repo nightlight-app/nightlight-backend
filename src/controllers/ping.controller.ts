@@ -45,7 +45,7 @@ export const sendPing = async (req: Request, res: Response) => {
 
     // Add the ping to the recipient's list of pings
     const recipientUser = await User.findByIdAndUpdate(ping.recipientId, {
-      $push: { sentPings: newPing._id },
+      $push: { receivedPings: newPing._id },
     });
 
     // Check if the user exists
@@ -55,7 +55,7 @@ export const sendPing = async (req: Request, res: Response) => {
 
     // Add the ping to the sender's list of pings
     const senderUser = await User.findByIdAndUpdate(ping.senderId, {
-      $push: { receivedPings: newPing._id },
+      $push: { sentPings: newPing._id },
     });
 
     // Check if the user exists

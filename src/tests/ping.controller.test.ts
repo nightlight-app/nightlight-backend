@@ -74,6 +74,7 @@ describe('test pings controller', () => {
       .catch(err => done(err));
   });
 
+  let pingId: string;
   it('should create a new ping via POST /pings', done => {
     const now = new Date();
     const future = new Date(now.getTime() + 10 * 60 * 1000);
@@ -89,11 +90,51 @@ describe('test pings controller', () => {
       })
       .then(res => {
         const ping = res.body.ping;
+        pingId = ping._id;
         expect(res).to.have.status(201);
         expect(ping).to.be.an('object');
         expect(ping).to.have.property('_id');
         expect(ping.senderId).to.equal(userId1);
         expect(ping.recipientId).to.equal(userId2);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should get recipient with pings via GET /users/:userId', done => {
+    chai
+      .request(server)
+      .get(`/users/`)
+      .query({ userId: userId2 })
+      .then(res => {
+        const user = res.body.users[0];
+        console.log(user);
+        expect(res).to.have.status(200);
+        expect(user).to.be.an('object');
+        expect(user).to.have.property('_id');
+        expect(user.email).to.equal(TEST_USER_1.email);
+        expect(user.receivedPings).to.be.an('array');
+        expect(user.receivedPings).to.have.length(1);
+        expect(user.receivedPings[0]._id).to.equal(pingId);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should get sender with pings via GET /users/:userId', done => {
+    chai
+      .request(server)
+      .get(`/users/`)
+      .query({ userId: userId1 })
+      .then(res => {
+        const user = res.body.users[0];
+        expect(res).to.have.status(200);
+        expect(user).to.be.an('object');
+        expect(user).to.have.property('_id');
+        expect(user.email).to.equal(TEST_USER_2.email);
+        expect(user.sentPings).to.be.an('array');
+        expect(user.sentPings).to.have.length(1);
+        expect(user.sentPings[0]._id).to.equal(pingId);
         done();
       })
       .catch(err => done(err));
