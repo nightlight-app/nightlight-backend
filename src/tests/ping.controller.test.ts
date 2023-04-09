@@ -108,7 +108,6 @@ describe('test pings controller', () => {
       .query({ userId: userId2 })
       .then(res => {
         const user = res.body.users[0];
-        console.log(user);
         expect(res).to.have.status(200);
         expect(user).to.be.an('object');
         expect(user).to.have.property('_id');
