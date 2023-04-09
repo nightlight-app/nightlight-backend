@@ -6,9 +6,6 @@ interface CustomRequest extends Request {
   decodedFirebaseToken?: admin.auth.DecodedIdToken;
 }
 
-// Initialize Firebase app
-admin.initializeApp();
-
 export const authenticateFirebaseToken = (
   req: CustomRequest,
   res: Response,

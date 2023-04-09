@@ -47,4 +47,7 @@ jobs:
           npm test
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
+          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
           ENVIRONMENT: test
