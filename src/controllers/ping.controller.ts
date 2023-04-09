@@ -50,7 +50,7 @@ export const sendPing = async (req: Request, res: Response) => {
 
     // Check if the user exists
     if (recipientUser === null) {
-      return res.status(404).send({ message: 'Recipient not found' });
+      return res.status(400).send({ message: 'Recipient not found' });
     }
 
     // Add the ping to the sender's list of pings
@@ -60,12 +60,12 @@ export const sendPing = async (req: Request, res: Response) => {
 
     // Check if the user exists
     if (senderUser === null) {
-      return res.status(404).send({ message: 'Sender not found' });
+      return res.status(400).send({ message: 'Sender not found' });
     }
 
     // Calculate the delay for the ping expiration
     const delay =
-      new Date().getTime() - new Date('2023-04-08T12:34:56.789Z').getTime();
+      new Date().getTime() - new Date(ping.expirationDateTime).getTime();
 
     // Add the ping expiration to the queue
     addPingExpireJob(newPing._id.toString(), delay);
