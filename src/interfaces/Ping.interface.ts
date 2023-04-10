@@ -14,6 +14,7 @@ import mongoose from 'mongoose';
  */
 export interface Ping extends PostPingData {
   _id?: mongoose.Types.ObjectId;
+  queueId: string;
   sentDateTime: string;
   status: PingStatus;
 }

@@ -7,6 +7,7 @@ import { sendNotifications } from '../utils/notification.utils';
 import { NotificationType } from '../interfaces/Notification.interface';
 import { PingStatus } from '../interfaces/Ping.interface';
 import mongoose from 'mongoose';
+import { nightlightQueue } from '../queue/setup/queue.setup';
 
 /**
  * TODO
@@ -31,11 +32,13 @@ export const sendPing = async (req: Request, res: Response) => {
     return res.status(400).send({ message: validationError });
   }
 
-  const ping = { ...pingData, sentDateTime, status: PingStatus.SENT };
-
-  const newPing = new Ping(ping);
-
   try {
+    // Check if the sender id is valid
+    const ping = { ...pingData, sentDateTime, status: PingStatus.SENT };
+
+    // Create a new ping from the request body
+    const newPing = new Ping(ping);
+
     // Save the ping to the database
     const savedPing = await newPing.save();
 
@@ -44,9 +47,35 @@ export const sendPing = async (req: Request, res: Response) => {
       return res.status(500).send({ message: 'Ping could not be saved' });
     }
 
+    // Calculate the delay for the ping expiration
+    const delay =
+      new Date().getTime() - new Date(ping.expirationDateTime).getTime();
+
+    // Add the ping expiration to the queue
+    const job = await addPingExpireJob(savedPing._id.toString(), delay);
+
+    // Check if the job was added to the queue
+    if (job === null || job?.id === undefined) {
+      return res
+        .status(400)
+        .send({ message: 'Failed to remove ping, queue error!' });
+    }
+
+    // Update the ping with the queue id
+    const finalPing = await Ping.findByIdAndUpdate(
+      savedPing._id,
+      { queueId: job.id },
+      { new: true }
+    );
+
+    // Check if the ping was updated
+    if (finalPing === null) {
+      return res.status(400).send({ message: 'Ping not found' });
+    }
+
     // Add the ping to the recipient's list of pings
     const recipientUser = await User.findByIdAndUpdate(ping.recipientId, {
-      $push: { receivedPings: newPing._id },
+      $push: { receivedPings: finalPing._id },
     });
 
     // Check if the user exists
@@ -56,20 +85,13 @@ export const sendPing = async (req: Request, res: Response) => {
 
     // Add the ping to the sender's list of pings
     const senderUser = await User.findByIdAndUpdate(ping.senderId, {
-      $push: { sentPings: newPing._id },
+      $push: { sentPings: finalPing._id },
     });
 
     // Check if the user exists
     if (senderUser === null) {
       return res.status(400).send({ message: 'Sender not found' });
     }
-
-    // Calculate the delay for the ping expiration
-    const delay =
-      new Date().getTime() - new Date(ping.expirationDateTime).getTime();
-
-    // Add the ping expiration to the queue
-    addPingExpireJob(newPing._id.toString(), delay);
 
     // Send a notification to the recipient
     sendNotifications(
@@ -86,7 +108,7 @@ export const sendPing = async (req: Request, res: Response) => {
     // Send the ping back to the user
     return res
       .status(201)
-      .send({ message: 'Ping sent successfully', ping: newPing });
+      .send({ message: 'Ping sent successfully', ping: finalPing });
   } catch (error: any) {
     return res.status(500).send({ error: error.message });
   }
@@ -129,6 +151,11 @@ export const respondToPing = async (req: Request, res: Response) => {
     // Check if the ping exists
     if (ping === null) {
       return res.status(400).send({ message: 'Ping not found' });
+    }
+
+    if (ping.queueId) {
+      // Remove the ping expiration from the queue
+      nightlightQueue.remove(ping.queueId);
     }
 
     // Add the ping to the recipient's list of pings

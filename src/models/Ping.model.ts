@@ -27,6 +27,9 @@ const pingSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  queueId: {
+    type: String,
+  },
 });
 
 const Ping = mongoose.model('Ping', pingSchema);

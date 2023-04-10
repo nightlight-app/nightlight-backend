@@ -11,6 +11,7 @@ import User from '../models/User.model';
 import Venue from '../models/Venue.model';
 import Notification from '../models/Notification.model';
 import { PingStatus } from '../interfaces/Ping.interface';
+import { nightlightQueue } from '../queue/setup/queue.setup';
 require('dotenv').config();
 
 chai.use(chaiHttp);
@@ -36,6 +37,7 @@ before(async () => {
   await Group.deleteMany({});
   await Venue.deleteMany({});
   await Notification.deleteMany({});
+  await nightlightQueue.drain();
 });
 
 describe('test pings controller', () => {
