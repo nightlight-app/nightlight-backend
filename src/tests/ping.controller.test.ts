@@ -179,7 +179,7 @@ describe('test pings controller', () => {
         expect(ping.status).to.equal(PingStatus.RESPONDED_NOT_OKAY);
         setTimeout(function () {
           done();
-        }, 6000);
+        }, 7000);
       })
       .catch(err => done(err));
   });
