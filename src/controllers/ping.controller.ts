@@ -159,7 +159,9 @@ export const respondToPing = async (req: Request, res: Response) => {
     );
 
     // Send the ping back to the user
-    return res.status(200).send({ message: 'Ping responded successfully' });
+    return res
+      .status(200)
+      .send({ message: 'Ping responded successfully', ping: ping });
   } catch (error: any) {
     return res.status(500).send({ error: error.message });
   }

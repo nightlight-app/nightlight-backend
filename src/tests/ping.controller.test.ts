@@ -10,6 +10,7 @@ import Group from '../models/Group.model';
 import User from '../models/User.model';
 import Venue from '../models/Venue.model';
 import Notification from '../models/Notification.model';
+import { PingStatus } from '../interfaces/Ping.interface';
 require('dotenv').config();
 
 chai.use(chaiHttp);
@@ -134,6 +135,46 @@ describe('test pings controller', () => {
         expect(user.sentPings).to.be.an('array');
         expect(user.sentPings).to.have.length(1);
         expect(user.sentPings[0]._id).to.equal(pingId);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should respond to ping via PATCH /pings/:pingId/respond', done => {
+    chai
+      .request(server)
+      .patch(`/pings/${pingId}/respond`)
+      .send({
+        response: PingStatus.RESPONDED_OKAY,
+      })
+      .then(res => {
+        const ping = res.body.ping;
+        expect(res).to.have.status(200);
+        expect(ping).to.be.an('object');
+        expect(ping).to.have.property('_id');
+        expect(ping.senderId).to.equal(userId1);
+        expect(ping.recipientId).to.equal(userId2);
+        expect(ping.status).to.equal(PingStatus.RESPONDED_OKAY);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  it('should respond to ping via PATCH /pings/:pingId/respond', done => {
+    chai
+      .request(server)
+      .patch(`/pings/${pingId}/respond`)
+      .send({
+        response: PingStatus.RESPONDED_NOT_OKAY,
+      })
+      .then(res => {
+        const ping = res.body.ping;
+        expect(res).to.have.status(200);
+        expect(ping).to.be.an('object');
+        expect(ping).to.have.property('_id');
+        expect(ping.senderId).to.equal(userId1);
+        expect(ping.recipientId).to.equal(userId2);
+        expect(ping.status).to.equal(PingStatus.RESPONDED_NOT_OKAY);
         done();
       })
       .catch(err => done(err));
