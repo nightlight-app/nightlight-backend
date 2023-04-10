@@ -177,9 +177,36 @@ describe('test pings controller', () => {
         expect(ping.senderId).to.equal(userId1);
         expect(ping.recipientId).to.equal(userId2);
         expect(ping.status).to.equal(PingStatus.RESPONDED_NOT_OKAY);
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  let pingId2: string;
+  it('should create a new ping for expiration via POST /pings', done => {
+    const now = new Date();
+    const future = new Date(now.getTime() + 10 * 60 * 1000);
+
+    chai
+      .request(server)
+      .post('/pings/')
+      .send({
+        senderId: userId1,
+        recipientId: userId2,
+        message: 'Hello world 2!',
+        expirationDatetime: future.toUTCString(),
+      })
+      .then(res => {
+        const ping = res.body.ping;
+        pingId = ping._id;
+        expect(res).to.have.status(201);
+        expect(ping).to.be.an('object');
+        expect(ping).to.have.property('_id');
+        expect(ping.senderId).to.equal(userId1);
+        expect(ping.recipientId).to.equal(userId2);
         setTimeout(function () {
           done();
-        }, 7000);
+        }, 6000);
       })
       .catch(err => done(err));
   });
@@ -195,8 +222,8 @@ describe('test pings controller', () => {
         expect(user).to.be.an('object');
         expect(user).to.have.property('_id');
         expect(user.email).to.equal(TEST_USER_2.email);
-        expect(user.sentPings).to.have.length(1);
-        expect(user.sentPings[0].status).to.equal(PingStatus.EXPIRED);
+        expect(user.sentPings).to.have.length(2);
+        expect(user.sentPings[1].status).to.equal(PingStatus.EXPIRED);
         done();
       })
       .catch(err => done(err));
@@ -213,8 +240,8 @@ describe('test pings controller', () => {
         expect(user).to.be.an('object');
         expect(user).to.have.property('_id');
         expect(user.email).to.equal(TEST_USER_1.email);
-        expect(user.receivedPings).to.have.length(1);
-        expect(user.receivedPings[0].status).to.equal(PingStatus.EXPIRED);
+        expect(user.receivedPings).to.have.length(2);
+        expect(user.receivedPings[1].status).to.equal(PingStatus.EXPIRED);
         done();
       })
       .catch(err => done(err));
