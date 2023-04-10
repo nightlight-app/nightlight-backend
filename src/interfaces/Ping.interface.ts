@@ -10,11 +10,12 @@ import mongoose from 'mongoose';
  * @property {string} message - The content of the Ping message.
  * @property {string} sentDateTime - The date and time the Ping message was sent.
  * @property {string} expirationDateTime - The date and time the Ping message will expire.
+ * @property {PingStatus} status - The status of the Ping message.
  */
 export interface Ping extends PostPingData {
   _id?: mongoose.Types.ObjectId;
   sentDateTime: string;
-  status: string;
+  status: PingStatus;
 }
 
 /**
@@ -30,7 +31,7 @@ export interface PostPingData {
   senderId: string;
   recipientId: string;
   message: string;
-  expirationDateTime: PingStatus;
+  expirationDateTime: string;
 }
 
 /**

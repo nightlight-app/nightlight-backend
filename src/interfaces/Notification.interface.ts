@@ -72,6 +72,8 @@ export enum NotificationType {
   pingExpiredRecipient = 'pingExpiredRecipient',
   pingExpiredSender = 'pingExpiredSender',
   pingReceived = 'pingReceived',
+  pingRespondedOkay = 'pingRespondedOkay',
+  pingRespondedNotOkay = 'pingRespondedNotOkay',
 }
 
 /**
