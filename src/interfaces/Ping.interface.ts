@@ -30,5 +30,15 @@ export interface PostPingData {
   senderId: string;
   recipientId: string;
   message: string;
-  expirationDateTime: string;
+  expirationDateTime: PingStatus;
+}
+
+/**
+ * Defines the enum for the status for sending a post request to create a new Ping message.
+ */
+export enum PingStatus {
+  SENT = 'SENT',
+  EXPIRED = 'EXPIRED',
+  RESPONDED_OKAY = 'RESPONDED_OKAY',
+  RESPONDED_NOT_OKAY = 'RESPONDED_NOT_OKAY',
 }

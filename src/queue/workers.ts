@@ -6,6 +6,7 @@ import User from '../models/User.model';
 import Venue from '../models/Venue.model';
 import { sendNotifications } from '../utils/notification.utils';
 import Ping from '../models/Ping.model';
+import { PingStatus } from '../interfaces/Ping.interface';
 
 /**
  * Expire a group from the database after the queue job has been processed
@@ -80,7 +81,9 @@ export const expireReaction = async (
 export const expirePing = async (pingId: string) => {
   try {
     // Update the status of the ping to expired and get the ping
-    const ping = await Ping.findByIdAndUpdate(pingId, { status: 'expired' });
+    const ping = await Ping.findByIdAndUpdate(pingId, {
+      status: PingStatus.EXPIRED,
+    });
 
     // If the ping is null, return
     if (ping === null) {

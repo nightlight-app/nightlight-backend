@@ -5,6 +5,7 @@ import User from '../models/User.model';
 import { addPingExpireJob, addReactionExpireJob } from '../queue/jobs';
 import { sendNotifications } from '../utils/notification.utils';
 import { NotificationType } from '../interfaces/Notification.interface';
+import { PingStatus } from '../interfaces/Ping.interface';
 
 /**
  * TODO
@@ -22,7 +23,6 @@ export const sendPing = async (req: Request, res: Response) => {
   const pingData = req.body;
 
   const sentDateTime = new Date().toUTCString();
-  const status = 'active';
 
   // Verify that the ping object has all the necessary keys
   const validationError = verifyKeys(pingData, KeyValidationType.PING);
@@ -30,7 +30,7 @@ export const sendPing = async (req: Request, res: Response) => {
     return res.status(400).send({ message: validationError });
   }
 
-  const ping = { ...pingData, sentDateTime, status };
+  const ping = { ...pingData, sentDateTime, status: PingStatus.SENT };
 
   const newPing = new Ping(ping);
 
@@ -89,4 +89,9 @@ export const sendPing = async (req: Request, res: Response) => {
   } catch (error: any) {
     return res.status(500).send({ error: error.message });
   }
+};
+
+export const respondToPing = async (req: Request, res: Response) => {
+  const pingId = req.params.pingId as string;
+  const response = req.body.response as string;
 };
