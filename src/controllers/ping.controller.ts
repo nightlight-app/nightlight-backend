@@ -193,3 +193,83 @@ export const respondToPing = async (req: Request, res: Response) => {
     return res.status(500).send({ error: error.message });
   }
 };
+
+/**
+ *
+ * @param req
+ * @param res
+ * @returns
+ */
+export const removePing = async (req: Request, res: Response) => {
+  const pingId = req.params.pingId as string;
+
+  // Verify that the ping ID is present
+  if (!pingId) {
+    return res.status(400).send({ message: 'Ping ID is required' });
+  }
+
+  // Verify that the ping ID is valid
+  if (!mongoose.Types.ObjectId.isValid(pingId)) {
+    return res.status(400).send({ message: 'Invalid ping ID' });
+  }
+
+  try {
+    // Remove the ping from the database
+    const removedPing = await Ping.findByIdAndRemove(pingId);
+
+    // Check if the ping exists
+    if (removedPing === null) {
+      return res.status(400).send({ message: 'Ping not found' });
+    }
+
+    // Remove the ping expiration from the queue
+    if (removedPing.queueId) {
+      nightlightQueue.remove(removedPing.queueId);
+    }
+
+    // Remove the ping from the recipient's list of pings
+    const recipientUser = await User.findByIdAndUpdate(
+      removedPing.recipientId,
+      {
+        $pull: { receivedPings: removedPing._id },
+      },
+      { new: true }
+    );
+
+    // Check if the user exists
+    if (recipientUser === null) {
+      return res.status(400).send({ message: 'Recipient not found' });
+    }
+
+    // Remove the ping from the sender's list of pings
+    const senderUser = await User.findByIdAndUpdate(
+      removedPing.senderId,
+      {
+        $pull: { sentPings: removedPing._id },
+      },
+      { new: true }
+    );
+
+    // Check if the user exists
+    if (senderUser === null) {
+      return res.status(400).send({ message: 'Sender not found' });
+    }
+
+    // Send a notification to the recipient
+    sendNotifications(
+      [removedPing.recipientId.toString()],
+      'Ping removed!📤',
+      `${senderUser.firstName} ${senderUser.lastName} is no longer pinging you.`,
+      {
+        notificationType: NotificationType.pingRemoved,
+        sentDateTime: new Date().toUTCString(),
+      },
+      false
+    );
+
+    // Send the ping back to the user
+    return res.status(200).send({ message: 'Ping removed successfully' });
+  } catch (error: any) {
+    return res.status(500).send({ error: error.message });
+  }
+};
