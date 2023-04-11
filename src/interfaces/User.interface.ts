@@ -35,11 +35,13 @@ export interface User {
   lastName: string;
   email: string;
   phone: string;
+  isEmergency: boolean;
   birthday?: string;
   currentGroup?: mongoose.Types.ObjectId;
   invitedGroups?: mongoose.Types.ObjectId[];
   friends?: mongoose.Types.ObjectId[];
   friendRequests?: mongoose.Types.ObjectId[];
+  sentFriendRequests?: mongoose.Types.ObjectId[];
   lastActive?: LastActive;
   savedGroups?: SavedGroup[];
   emergencyContacts?: EmergencyContact[];

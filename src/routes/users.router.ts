@@ -22,6 +22,9 @@ import {
   updateEmergencyContact,
   getEmergencyContacts,
   searchUsers,
+  removeFriendRequest,
+  activateEmergency,
+  deactivateEmergency,
 } from '../controllers/user.controller';
 
 const usersRouter = express.Router();

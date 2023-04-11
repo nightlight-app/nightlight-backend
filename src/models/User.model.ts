@@ -57,6 +57,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isEmergency: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
   birthday: {
     type: String,
   },
@@ -67,6 +72,12 @@ const userSchema = new mongoose.Schema({
     },
   ],
   friendRequests: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
+  sentFriendRequests: [
     {
       type: Schema.Types.ObjectId,
       ref: 'User',
