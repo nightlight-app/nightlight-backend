@@ -45,12 +45,15 @@ usersRouter.patch('/:userId/leave-group', leaveGroup);
 usersRouter.patch('/:userId/request-friend', requestFriend);
 usersRouter.patch('/:userId/accept-friend-request', acceptFriendRequest);
 usersRouter.patch('/:userId/decline-friend-request', declineFriendRequest);
+usersRouter.patch('/:userId/remove-friend-request', removeFriendRequest);
 usersRouter.patch('/:userId/remove-friend', removeFriend);
 usersRouter.patch('/:userId/add-notification-token', addNotificationToken);
 usersRouter.patch('/:userId/remove-notification-token', removeNotificationToken);
 usersRouter.patch('/:userId/add-emergency-contact', addEmergencyContact);
 usersRouter.patch('/:userId/remove-emergency-contact', removeEmergencyContact);
 usersRouter.patch('/:userId/update-emergency-contact', updateEmergencyContact);
+usersRouter.patch('/:userId/activate-emergency', activateEmergency);
+usersRouter.patch('/:userId/deactivate-emergency', deactivateEmergency);
 usersRouter.patch('/:userId/upload-profile-img', uploadProfileImg);
 
 export = usersRouter;
