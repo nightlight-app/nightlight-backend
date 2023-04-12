@@ -119,6 +119,18 @@ const userSchema = new mongoose.Schema({
       phone: String,
     },
   ],
+  sentPings: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Ping',
+    },
+  ],
+  receivedPings: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Ping',
+    },
+  ],
 });
 
 const User = mongoose.model('User', userSchema);

@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import { Venue as VenueInterface } from '../interfaces/Venue.interface';
 import Venue from '../models/Venue.model';
 import { REACTION_EMOJIS, REACTION_EXPIRY_DURATION } from '../utils/constants';
-import { Emoji, encodeEmoji } from '../utils/venue.utils';
+import { Emoji } from '../utils/venue.utils';
 import { addReactionExpireJob } from '../queue/jobs';
 import { nightlightQueue } from '../queue/setup/queue.setup';
 import { verifyKeys, KeyValidationType } from '../utils/validation.utils';
@@ -47,7 +47,7 @@ export const getVenue = async (req: Request, res: Response) => {
     const userId = req.query.userId as string;
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).send({ message: 'Invalid user ID!' });
+      return res.status(400).send({ message: 'Invalid venue ID!' });
     }
 
     const targetVenue: VenueInterface[] = await Venue.aggregate([
@@ -129,18 +129,24 @@ export const getVenues = async (req: Request, res: Response) => {
   const userId = req.query.userId as string;
   const count = Number(req.query?.count);
 
+  // Check if the user ID is valid
+  if (!mongoose.Types.ObjectId.isValid(userId as string)) {
+    return res.status(400).send({ message: 'Invalid venue ID!' });
+  }
+
+  // Check if the count is valid
+  if (Number(count) <= 0) {
+    return res.status(400).send({ message: 'Invalid page count!' });
+  }
+
   try {
-    if (!mongoose.Types.ObjectId.isValid(userId as string)) {
-      return res.status(400).send({ message: 'Invalid venue ID!' });
-    }
-
-    if (Number(count) <= 0) {
-      return res.status(400).send({ message: 'Invalid page count!' });
-    }
-
+    // Get the page number from the query parameters
     const page = Number(req.query?.page);
+
+    // Get the number of venues to skip
     const skip = (page - 1) * count;
 
+    // Find all venues with their associated reactions for the user
     const targetVenues: VenueInterface[] = await Venue.aggregate([
       {
         $addFields: {
@@ -192,6 +198,7 @@ export const getVenues = async (req: Request, res: Response) => {
       { $limit: count },
     ]);
 
+    // If no venues exist, send an error message
     if (targetVenues.length == 0) {
       return res.status(400).send({ message: 'Venues do not exist!' });
     }
@@ -216,14 +223,17 @@ export const addReactionToVenue = async (req: Request, res: Response) => {
     const userId = req.query.userId as string;
     const emoji = req.query.emoji as Emoji;
 
+    // Check if venue ID is valid
     if (!mongoose.Types.ObjectId.isValid(venueId)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
     }
 
+    // Check if user ID is valid
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).send({ message: 'Invalid user ID!' });
     }
 
+    // Add reaction to queue
     const job = await addReactionExpireJob(
       userId,
       venueId,
@@ -231,12 +241,14 @@ export const addReactionToVenue = async (req: Request, res: Response) => {
       REACTION_EXPIRY_DURATION
     );
 
+    // Check if job was added to queue
     if (job === null || job?.id === undefined) {
       return res
         .status(400)
         .send({ message: 'Failed to react to venue, queue error!' });
     }
 
+    // Add reaction to venue
     const result = await Venue.findByIdAndUpdate(
       venueId,
       {
@@ -251,10 +263,12 @@ export const addReactionToVenue = async (req: Request, res: Response) => {
       { new: true }
     );
 
+    // Check if venue exists
     if (result === null) {
       nightlightQueue.remove(job.id);
       return res.status(400).send({ message: 'Venue does not exist!' });
     }
+
     return res
       .status(200)
       .send({ message: 'Successfully added reaction to Venue!', body: result });
@@ -275,30 +289,39 @@ export const deleteReactionFromVenue = async (req: Request, res: Response) => {
     const userId = req.query.userId as string;
     const emoji = req.query.emoji as Emoji;
 
+    // Check if venue ID is valid
     if (!mongoose.Types.ObjectId.isValid(venueId)) {
       return res.status(400).send({ message: 'Invalid venue ID!' });
     }
 
+    // Check if user ID is valid
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).send({ message: 'Invalid user ID!' });
     }
 
+    // Get venue
     const result = await Venue.findOne({ _id: venueId });
 
+    // Check if venue exists
     if (result === null) {
       return res.status(400).send({ message: 'Venue does not exist!' });
     }
 
+    // Find reaction index
     const reactionIndex = result.reactions.findIndex(
       r => r.userId === userId && r.emoji === emoji
     );
 
+    // Remove reaction from venue
     const removedReaction = result.reactions.splice(reactionIndex, 1)[0];
 
+    // Obtain queue ID
     const queueId = removedReaction.queueId;
 
+    // Remove reaction from queue
     await result.updateOne({ $set: { reactions: result.reactions } });
 
+    // Remove job from queue
     nightlightQueue.remove(queueId);
 
     return res.status(200).send({
@@ -319,12 +342,16 @@ export const deleteReactionFromVenue = async (req: Request, res: Response) => {
 export const deleteVenue = async (req: Request, res: Response) => {
   const venueId = req.params?.venueId;
 
+  // Check if venue ID is valid
+  if (!mongoose.Types.ObjectId.isValid(venueId)) {
+    return res.status(400).send({ message: 'Invalid venue ID!' });
+  }
+
   try {
-    if (!mongoose.Types.ObjectId.isValid(venueId)) {
-      return res.status(400).send({ message: 'Invalid venue ID!' });
-    }
+    // Delete venue
     const result = await Venue.deleteOne({ _id: venueId });
 
+    // Check if venue was deleted
     if (result.deletedCount === 0) {
       return res.status(400).send({ message: 'Venue not found!' });
     }
@@ -342,18 +369,22 @@ export const deleteVenue = async (req: Request, res: Response) => {
  * @return {Promise} - A promise that resolves when the venue is successfully deleted or failed to delete
  */
 export const updateVenue = async (req: Request, res: Response) => {
-  const venueId = req.params?.venueId;
+  const venueId = req.params.venueId as string;
+
+  // Check if venue ID is valid
+  if (!mongoose.Types.ObjectId.isValid(venueId)) {
+    return res.status(400).send({ message: 'Invalid venue ID!' });
+  }
 
   try {
-    if (!mongoose.Types.ObjectId.isValid(venueId)) {
-      return res.status(400).send({ message: 'Invalid venue ID!' });
-    }
-
+    // Update venue
     const result = await Venue.findByIdAndUpdate(venueId, req.body);
 
+    // Check if venue was updated
     if (result === null) {
       return res.status(400).send({ message: 'Venue does not exist!' });
     }
+
     return res.status(200).send({
       message: 'Successfully added reaction to Venue!',
     });

@@ -20,6 +20,7 @@ import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
 export const createUser = async (req: Request, res: Response) => {
   const user = req.body;
 
+  // Verify that the user object has all the necessary keys
   const validationError = verifyKeys(user, KeyValidationType.USERS);
   if (validationError !== '') {
     return res.status(400).send({ message: validationError });
@@ -87,7 +88,9 @@ export const getUsers = async (req: Request, res: Response) => {
         [queryType]: idList,
       },
       { notificationToken: 0 }
-    );
+    )
+      .populate('sentPings')
+      .populate('receivedPings');
 
     // Check if the user exists
     if (targetUsers.length === 0 || !targetUsers) {

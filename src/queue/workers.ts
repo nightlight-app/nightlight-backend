@@ -5,6 +5,8 @@ import Group from '../models/Group.model';
 import User from '../models/User.model';
 import Venue from '../models/Venue.model';
 import { sendNotifications } from '../utils/notification.utils';
+import Ping from '../models/Ping.model';
+import { PingStatus } from '../interfaces/Ping.interface';
 
 /**
  * Expire a group from the database after the queue job has been processed
@@ -66,6 +68,66 @@ export const expireReaction = async (
     await Venue.findOneAndUpdate(
       { _id: venueId },
       { $pull: { reactions: { userId: userId, emoji: emoji } } }
+    );
+  } catch (error: any) {
+    console.log(error.message);
+  }
+};
+
+/**
+ * If a ping expires, the status of the ping must be updated to expired
+ * @param pingId - The ID of the ping that the expiration job is for
+ */
+export const expirePing = async (pingId: string) => {
+  try {
+    // Update the status of the ping to expired and get the ping
+    const ping = await Ping.findByIdAndUpdate(pingId, {
+      status: PingStatus.EXPIRED,
+    });
+
+    // If the ping is null, return
+    if (ping === null) {
+      return;
+    }
+
+    // Get the recipient of the ping
+    const recipientUser = await User.findById(ping?.recipientId);
+
+    // If the recipient is null, return
+    if (recipientUser === null) {
+      return;
+    }
+
+    // Get the sender of the ping
+    const senderUser = await User.findById(ping?.senderId);
+
+    // If the sender is null, return
+    if (senderUser === null) {
+      return;
+    }
+
+    // Send a notification to the sender
+    sendNotifications(
+      [ping?.senderId.toString()],
+      'Ping expired!⚠️',
+      `Your ping to ${recipientUser.firstName} ${recipientUser.lastName} has expired without a response.`,
+      {
+        notificationType: NotificationType.pingExpiredSender,
+        sentDateTime: new Date().toUTCString(),
+      },
+      true
+    );
+
+    // Send a notification to the recipient
+    sendNotifications(
+      [ping?.recipientId.toString()],
+      'Ping expired!⚠️',
+      `You haven't responded to your ping from ${senderUser?.firstName} ${senderUser?.lastName}.`,
+      {
+        notificationType: NotificationType.pingExpiredRecipient,
+        sentDateTime: new Date().toUTCString(),
+      },
+      true
     );
   } catch (error: any) {
     console.log(error.message);
