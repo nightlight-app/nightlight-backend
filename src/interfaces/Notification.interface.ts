@@ -84,3 +84,16 @@ export interface NotificationDocument extends Document {
   data: NotificationData;
   delay: number;
 }
+
+export interface FriendRequestNotificationData extends NotificationData {
+  userId: string;
+}
+
+export interface GroupNotificationData extends NotificationData {
+  groupId: string;
+}
+
+export interface EmergencyNotificationData extends NotificationData {
+  userId: string;
+  groupId: string;
+}
