@@ -2,7 +2,7 @@ import Ping from '../models/Ping.model';
 import { Request, Response } from 'express';
 import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
 import User from '../models/User.model';
-import { addPingExpireJob, addReactionExpireJob } from '../queue/jobs';
+import { addPingExpireJob } from '../queue/jobs';
 import { sendNotifications } from '../utils/notification.utils';
 import { NotificationType } from '../interfaces/Notification.interface';
 import { PingStatus } from '../interfaces/Ping.interface';
@@ -10,15 +10,13 @@ import mongoose from 'mongoose';
 import { nightlightQueue } from '../queue/setup/queue.setup';
 
 /**
- * TODO
+ * Sends a ping from the sender to the recipient.
+ * Adds a queue job to change the ping status after the expiration date.
+ * Sends a notification to the recipient about the ping.
  *
- * Create ping
- * Send expiration to queue
- * Send notification to recipient
- *
- * @param req
- * @param res
- * @returns
+ * @param {Request} req - Express request object containing the ping object data
+ * @param {Response} res - Express response object containing the ping object data after it has been saved to the database
+ * @returns {Promise<Ping>} - Resolved promise containing the ping object data after it has been saved to the database
  */
 export const sendPing = async (req: Request, res: Response) => {
   // Get the ping object from the request body
@@ -114,6 +112,15 @@ export const sendPing = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Responds to a ping from the recipient.
+ * Removes the ping expiration from the queue.
+ * Sends a notification to the sender about the ping response and sends a notification to the recipient about the ping response.
+ *
+ * @param {Request} req - Express request object containing the ping object data
+ * @param {Response} res - Express response object containing the ping object data after it has been saved to the database
+ * @returns {Promise<Ping>} - Resolved promise containing the ping object data after it has been saved to the database
+ */
 export const respondToPing = async (req: Request, res: Response) => {
   const pingId = req.params.pingId as string;
   const response = req.body.response as string;
@@ -195,10 +202,11 @@ export const respondToPing = async (req: Request, res: Response) => {
 };
 
 /**
+ * Removes a ping from the database and removes the ping expiration from the queue.
  *
- * @param req
- * @param res
- * @returns
+ * @param {Request} req - Express request object containing the ping object data
+ * @param {Response} res - Express response object containing the ping object data after it has been saved to the database
+ * @returns {Promise<Ping>} - Resolved promise containing the ping object data after it has been saved to the database
  */
 export const removePing = async (req: Request, res: Response) => {
   const pingId = req.params.pingId as string;
