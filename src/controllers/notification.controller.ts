@@ -44,10 +44,7 @@ export const getNotifications = async (req: Request, res: Response) => {
  * @param {Response} res - Express response object used to send the response back to the client.
  * @returns {Promise} - a promise resolving to the newly created Notification document from the MongoDB database
  */
-export const addNotificationsToDatabase = async (
-  req: Request,
-  res: Response
-) => {
+export const addNotificationsToDatabase = async (req: Request, res: Response) => {
   // check if all required fields are present
   const notification = req.body;
 
@@ -61,9 +58,7 @@ export const addNotificationsToDatabase = async (
 
   // check if delay is a positive number
   if (req.body.delay < 0) {
-    return res
-      .status(500)
-      .send({ message: 'Delay must be a positive number.' });
+    return res.status(500).send({ message: 'Delay must be a positive number.' });
   }
 
   try {

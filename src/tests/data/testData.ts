@@ -33,10 +33,7 @@ const TEST_SAVED_GROUP_1: SavedGroup = {
 const TEST_SAVED_GROUP_2: SavedGroup = {
   _id: new mongoose.Types.ObjectId(),
   name: 'My side friend group',
-  users: [
-    new mongoose.Types.ObjectId(2456),
-    new mongoose.Types.ObjectId(34675),
-  ],
+  users: [new mongoose.Types.ObjectId(2456), new mongoose.Types.ObjectId(34675)],
 };
 
 export const TEST_USER_1: User = {
@@ -252,10 +249,7 @@ export const SEARCH_USER_3: User = {
 /* Groups */
 export const TEST_GROUP1: Group = {
   name: 'Our group',
-  members: [
-    new mongoose.Types.ObjectId(234),
-    new mongoose.Types.ObjectId(65164),
-  ],
+  members: [new mongoose.Types.ObjectId(234), new mongoose.Types.ObjectId(65164)],
   invitedMembers: [
     new mongoose.Types.ObjectId(5),
     new mongoose.Types.ObjectId(65264),

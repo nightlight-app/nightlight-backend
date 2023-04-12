@@ -232,10 +232,10 @@ describe('testing group actions', () => {
       });
   });
 
-  it('should invite a new member to a group via PATCH /group/{groupId}/inviteMembers (friend3)', done => {
+  it('should invite a new member to a group via PATCH /group/{groupId}/invite-members (friend3)', done => {
     chai
       .request(server)
-      .patch(`/groups/${groupId}/inviteMembers`)
+      .patch(`/groups/${groupId}/invite-members`)
       .query({ userId: userIdMain })
       .send([userIdFriend3])
       .then(res => {
@@ -244,10 +244,10 @@ describe('testing group actions', () => {
       });
   });
 
-  it('should invite a new member to a group via PATCH /group/{groupId}/inviteMembers (friend6)', done => {
+  it('should invite a new member to a group via PATCH /group/{groupId}/invite-members (friend6)', done => {
     chai
       .request(server)
-      .patch(`/groups/${groupId}/inviteMembers`)
+      .patch(`/groups/${groupId}/invite-members`)
       .query({ userId: userIdMain })
       .send([userIdFriend6])
       .then(res => {
@@ -275,10 +275,10 @@ describe('testing group actions', () => {
       });
   });
 
-  it('should remove a member invitation via PATCH /group/{groupId}/removeMemberInvitation', done => {
+  it('should remove a member invitation via PATCH /group/{groupId}/remove-member-invitation', done => {
     chai
       .request(server)
-      .patch(`/groups/${groupId}/removeMemberInvitation`)
+      .patch(`/groups/${groupId}/remove-member-invitation`)
       .query({ userId: userIdFriend3 })
       .send()
       .then(res => {
@@ -287,10 +287,10 @@ describe('testing group actions', () => {
       });
   });
 
-  it('should decline a member invitation via PATCH /users/${userId}/declineGroupInvitation (friend6)', done => {
+  it('should decline a member invitation via PATCH /users/${userId}/decline-group-invitation (friend6)', done => {
     chai
       .request(server)
-      .patch(`/users/${userIdFriend6}/declineGroupInvitation`)
+      .patch(`/users/${userIdFriend6}/decline-group-invitation`)
       .query({ groupId: groupId })
       .send()
       .then(res => {
@@ -318,10 +318,10 @@ describe('testing group actions', () => {
       });
   });
 
-  it('should accept a group invitation via PATCH /users/{userId}/acceptGroupInvitation', done => {
+  it('should accept a group invitation via PATCH /users/{userId}/accept-group-invitation', done => {
     chai
       .request(server)
-      .patch(`/users/${userIdFriend2}/acceptGroupInvitation`)
+      .patch(`/users/${userIdFriend2}/accept-group-invitation`)
       .query({ groupId: groupId })
       .send()
       .then(res => {
@@ -333,7 +333,7 @@ describe('testing group actions', () => {
   it('should accept group invitation and add member to group (userIdFriend5)', done => {
     chai
       .request(server)
-      .patch(`/users/${userIdFriend5}/acceptGroupInvitation`)
+      .patch(`/users/${userIdFriend5}/accept-group-invitation`)
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
@@ -377,7 +377,7 @@ describe('testing group actions', () => {
   it('should allow user to leave group (userIdFriend5)', done => {
     chai
       .request(server)
-      .patch(`/users/${userIdFriend5}/leaveGroup`)
+      .patch(`/users/${userIdFriend5}/leave-group`)
       .query({ groupId })
       .then(res => {
         expect(res).to.have.status(200);
@@ -655,10 +655,10 @@ describe('testing group deletion after less than 2 members', () => {
       });
   });
 
-  it('should invite a new member to a group via PATCH /group/{groupId}/inviteMembers (friend3)', done => {
+  it('should invite a new member to a group via PATCH /group/{groupId}/invite-members (friend3)', done => {
     chai
       .request(server)
-      .patch(`/groups/${groupId}/inviteMembers`)
+      .patch(`/groups/${groupId}/invite-members`)
       .query({ userId: userIdMain })
       .send([userIdFriend3])
       .then(res => {
@@ -667,10 +667,10 @@ describe('testing group deletion after less than 2 members', () => {
       });
   });
 
-  it('should invite a new member to a group via PATCH /group/{groupId}/inviteMembers (friend6)', done => {
+  it('should invite a new member to a group via PATCH /group/{groupId}/invite-members (friend6)', done => {
     chai
       .request(server)
-      .patch(`/groups/${groupId}/inviteMembers`)
+      .patch(`/groups/${groupId}/invite-members`)
       .query({ userId: userIdMain })
       .send([userIdFriend6])
       .then(res => {
@@ -701,7 +701,7 @@ describe('testing group deletion after less than 2 members', () => {
   it('should accept group invitation and add member to group (userIdFriend1)', done => {
     chai
       .request(server)
-      .patch(`/users/${userIdFriend1}/acceptGroupInvitation`)
+      .patch(`/users/${userIdFriend1}/accept-group-invitation`)
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
@@ -712,7 +712,7 @@ describe('testing group deletion after less than 2 members', () => {
   it('should accept group invitation and add member to group (userIdFriend2)', done => {
     chai
       .request(server)
-      .patch(`/users/${userIdFriend2}/acceptGroupInvitation`)
+      .patch(`/users/${userIdFriend2}/accept-group-invitation`)
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
@@ -723,7 +723,7 @@ describe('testing group deletion after less than 2 members', () => {
   it('should accept group invitation and add member to group (userIdFriend3)', done => {
     chai
       .request(server)
-      .patch(`/users/${userIdFriend3}/acceptGroupInvitation`)
+      .patch(`/users/${userIdFriend3}/accept-group-invitation`)
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
@@ -734,7 +734,7 @@ describe('testing group deletion after less than 2 members', () => {
   it('should allow user to leave group (userIdFriend1)', done => {
     chai
       .request(server)
-      .patch(`/users/${userIdFriend1}/leaveGroup`)
+      .patch(`/users/${userIdFriend1}/leave-group`)
       .query({ groupId })
       .then(res => {
         expect(res).to.have.status(200);
@@ -759,7 +759,7 @@ describe('testing group deletion after less than 2 members', () => {
   it('should allow user to leave group (userIdFriend2)', done => {
     chai
       .request(server)
-      .patch(`/users/${userIdFriend2}/leaveGroup`)
+      .patch(`/users/${userIdFriend2}/leave-group`)
       .query({ groupId })
       .then(res => {
         expect(res).to.have.status(200);
@@ -784,7 +784,7 @@ describe('testing group deletion after less than 2 members', () => {
   it('should allow user to leave group (userIdFriend3)', done => {
     chai
       .request(server)
-      .patch(`/users/${userIdFriend3}/leaveGroup`)
+      .patch(`/users/${userIdFriend3}/leave-group`)
       .query({ groupId })
       .then(res => {
         expect(res).to.have.status(200);

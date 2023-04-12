@@ -40,10 +40,7 @@ export const createUser = (
         longitude: Number(faker.address.longitude()),
       },
       time: new Date(
-        faker.date.between(
-          '1990-01-01T00:00:00.000Z',
-          '2001-01-01T00:00:00.000Z'
-        )
+        faker.date.between('1990-01-01T00:00:00.000Z', '2001-01-01T00:00:00.000Z')
       ).toUTCString(),
     },
     savedGroups: [],

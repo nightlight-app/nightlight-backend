@@ -108,7 +108,7 @@ describe('testing user actions', () => {
   it('should update notification token for a user via PATCH /users/{userId}', done => {
     chai
       .request(server)
-      .patch(`/users/${userId}/addNotificationToken`)
+      .patch(`/users/${userId}/add-notification-token`)
       .send({ notificationToken: 'ExponentPushToken[TestToken1234]' })
       .then(res => {
         expect(res).to.have.status(200);
@@ -120,7 +120,7 @@ describe('testing user actions', () => {
   it('should remove notification token for a user via PATCH /users/{userId}', done => {
     chai
       .request(server)
-      .patch(`/users/${userId}/removeNotificationToken`)
+      .patch(`/users/${userId}/remove-notification-token`)
       .send()
       .then(res => {
         expect(res).to.have.status(200);
@@ -130,10 +130,10 @@ describe('testing user actions', () => {
   });
 
   let emergencyContactId: string;
-  it('should add an emergency contact via PATCH /users/{userId}/addEmergencyContact', done => {
+  it('should add an emergency contact via PATCH /users/{userId}/add-emergency-contact', done => {
     chai
       .request(server)
-      .patch(`/users/${userId}/addEmergencyContact`)
+      .patch(`/users/${userId}/add-emergency-contact`)
       .send(TEST_EMERGENCY_CONTACT)
       .then(res => {
         emergencyContactId = res.body.emergencyContact._id;
@@ -162,10 +162,10 @@ describe('testing user actions', () => {
       .catch(err => done(err));
   });
 
-  it('should update an emergency contact via PATCH /users/{userId}/updateEmergencyContact', done => {
+  it('should update an emergency contact via PATCH /users/{userId}/update-emergency-contact', done => {
     chai
       .request(server)
-      .patch(`/users/${userId}/updateEmergencyContact`)
+      .patch(`/users/${userId}/update-emergency-contact`)
       .query({ emergencyContactId: emergencyContactId })
       .send({ name: 'Test User', phone: '+14567891023' })
       .then(res => {
@@ -182,9 +182,7 @@ describe('testing user actions', () => {
       .query({ userId: userId })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.users[0].emergencyContacts[0].name).to.equal(
-          'Test User'
-        );
+        expect(res.body.users[0].emergencyContacts[0].name).to.equal('Test User');
         expect(res.body.users[0].emergencyContacts[0].phone).to.equal(
           '+14567891023'
         );
@@ -193,10 +191,10 @@ describe('testing user actions', () => {
       .catch(err => done(err));
   });
 
-  it('should get emergency contacts via GET /users/{userId}/getEmergencyContacts', done => {
+  it('should get emergency contacts via GET /users/{userId}/get-emergency-contacts', done => {
     chai
       .request(server)
-      .get(`/users/${userId}/emergencyContacts`)
+      .get(`/users/${userId}/emergency-contacts`)
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.emergencyContacts).to.have.length(1);
@@ -205,10 +203,10 @@ describe('testing user actions', () => {
       .catch(err => done(err));
   });
 
-  it('should remove an emergency contact via PATCH /users/{userId}/removeEmergencyContact', done => {
+  it('should remove an emergency contact via PATCH /users/{userId}/remove-emergency-contact', done => {
     chai
       .request(server)
-      .patch(`/users/${userId}/removeEmergencyContact`)
+      .patch(`/users/${userId}/remove-emergency-contact`)
       .query({ emergencyContactId: emergencyContactId })
       .then(res => {
         expect(res).to.have.status(200);
@@ -230,10 +228,10 @@ describe('testing user actions', () => {
       .catch(err => done(err));
   });
 
-  it('should activate an emergency for a user via PATCH /users/{userId}/activateEmergency', done => {
+  it('should activate an emergency for a user via PATCH /users/{userId}/activate-emergency', done => {
     chai
       .request(server)
-      .patch(`/users/${userId}/activateEmergency`)
+      .patch(`/users/${userId}/activate-emergency`)
       .then(res => {
         expect(res).to.have.status(200);
 
@@ -257,10 +255,10 @@ describe('testing user actions', () => {
       .catch(err => done(err));
   });
 
-  it('should deactivate an emergency for a user via PATCH /users/{userId}/activateEmergency', done => {
+  it('should deactivate an emergency for a user via PATCH /users/{userId}/activate-emergency', done => {
     chai
       .request(server)
-      .patch(`/users/${userId}/deactivateEmergency`)
+      .patch(`/users/${userId}/deactivate-emergency`)
       .then(res => {
         expect(res).to.have.status(200);
         done();
@@ -312,10 +310,10 @@ describe('testing save groups', () => {
       });
   });
 
-  it('should add a savedGroup via PATCH /users/:userId/saveGroup', done => {
+  it('should add a savedGroup via PATCH /users/:userId/save-group', done => {
     chai
       .request(server)
-      .patch(`/users/${userId}/saveGroup`)
+      .patch(`/users/${userId}/save-group`)
       .send(SAVED_GROUP)
       .then(res => {
         expect(res).to.have.status(200);
@@ -339,10 +337,10 @@ describe('testing save groups', () => {
       });
   });
 
-  it('should delete a specific savedGroup via PATCH /users/:userId/deleteSavedGroup', done => {
+  it('should delete a specific savedGroup via PATCH /users/:userId/delete-saved-group', done => {
     chai
       .request(server)
-      .patch(`/users/${userId}/deleteSavedGroup`)
+      .patch(`/users/${userId}/delete-saved-group`)
       .query({ savedGroupId: groupId })
       .send()
       .then(res => {
@@ -478,10 +476,10 @@ describe('testing friend requests', () => {
       });
   });
 
-  it('should send a friend request via PATCH /users/:userId/requestFriend', done => {
+  it('should send a friend request via PATCH /users/:userId/request-friend', done => {
     chai
       .request(server)
-      .patch(`/users/${userId1}/requestFriend`)
+      .patch(`/users/${userId1}/request-friend`)
       .query({ friendId: userId2 })
       .then(res => {
         expect(res).to.have.status(200);
@@ -490,10 +488,10 @@ describe('testing friend requests', () => {
   });
 
   // Test remove friend request
-  it('should send a friend request via PATCH /users/:userId/requestFriend', done => {
+  it('should send a friend request via PATCH /users/:userId/request-friend', done => {
     chai
       .request(server)
-      .patch(`/users/${userId3}/requestFriend`)
+      .patch(`/users/${userId3}/request-friend`)
       .query({ friendId: userId2 })
       .then(res => {
         expect(res).to.have.status(200);
@@ -516,10 +514,10 @@ describe('testing friend requests', () => {
       .catch(err => done(err));
   });
 
-  it('should remove a friend request via PATCH /users/:userId/removeFriendRequest', done => {
+  it('should remove a friend request via PATCH /users/:userId/remove-friend-request', done => {
     chai
       .request(server)
-      .patch(`/users/${userId3}/removeFriendRequest`)
+      .patch(`/users/${userId3}/remove-friend-request`)
       .query({ friendId: userId2 })
       .then(res => {
         expect(res).to.have.status(200);
@@ -542,10 +540,10 @@ describe('testing friend requests', () => {
       .catch(err => done(err));
   });
 
-  it('should resend a friend request via PATCH /users/:userId/requestFriend', done => {
+  it('should resend a friend request via PATCH /users/:userId/request-friend', done => {
     chai
       .request(server)
-      .patch(`/users/${userId3}/requestFriend`)
+      .patch(`/users/${userId3}/request-friend`)
       .query({ friendId: userId2 })
       .then(res => {
         expect(res).to.have.status(200);
@@ -568,10 +566,10 @@ describe('testing friend requests', () => {
       .catch(err => done(err));
   });
 
-  it('should accept a friend request via PATCH /users/:userId/acceptFriendRequest', done => {
+  it('should accept a friend request via PATCH /users/:userId/accept-friend-request', done => {
     chai
       .request(server)
-      .patch(`/users/${userId2}/acceptFriendRequest`)
+      .patch(`/users/${userId2}/accept-friend-request`)
       .query({ friendId: userId1 })
       .then(res => {
         expect(res).to.have.status(200);
@@ -608,10 +606,10 @@ describe('testing friend requests', () => {
       .catch(err => done(err));
   });
 
-  it('should decline a friend request via PATCH /users/:userId/acceptFriendRequest', done => {
+  it('should decline a friend request via PATCH /users/:userId/accept-friend-request', done => {
     chai
       .request(server)
-      .patch(`/users/${userId2}/declineFriendRequest`)
+      .patch(`/users/${userId2}/decline-friend-request`)
       .query({ friendId: userId3 })
       .then(res => {
         expect(res).to.have.status(200);
@@ -657,10 +655,10 @@ describe('testing friend requests', () => {
   });
 
   // test friend removal
-  it('should remove a friend via PATCH /users/:userId/removeFriend', done => {
+  it('should remove a friend via PATCH /users/:userId/remove-friend', done => {
     chai
       .request(server)
-      .patch(`/users/${userId1}/removeFriend`)
+      .patch(`/users/${userId1}/remove-friend`)
       .query({ friendId: userId2 })
       .then(res => {
         expect(res).to.have.status(200);
