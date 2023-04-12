@@ -435,9 +435,7 @@ export const declineGroupInvitation = async (req: Request, res: Response) => {
       false
     );
 
-    return res
-      .status(200)
-      .send({ message: 'Successfully declined invitation!' });
+    return res.status(200).send({ message: 'Successfully declined invitation!' });
   } catch (error: any) {
     return res.status(500).send({ message: error.message });
   }
@@ -630,9 +628,7 @@ export const requestFriend = async (req: Request, res: Response) => {
       true
     );
 
-    return res
-      .status(200)
-      .send({ message: 'Successfully sent friend request!' });
+    return res.status(200).send({ message: 'Successfully sent friend request!' });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }
@@ -735,9 +731,7 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
 
     // Check if the friend exists
     if (targetFriend === null) {
-      return res
-        .status(400)
-        .send({ message: 'User requesting does not exist!' });
+      return res.status(400).send({ message: 'User requesting does not exist!' });
     }
 
     // Find the user in the database and remove the friendId from their friendRequests array
@@ -1034,9 +1028,7 @@ export const removeEmergencyContact = async (req: Request, res: Response) => {
 
   // Check if the emergency contact ID was provided
   if (!emergencyContactId) {
-    return res
-      .status(400)
-      .send({ message: 'No emergency contact ID provided!' });
+    return res.status(400).send({ message: 'No emergency contact ID provided!' });
   }
 
   // Check if the provided userId is valid
@@ -1091,9 +1083,7 @@ export const updateEmergencyContact = async (req: Request, res: Response) => {
 
   // Check if the emergency contact ID was provided
   if (!emergencyContactId) {
-    return res
-      .status(400)
-      .send({ message: 'No emergency contact ID provided!' });
+    return res.status(400).send({ message: 'No emergency contact ID provided!' });
   }
 
   // Check if the emergency contact is valid

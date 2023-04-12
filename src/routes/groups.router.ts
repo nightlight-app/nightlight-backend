@@ -13,7 +13,7 @@ const groupsRouter = express.Router();
 groupsRouter.post('/', createGroup);
 groupsRouter.get('/', getGroup);
 groupsRouter.delete('/:groupId', deleteGroup);
-groupsRouter.patch('/:groupId/inviteMembers', inviteMembersToExistingGroup);
-groupsRouter.patch('/:groupId/removeMemberInvitation', removeMemberInvitation);
+groupsRouter.patch('/:groupId/invite-members', inviteMembersToExistingGroup);
+groupsRouter.patch('/:groupId/remove-member-invitation', removeMemberInvitation);
 
 export = groupsRouter;

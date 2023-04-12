@@ -94,9 +94,7 @@ export const sendNotifications = async (
  * @param body The body text of the notification.
  * @param data Optional additional data to send along with the notification.
  */
-export const sendNotificationToExpo = async (
-  notification: ExpoNotification
-) => {
+export const sendNotificationToExpo = async (notification: ExpoNotification) => {
   try {
     console.log({ ...notification });
     // send notification to expo to be sent to device
@@ -133,9 +131,7 @@ export const sendNotificationToExpo = async (
  * @param delay The amount of time to delay sending the notification (in milliseconds).
  * @return The created Notification object or undefined.
  */
-export const sendNotificationToUser = async (
-  notification: MongoNotification
-) => {
+export const sendNotificationToUser = async (notification: MongoNotification) => {
   try {
     // create new notification
     const newNotification = new Notification(notification);
