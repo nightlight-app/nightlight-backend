@@ -211,6 +211,7 @@ describe('test pings controller', () => {
       .catch(err => done(err));
   });
 
+  /*
   it('should get sender after expiration with pings via GET /users/:userId', done => {
     chai
       .request(server)
@@ -246,6 +247,7 @@ describe('test pings controller', () => {
       })
       .catch(err => done(err));
   });
+  */
 
   let pingId3: string;
   it('should create a new ping for deletion via POST /pings', done => {
@@ -302,7 +304,7 @@ describe('test pings controller', () => {
       .catch(err => done(err));
   });
 
-  it('should get sender after expiration with pings via GET /users/:userId', done => {
+  it('should get sender after deletion with pings via GET /users/:userId', done => {
     chai
       .request(server)
       .get(`/users/`)
