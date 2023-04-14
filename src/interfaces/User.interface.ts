@@ -45,6 +45,8 @@ export interface User {
   lastActive?: LastActive;
   savedGroups?: SavedGroup[];
   emergencyContacts?: EmergencyContact[];
+  sentPings?: mongoose.Types.ObjectId[];
+  receivedPings?: mongoose.Types.ObjectId[];
 }
 
 /**

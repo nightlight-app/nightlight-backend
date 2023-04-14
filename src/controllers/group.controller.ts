@@ -151,6 +151,8 @@ export const deleteGroup = async (req: Request, res: Response) => {
     // delete group from database
     const result = await Group.deleteOne({ _id: groupId });
 
+    // TODO: remove group from expire queue
+
     // check if group was deleted
     if (result.deletedCount === 0) {
       return res.status(400).send({ message: 'Group not found!' });

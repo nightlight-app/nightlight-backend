@@ -57,3 +57,28 @@ export const addReactionExpireJob = async (
     console.log(error.message);
   }
 };
+
+/**
+ * Add ping expire job to the nightlightQueue.
+ * @param {string} pingId - The ID of the ping that the expiration job is for
+ * @param {number} delay - Optional delay (in ms) before the job gets processed by the worker
+ */
+export const addPingExpireJob = async (pingId: string, delay: number) => {
+  // override delay if environment is test
+  if (process.env.ENVIRONMENT === 'test') delay = 3000;
+
+  try {
+    const job = await nightlightQueue.add(
+      'pingExpire',
+      {
+        type: 'pingExpire',
+        pingId: pingId,
+      },
+      { delay: delay, removeOnComplete: true, removeOnFail: true }
+    );
+
+    return job;
+  } catch (error: any) {
+    console.log(error.message);
+  }
+};

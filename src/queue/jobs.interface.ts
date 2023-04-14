@@ -4,7 +4,7 @@ import { Emoji } from '../utils/venue.utils';
  * The list of jobs that the queue can handle
  * @options groupExpire, reactionExpire
  */
-export type JobsList = 'groupExpire' | 'reactionExpire';
+export type JobsList = 'groupExpire' | 'reactionExpire' | 'pingExpire';
 
 /**
  * Interface representing a group expire job.
@@ -20,7 +20,7 @@ export interface GroupExpireJob {
 
 /**
  * Represents a job to expire a reaction on a venue.
- * @interface
+ * @interface ReactionExpireJob
  *
  * @property {string} type - The type of the job, which should always be `'reactionExpire'`.
  * @property {string} userId - The ID of the user who reacted to the venue.
@@ -35,9 +35,24 @@ export interface ReactionExpireJob {
 }
 
 /**
+ * Represents a job to expire a ping.
+ * @interface PingExpireJob
+ *
+ * @property {string} type - The type of the job, which should always be `'pingExpire'`.
+ * @property {string} pingId - The ID of the ping to expire.
+ */
+export interface PingExpireJob {
+  type: 'pingExpire';
+  pingId: string;
+}
+
+/**
  * Generic type for the jobs that the queue can handle.
  * This is the union of all the jobs that the queue can handle.
  *
  * @options GroupExpireJob, ReactionExpireJob
  */
-export type NightlightQueueJob = GroupExpireJob | ReactionExpireJob;
+export type NightlightQueueJob =
+  | GroupExpireJob
+  | ReactionExpireJob
+  | PingExpireJob;

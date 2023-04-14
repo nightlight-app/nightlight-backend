@@ -47,6 +47,8 @@ export const USER_KEYS_ALL = [
   'notificationToken',
   'currentGroup',
   'emergencyContacts',
+  'sentPings',
+  'receivedPings',
 ];
 
 /**
@@ -108,6 +110,30 @@ export const NOTIFICATION_KEYS_ALL = [
   'body',
   'data',
   'delay',
+];
+
+/**
+ * The necessary keys for a ping object
+ */
+export const PING_KEYS = [
+  'senderId',
+  'recipientId',
+  'message',
+  'expirationDatetime',
+];
+
+/**
+ * All keys for a ping object
+ */
+export const PING_KEYS_ALL = [
+  '__v',
+  '_id',
+  'senderId',
+  'recipientId',
+  'message',
+  'sentDatetime',
+  'expirationDatetime',
+  'status',
 ];
 
 /**
