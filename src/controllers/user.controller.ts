@@ -1315,7 +1315,7 @@ export const deactivateEmergency = async (req: Request, res: Response) => {
 
     return res
       .status(200)
-      .send({ message: 'Successfully activated emergency!' });
+      .send({ message: 'Successfully deactivated emergency!' });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }
