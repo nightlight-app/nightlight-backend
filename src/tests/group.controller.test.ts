@@ -237,7 +237,7 @@ describe('testing group actions', () => {
       .request(server)
       .patch(`/groups/${groupId}/invite-members`)
       .query({ userId: userIdMain })
-      .send([userIdFriend3])
+      .send({ users: [userIdFriend3] })
       .then(res => {
         expect(res).to.have.status(200);
         done();
@@ -249,7 +249,7 @@ describe('testing group actions', () => {
       .request(server)
       .patch(`/groups/${groupId}/invite-members`)
       .query({ userId: userIdMain })
-      .send([userIdFriend6])
+      .send({ users: [userIdFriend6] })
       .then(res => {
         expect(res).to.have.status(200);
         done();
@@ -660,7 +660,7 @@ describe('testing group deletion after less than 2 members', () => {
       .request(server)
       .patch(`/groups/${groupId}/invite-members`)
       .query({ userId: userIdMain })
-      .send([userIdFriend3])
+      .send({ users: [userIdFriend3] })
       .then(res => {
         expect(res).to.have.status(200);
         done();
@@ -672,7 +672,7 @@ describe('testing group deletion after less than 2 members', () => {
       .request(server)
       .patch(`/groups/${groupId}/invite-members`)
       .query({ userId: userIdMain })
-      .send([userIdFriend6])
+      .send({ users: [userIdFriend6] })
       .then(res => {
         expect(res).to.have.status(200);
         done();
