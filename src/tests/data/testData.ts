@@ -325,6 +325,8 @@ export const USER_KEYS_TEST = [
   'lastActive',
   'savedGroups',
   'emergencyContacts',
+  'sentPings',
+  'receivedPings',
 ];
 
 export const GROUP_KEYS_TEST = [
@@ -354,6 +356,17 @@ export const NOTIFICATION_KEYS_TEST = [
   'body',
   'data',
   'delay',
+];
+
+export const PING_KEYS_TEST = [
+  '__v',
+  '_id',
+  'senderId',
+  'recipientId',
+  'message',
+  'sentDatetime',
+  'expirationDatetime',
+  'status',
 ];
 
 export const REACTION_KEYS_TEST = ['count', 'didReact'];

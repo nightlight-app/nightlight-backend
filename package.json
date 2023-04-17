@@ -21,6 +21,7 @@
     "test:users": "ENVIRONMENT=test nyc mocha -r dotenv/config --timeout 8000 --exit -r ts-node/register src/tests/user.controller.test.ts",
     "test:groups": "ENVIRONMENT=test nyc mocha -r dotenv/config --timeout 8000 --exit -r ts-node/register src/tests/group.controller.test.ts",
     "test:notifs": "ENVIRONMENT=test nyc mocha -r dotenv/config --timeout 8000 --exit -r ts-node/register src/tests/notification.controller.test.ts",
+    "test:pings": "ENVIRONMENT=test nyc mocha -r dotenv/config --timeout 8000 --exit -r ts-node/register src/tests/ping.controller.test.ts",
     "test": "ENVIRONMENT=test nyc mocha -r dotenv/config --timeout 20000 --exit -r ts-node/register src/tests/*.test.ts"
   },
   "dependencies": {

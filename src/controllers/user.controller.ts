@@ -20,6 +20,7 @@ import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
 export const createUser = async (req: Request, res: Response) => {
   const user = req.body;
 
+  // Verify that the user object has all the necessary keys
   const validationError = verifyKeys(user, KeyValidationType.USERS);
   if (validationError !== '') {
     return res.status(400).send({ message: validationError });
@@ -62,19 +63,23 @@ export const getUsers = async (req: Request, res: Response) => {
   if (userIds) idList = userIds.split(',');
   if (firebaseUids) idList = firebaseUids.split(',');
 
+  // Check if the user ID or firebase UID was provided
   if (!idList)
     return res
       .status(400)
       .send({ message: 'No user IDs or firebase UIDs provided!' });
 
+  // Check if the user ID or firebase UID was provided
   if (userIds) {
     idList = idList.filter((id: string) => mongoose.Types.ObjectId.isValid(id));
   }
 
+  // Check if the user ID or firebase UID was provided
   if (firebaseUids) {
     idList = idList.filter((id: string) => id.length === 28);
   }
 
+  // Respond with an error if the user ID or firebase UID is invalid
   if (idList.length === 0)
     return res
       .status(400)
@@ -87,7 +92,9 @@ export const getUsers = async (req: Request, res: Response) => {
         [queryType]: idList,
       },
       { notificationToken: 0 }
-    );
+    )
+      .populate('sentPings')
+      .populate('receivedPings');
 
     // Check if the user exists
     if (targetUsers.length === 0 || !targetUsers) {
@@ -1315,7 +1322,7 @@ export const deactivateEmergency = async (req: Request, res: Response) => {
 
     return res
       .status(200)
-      .send({ message: 'Successfully activated emergency!' });
+      .send({ message: 'Successfully deactivated emergency!' });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }
