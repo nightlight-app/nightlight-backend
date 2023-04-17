@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 import {
   ExpoNotification,
   MongoNotification,
-  NotificationData,
   NotificationDocument,
+  NotificationSpecificData,
 } from '../interfaces/Notification.interface';
 import Notification from '../models/Notification.model';
 import User from '../models/User.model';
@@ -30,7 +30,7 @@ export const sendNotifications = async (
   userIds: string[],
   title: string,
   body: string,
-  data: NotificationData,
+  data: NotificationSpecificData,
   isPush: boolean,
   delay: number = 0
 ) => {

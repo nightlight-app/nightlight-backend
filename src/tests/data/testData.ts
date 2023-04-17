@@ -4,6 +4,7 @@ import { LastActive } from '../../interfaces/LastActive.interface';
 import {
   MongoNotification,
   NotificationData,
+  NotificationSpecificData,
   NotificationType,
 } from '../../interfaces/Notification.interface';
 import { SavedGroup } from '../../interfaces/SavedGroup.interface';
@@ -11,6 +12,7 @@ import { EmergencyContact, User } from '../../interfaces/User.interface';
 import { Venue, VenueReaction } from '../../interfaces/Venue.interface';
 import { REACTION_EMOJIS } from '../../utils/constants';
 import { Emoji } from '../../utils/venue.utils';
+import { faker } from '@faker-js/faker';
 
 /* User 1 */
 const TEST_LAST_ACTIVE_1: LastActive = {
@@ -285,7 +287,11 @@ export const TEST_NOTIFICATION: MongoNotification = {
   body: 'You have a friend request!',
   data: {
     notificationType: NotificationType.friendRequest,
-  } as NotificationData,
+    sentDateTime: new Date().toUTCString(),
+    senderId: new mongoose.Types.ObjectId(123).toString(),
+    senderFirstName: faker.name.firstName(),
+    senderLastName: faker.name.lastName(),
+  } as NotificationSpecificData,
   delay: 0,
 };
 

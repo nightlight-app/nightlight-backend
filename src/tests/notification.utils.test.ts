@@ -32,7 +32,11 @@ describe('test notification utils', () => {
       [new ObjectId().toString()],
       'Test Title',
       'Test Body',
-      { notificationType: 'test', sentDateTime: new Date().toUTCString() },
+      {
+        notificationType: 'test',
+        sentDateTime: new Date().toUTCString(),
+        groupId: new ObjectId().toString(),
+      },
       false,
       0
     ).then(notification => {
@@ -54,7 +58,11 @@ describe('test notification utils', () => {
       ],
       'Test Title',
       'Test Body',
-      { notificationType: 'test', sentDateTime: new Date().toUTCString() },
+      {
+        notificationType: 'test',
+        sentDateTime: new Date().toUTCString(),
+        groupId: new ObjectId().toString(),
+      },
       false,
       0
     ).then(notifications => {
@@ -84,7 +92,11 @@ describe('test notification utils', () => {
       [],
       'Test Title',
       'Test Body',
-      { notificationType: 'test', sentDateTime: new Date().toUTCString() },
+      {
+        notificationType: 'test',
+        sentDateTime: new Date().toUTCString(),
+        groupId: new ObjectId().toString(),
+      },
       false,
       0
     ).then(notification => {
@@ -98,7 +110,11 @@ describe('test notification utils', () => {
       [],
       'Test Title',
       'Test Body',
-      { notificationType: 'test', sentDateTime: new Date().toUTCString() },
+      {
+        notificationType: 'test',
+        sentDateTime: new Date().toUTCString(),
+        groupId: new ObjectId().toString(),
+      },
       false,
       0
     ).then(notification => {
@@ -114,7 +130,11 @@ describe('test notification utils errors', () => {
       ['invalidId'],
       'Test Title',
       'Test Body',
-      { notificationType: 'test', sentDateTime: new Date().toUTCString() },
+      {
+        notificationType: 'test',
+        sentDateTime: new Date().toUTCString(),
+        groupId: new ObjectId().toString(),
+      },
       false
     ).then(notifications => {
       assert(notifications.length === 0);
@@ -127,7 +147,11 @@ describe('test notification utils errors', () => {
       [new ObjectId(123456).toString(), 'BAD ID', new ObjectId(26373).toString()],
       'Test Title',
       'Test Body',
-      { notificationType: 'test', sentDateTime: new Date().toUTCString() },
+      {
+        notificationType: 'test',
+        sentDateTime: new Date().toUTCString(),
+        groupId: new ObjectId().toString(),
+      },
       false
     ).then(notifications => {
       assert.isArray(notifications);
