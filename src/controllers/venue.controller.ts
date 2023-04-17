@@ -211,6 +211,67 @@ export const getVenues = async (req: Request, res: Response) => {
   }
 };
 
+const toggleReactionToVenue = async (req: Request, res: Response) => {
+  try {
+    const venueId = req.params?.venueId as string;
+    const userId = req.query.userId as string;
+    const emoji = req.query.emoji as Emoji;
+
+    // Check if venue ID is valid
+    if (!mongoose.Types.ObjectId.isValid(venueId)) {
+      return res.status(400).send({ message: 'Invalid venue ID!' });
+    }
+
+    // Check if user ID is valid
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).send({ message: 'Invalid user ID!' });
+    }
+
+    // Check if emoji is valid
+    if (!REACTION_EMOJIS.includes(emoji)) {
+      return res.status(400).send({ message: 'Invalid emoji!' });
+    }
+
+    // Add reaction to queue
+    const job = await addReactionExpireJob(
+      userId,
+      venueId,
+      emoji,
+      REACTION_EXPIRY_DURATION
+    );
+
+    // Add reaction to venue. If reaction already exists, remove it. If it does not exist, add it. (Fancy mongo! Yay!)
+    const targetVenue = await Venue.findByIdAndUpdate(
+      venueId,
+      {
+        $addToSet: {
+          reactions: {
+            userId: userId,
+            emoji: emoji,
+            queueId: job?.id,
+          },
+        },
+        $pull: {
+          reactions: {
+            userId: userId,
+            emoji: emoji,
+          },
+        },
+      },
+      { new: true }
+    );
+
+    // If venue does not exist, send an error message
+    if (!targetVenue) {
+      return res.status(400).send({ message: 'Venue does not exist!' });
+    }
+
+    return res.status(200).send({ message: 'Successfully added reaction!' });
+  } catch (error: any) {
+    return res.status(500).send({ message: error.message });
+  }
+};
+
 /**
  * Adds a reaction to a venue with specified ID
  * @param {Request} req - The request object containing the suggested request parameters.
@@ -231,6 +292,11 @@ export const addReactionToVenue = async (req: Request, res: Response) => {
     // Check if user ID is valid
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).send({ message: 'Invalid user ID!' });
+    }
+
+    // Check if emoji is valid
+    if (!REACTION_EMOJIS.includes(emoji)) {
+      return res.status(400).send({ message: 'Invalid emoji!' });
     }
 
     // Add reaction to queue
