@@ -73,7 +73,7 @@ describe('testing user actions', () => {
       .catch(err => done(err));
   });
 
-  it('should fetch a user via GET /users/?userId={userId}', done => {
+  it('should fetch a user via GET /users/?userIds={userId}', done => {
     chai
       .request(server)
       .get(`/users/`)
@@ -499,7 +499,7 @@ describe('testing friend requests', () => {
       });
   });
 
-  it('should fetch a user via GET to check friend requests /users/?userId={userId}', done => {
+  it('should fetch a user via GET to check friend requests /users/?userIds={userId}', done => {
     chai
       .request(server)
       .get(`/users/`)
@@ -525,7 +525,7 @@ describe('testing friend requests', () => {
       });
   });
 
-  it('should fetch a user via GET to check friend requests /users/?userId={userId}', done => {
+  it('should fetch a user via GET to check friend requests /users/?userIds={userId}', done => {
     chai
       .request(server)
       .get(`/users/`)
@@ -551,7 +551,7 @@ describe('testing friend requests', () => {
       });
   });
 
-  it('should fetch a user via GET to check sent friend requests /users/?userId={userId}', done => {
+  it('should fetch a user via GET to check sent friend requests /users/?userIds={userId}', done => {
     chai
       .request(server)
       .get(`/users/`)
@@ -577,7 +577,7 @@ describe('testing friend requests', () => {
       });
   });
 
-  it('should fetch a user via GET to check friend requests after accept /users/?userId={userId}', done => {
+  it('should fetch a user via GET to check friend requests after accept /users/?userIds={userId}', done => {
     chai
       .request(server)
       .get(`/users/`)
@@ -592,7 +592,7 @@ describe('testing friend requests', () => {
       .catch(err => done(err));
   });
 
-  it('should fetch a user via GET to check sent friend requests after accept /users/?userId={userId}', done => {
+  it('should fetch a user via GET to check sent friend requests after accept /users/?userIds={userId}', done => {
     chai
       .request(server)
       .get(`/users/`)
@@ -617,7 +617,7 @@ describe('testing friend requests', () => {
       });
   });
 
-  it('should fetch a user via GET to check friend requests after decline /users/?userId={userId}', done => {
+  it('should fetch a user via GET to check friend requests after decline /users/?userIds={userId}', done => {
     chai
       .request(server)
       .get(`/users/`)

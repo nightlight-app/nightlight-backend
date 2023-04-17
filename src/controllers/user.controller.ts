@@ -52,7 +52,7 @@ export const createUser = async (req: Request, res: Response) => {
  * Otherwise, returns an error status with an appropriate message.
  */
 export const getUsers = async (req: Request, res: Response) => {
-  const userIds = req.query.userId as string;
+  const userIds = req.query.userIds as string;
   const firebaseUids = req.query.firebaseUid as string;
 
   // Determine which query parameter was provided (prefer userId over firebaseUid)
