@@ -73,11 +73,11 @@ describe('testing user actions', () => {
       .catch(err => done(err));
   });
 
-  it('should fetch a user via GET /users/?userId={userId}', done => {
+  it('should fetch a user via GET /users/?userIds={userId}', done => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId })
+      .query({ userIds: userId })
       .then(res => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
@@ -147,7 +147,7 @@ describe('testing user actions', () => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId })
+      .query({ userIds: userId })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0].emergencyContacts[0]).to.not.be.undefined;
@@ -179,7 +179,7 @@ describe('testing user actions', () => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId })
+      .query({ userIds: userId })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0].emergencyContacts[0].name).to.equal('Test User');
@@ -219,7 +219,7 @@ describe('testing user actions', () => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId })
+      .query({ userIds: userId })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0].emergencyContacts).to.have.length(0);
@@ -246,7 +246,7 @@ describe('testing user actions', () => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId })
+      .query({ userIds: userId })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0].isEmergency).to.equal(true);
@@ -270,7 +270,7 @@ describe('testing user actions', () => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId })
+      .query({ userIds: userId })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0].isEmergency).to.equal(false);
@@ -321,11 +321,11 @@ describe('testing save groups', () => {
       });
   });
 
-  it('should fetch the savedGroups of the user via GET /users/:userId', done => {
+  it('should fetch the savedGroups of the user via GET /users/:userIds', done => {
     chai
       .request(server)
       .get('/users/')
-      .query({ userId: userId })
+      .query({ userIds: userId })
       .then(res => {
         groupId = res.body.users[0].savedGroups[2]._id;
         expect(res).to.have.status(200);
@@ -349,11 +349,11 @@ describe('testing save groups', () => {
       });
   });
 
-  it('should show the updated user data after deleting the savedGroup via GET /users/:userId', done => {
+  it('should show the updated user data after deleting the savedGroup via GET /users/:userIds', done => {
     chai
       .request(server)
       .get('/users/')
-      .query({ userId: userId })
+      .query({ userIds: userId })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
@@ -421,7 +421,7 @@ describe('testing save groups', () => {
       });
   });
 
-  it('should get a list of friends by user id via GET /users/:userId/friends', done => {
+  it('should get a list of friends by user id via GET /users/:userIds/friends', done => {
     chai
       .request(server)
       .get(`/users/${userId1}/friends`)
@@ -499,11 +499,11 @@ describe('testing friend requests', () => {
       });
   });
 
-  it('should fetch a user via GET to check friend requests /users/?userId={userId}', done => {
+  it('should fetch a user via GET to check friend requests /users/?userIds={userId}', done => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId2 })
+      .query({ userIds: userId2 })
       .then(res => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
@@ -525,11 +525,11 @@ describe('testing friend requests', () => {
       });
   });
 
-  it('should fetch a user via GET to check friend requests /users/?userId={userId}', done => {
+  it('should fetch a user via GET to check friend requests /users/?userIds={userId}', done => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId2 })
+      .query({ userIds: userId2 })
       .then(res => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
@@ -551,11 +551,11 @@ describe('testing friend requests', () => {
       });
   });
 
-  it('should fetch a user via GET to check sent friend requests /users/?userId={userId}', done => {
+  it('should fetch a user via GET to check sent friend requests /users/?userIds={userId}', done => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId3 })
+      .query({ userIds: userId3 })
       .then(res => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
@@ -577,11 +577,11 @@ describe('testing friend requests', () => {
       });
   });
 
-  it('should fetch a user via GET to check friend requests after accept /users/?userId={userId}', done => {
+  it('should fetch a user via GET to check friend requests after accept /users/?userIds={userId}', done => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId2 })
+      .query({ userIds: userId2 })
       .then(res => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
@@ -592,11 +592,11 @@ describe('testing friend requests', () => {
       .catch(err => done(err));
   });
 
-  it('should fetch a user via GET to check sent friend requests after accept /users/?userId={userId}', done => {
+  it('should fetch a user via GET to check sent friend requests after accept /users/?userIds={userId}', done => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId1 })
+      .query({ userIds: userId1 })
       .then(res => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
@@ -617,11 +617,11 @@ describe('testing friend requests', () => {
       });
   });
 
-  it('should fetch a user via GET to check friend requests after decline /users/?userId={userId}', done => {
+  it('should fetch a user via GET to check friend requests after decline /users/?userIds={userId}', done => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId2 })
+      .query({ userIds: userId2 })
       .then(res => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
@@ -632,7 +632,7 @@ describe('testing friend requests', () => {
       .catch(err => done(err));
   });
 
-  it('should get a list of friends by user id via GET /users/:userId/friends', done => {
+  it('should get a list of friends by user id via GET /users/:userIds/friends', done => {
     chai
       .request(server)
       .get(`/users/${userId1}/friends`)
@@ -643,7 +643,7 @@ describe('testing friend requests', () => {
       });
   });
 
-  it('should get a list of friends by user id via GET /users/:userId/friends', done => {
+  it('should get a list of friends by user id via GET /users/:userIds/friends', done => {
     chai
       .request(server)
       .get(`/users/${userId2}/friends`)
@@ -666,7 +666,7 @@ describe('testing friend requests', () => {
       });
   });
 
-  it('should get a list of friends by user id via GET /users/:userId/friends', done => {
+  it('should get a list of friends by user id via GET /users/:userIds/friends', done => {
     chai
       .request(server)
       .get(`/users/${userId2}/friends`)
@@ -677,7 +677,7 @@ describe('testing friend requests', () => {
       });
   });
 
-  it('should get a list of friends by user id via GET /users/:userId/friends', done => {
+  it('should get a list of friends by user id via GET /users/:userIds/friends', done => {
     chai
       .request(server)
       .get(`/users/${userId1}/friends`)
@@ -845,7 +845,7 @@ describe('testing User Error', () => {
     chai
       .request(server)
       .get('/users/')
-      .query({ userId: 'FAKEID' })
+      .query({ userIds: 'FAKEID' })
       .then(res => {
         expect(res).to.have.status(400);
         done();
@@ -869,7 +869,7 @@ describe('testing User Error', () => {
     chai
       .request(server)
       .get('/users/')
-      .query({ userId: new ObjectId(1234).toString() })
+      .query({ userIds: new ObjectId(1234).toString() })
       .then(res => {
         expect(res).to.have.status(400);
         expect(res.body.venue).to.equal(undefined);
@@ -903,7 +903,7 @@ describe('testing User Error', () => {
     chai
       .request(server)
       .get('/users/')
-      .query({ userId: userId1 })
+      .query({ userIds: userId1 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);

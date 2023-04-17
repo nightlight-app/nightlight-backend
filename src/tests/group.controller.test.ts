@@ -197,7 +197,7 @@ describe('testing group actions', () => {
     chai
       .request(server)
       .get('/users/')
-      .query({ userId: userIdFriend1 })
+      .query({ userIds: userIdFriend1 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
@@ -210,7 +210,7 @@ describe('testing group actions', () => {
     chai
       .request(server)
       .get('/users/')
-      .query({ userId: userIdFriend2 })
+      .query({ userIds: userIdFriend2 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
@@ -223,7 +223,7 @@ describe('testing group actions', () => {
     chai
       .request(server)
       .get('/users/')
-      .query({ userId: userIdFriend5 })
+      .query({ userIds: userIdFriend5 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
@@ -361,7 +361,7 @@ describe('testing group actions', () => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userIdFriend5 })
+      .query({ userIds: userIdFriend5 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys([
@@ -389,7 +389,7 @@ describe('testing group actions', () => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userIdFriend5 })
+      .query({ userIds: userIdFriend5 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys([...USER_KEYS_TEST]);
@@ -419,7 +419,7 @@ describe('testing group actions', () => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userIdFriend2 })
+      .query({ userIds: userIdFriend2 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys([
@@ -461,7 +461,7 @@ describe('testing group actions', () => {
     chai
       .request(server)
       .get('/users/')
-      .query({ userId: userIdMain })
+      .query({ userIds: userIdMain })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0].currentGroup).to.be.undefined;
@@ -620,7 +620,7 @@ describe('testing group deletion after less than 2 members', () => {
     chai
       .request(server)
       .get('/users/')
-      .query({ userId: userIdFriend1 })
+      .query({ userIds: userIdFriend1 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
@@ -633,7 +633,7 @@ describe('testing group deletion after less than 2 members', () => {
     chai
       .request(server)
       .get('/users/')
-      .query({ userId: userIdFriend2 })
+      .query({ userIds: userIdFriend2 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
@@ -646,7 +646,7 @@ describe('testing group deletion after less than 2 members', () => {
     chai
       .request(server)
       .get('/users/')
-      .query({ userId: userIdFriend5 })
+      .query({ userIds: userIdFriend5 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
@@ -746,7 +746,7 @@ describe('testing group deletion after less than 2 members', () => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userIdFriend1 })
+      .query({ userIds: userIdFriend1 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys([...USER_KEYS_TEST]);
@@ -771,7 +771,7 @@ describe('testing group deletion after less than 2 members', () => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userIdFriend2 })
+      .query({ userIds: userIdFriend2 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys([...USER_KEYS_TEST]);
@@ -796,7 +796,7 @@ describe('testing group deletion after less than 2 members', () => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userIdFriend3 })
+      .query({ userIds: userIdFriend3 })
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys([...USER_KEYS_TEST]);
