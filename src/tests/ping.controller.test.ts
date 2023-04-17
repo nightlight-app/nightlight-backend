@@ -104,11 +104,11 @@ describe('test pings controller', () => {
       .catch(err => done(err));
   });
 
-  it('should get recipient with pings via GET /users/:userId', done => {
+  it('should get recipient with pings via GET /users/:userIds', done => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId2 })
+      .query({ userIds: userId2 })
       .then(res => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
@@ -123,11 +123,11 @@ describe('test pings controller', () => {
       .catch(err => done(err));
   });
 
-  it('should get sender with pings via GET /users/:userId', done => {
+  it('should get sender with pings via GET /users/:userIds', done => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId1 })
+      .query({ userIds: userId1 })
       .then(res => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
@@ -212,11 +212,11 @@ describe('test pings controller', () => {
   });
 
   /*
-  it('should get sender after expiration with pings via GET /users/:userId', done => {
+  it('should get sender after expiration with pings via GET /users/:userIds', done => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId1 })
+      .query({ userIds: userId1 })
       .then(res => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
@@ -230,11 +230,11 @@ describe('test pings controller', () => {
       .catch(err => done(err));
   });
 
-  it('should get recipient after expiration with pings via GET /users/:userId', done => {
+  it('should get recipient after expiration with pings via GET /users/:userIds', done => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId2 })
+      .query({ userIds: userId2 })
       .then(res => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
@@ -287,11 +287,11 @@ describe('test pings controller', () => {
       .catch(err => done(err));
   });
 
-  it('should get recipient after deletion of ping via GET /users/:userId', done => {
+  it('should get recipient after deletion of ping via GET /users/:userIds', done => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId2 })
+      .query({ userIds: userId2 })
       .then(res => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
@@ -304,11 +304,11 @@ describe('test pings controller', () => {
       .catch(err => done(err));
   });
 
-  it('should get sender after deletion with pings via GET /users/:userId', done => {
+  it('should get sender after deletion with pings via GET /users/:userIds', done => {
     chai
       .request(server)
       .get(`/users/`)
-      .query({ userId: userId1 })
+      .query({ userIds: userId1 })
       .then(res => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);

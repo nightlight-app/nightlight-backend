@@ -321,7 +321,7 @@ describe('testing save groups', () => {
       });
   });
 
-  it('should fetch the savedGroups of the user via GET /users/:userId', done => {
+  it('should fetch the savedGroups of the user via GET /users/:userIds', done => {
     chai
       .request(server)
       .get('/users/')
@@ -349,7 +349,7 @@ describe('testing save groups', () => {
       });
   });
 
-  it('should show the updated user data after deleting the savedGroup via GET /users/:userId', done => {
+  it('should show the updated user data after deleting the savedGroup via GET /users/:userIds', done => {
     chai
       .request(server)
       .get('/users/')
@@ -421,7 +421,7 @@ describe('testing save groups', () => {
       });
   });
 
-  it('should get a list of friends by user id via GET /users/:userId/friends', done => {
+  it('should get a list of friends by user id via GET /users/:userIds/friends', done => {
     chai
       .request(server)
       .get(`/users/${userId1}/friends`)
@@ -632,7 +632,7 @@ describe('testing friend requests', () => {
       .catch(err => done(err));
   });
 
-  it('should get a list of friends by user id via GET /users/:userId/friends', done => {
+  it('should get a list of friends by user id via GET /users/:userIds/friends', done => {
     chai
       .request(server)
       .get(`/users/${userId1}/friends`)
@@ -643,7 +643,7 @@ describe('testing friend requests', () => {
       });
   });
 
-  it('should get a list of friends by user id via GET /users/:userId/friends', done => {
+  it('should get a list of friends by user id via GET /users/:userIds/friends', done => {
     chai
       .request(server)
       .get(`/users/${userId2}/friends`)
@@ -666,7 +666,7 @@ describe('testing friend requests', () => {
       });
   });
 
-  it('should get a list of friends by user id via GET /users/:userId/friends', done => {
+  it('should get a list of friends by user id via GET /users/:userIds/friends', done => {
     chai
       .request(server)
       .get(`/users/${userId2}/friends`)
@@ -677,7 +677,7 @@ describe('testing friend requests', () => {
       });
   });
 
-  it('should get a list of friends by user id via GET /users/:userId/friends', done => {
+  it('should get a list of friends by user id via GET /users/:userIds/friends', done => {
     chai
       .request(server)
       .get(`/users/${userId1}/friends`)
