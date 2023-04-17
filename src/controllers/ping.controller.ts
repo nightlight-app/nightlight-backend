@@ -50,19 +50,19 @@ export const sendPing = async (req: Request, res: Response) => {
       new Date().getTime() - new Date(ping.expirationDateTime).getTime();
 
     // Add the ping expiration to the queue
-    const job = await addPingExpireJob(savedPing._id.toString(), delay);
+    //const job = await addPingExpireJob(savedPing._id.toString(), delay);
 
     // Check if the job was added to the queue
-    if (job === null || job?.id === undefined) {
-      return res
-        .status(400)
-        .send({ message: 'Failed to remove ping, queue error!' });
-    }
+    // if (!job) {
+    //   return res
+    //     .status(400)
+    //     .send({ message: 'Failed to remove ping, queue error!' });
+    // }
 
     // Update the ping with the queue id
     const finalPing = await Ping.findByIdAndUpdate(
       savedPing._id,
-      { queueId: job.id },
+      { queueId: '' },
       { new: true }
     );
 

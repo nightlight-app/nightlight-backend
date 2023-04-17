@@ -53,7 +53,7 @@ export const createUser = async (req: Request, res: Response) => {
  * Otherwise, returns an error status with an appropriate message.
  */
 export const getUsers = async (req: Request, res: Response) => {
-  const userIds = req.query.userId as string;
+  const userIds = req.query.userIds as string;
   const firebaseUids = req.query.firebaseUid as string;
 
   // Determine which query parameter was provided (prefer userId over firebaseUid)
@@ -63,19 +63,23 @@ export const getUsers = async (req: Request, res: Response) => {
   if (userIds) idList = userIds.split(',');
   if (firebaseUids) idList = firebaseUids.split(',');
 
+  // Check if the user ID or firebase UID was provided
   if (!idList)
     return res
       .status(400)
       .send({ message: 'No user IDs or firebase UIDs provided!' });
 
+  // Check if the user ID or firebase UID was provided
   if (userIds) {
     idList = idList.filter((id: string) => mongoose.Types.ObjectId.isValid(id));
   }
 
+  // Check if the user ID or firebase UID was provided
   if (firebaseUids) {
     idList = idList.filter((id: string) => id.length === 28);
   }
 
+  // Respond with an error if the user ID or firebase UID is invalid
   if (idList.length === 0)
     return res
       .status(400)

@@ -18,11 +18,15 @@ import { EmergencyContact } from '../interfaces/User.interface';
  * @property {String} birthday - The date of birth (UTC) of the user.
  * @property {[mongoose.Types.ObjectId]} [friends] - The IDs of the friends of the user.
  * @property {[mongoose.Types.ObjectId]} [friendRequests] - The IDs of the users who have sent friendship requests to the user.
+ * @property {[mongoose.Types.ObjectId]} [sentFriendRequests] - The IDs of the users who the user has sent friendship requests to.
  * @property {mongoose.Types.ObjectId} [currentGroup] - The ID of the current group the user is in.
  * @property {[mongoose.Types.ObjectId]} [invitedGroups] - The IDs of the groups the user has been invited to.
  * @property {LastActive} [lastActive] - Object containing the location of the user's last activity and the time of that activity.
  * @property {[SavedGroup]} [savedGroups] - The saved groups of the user.
  * @property {[EmergencyContact]} [emergencyContacts] - The emergency contacts of the user.
+ * @property {Boolean} [isEmergency] - Whether the user is in emergency mode.
+ * @property {[mongoose.Types.ObjectId]} [sentPings] - The IDs of the pings the user has sent.
+ * @property {[mongoose.Types.ObjectId]} [receivedPings] - The IDs of the pings the user has received.
  */
 const userSchema = new mongoose.Schema({
   firebaseUid: {
@@ -59,7 +63,6 @@ const userSchema = new mongoose.Schema({
   },
   isEmergency: {
     type: Boolean,
-    required: true,
     default: false,
   },
   birthday: {

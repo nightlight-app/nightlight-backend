@@ -47,7 +47,7 @@ export const getVenue = async (req: Request, res: Response) => {
     const userId = req.query.userId as string;
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).send({ message: 'Invalid venue ID!' });
+      return res.status(400).send({ message: 'Invalid user ID!' });
     }
 
     const targetVenue: VenueInterface[] = await Venue.aggregate([
@@ -131,7 +131,7 @@ export const getVenues = async (req: Request, res: Response) => {
 
   // Check if the user ID is valid
   if (!mongoose.Types.ObjectId.isValid(userId as string)) {
-    return res.status(400).send({ message: 'Invalid venue ID!' });
+    return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
   // Check if the count is valid

@@ -20,7 +20,6 @@ export const USER_KEYS = [
   'firstName',
   'lastName',
   'phone',
-  'isEmergency',
 ];
 
 /**

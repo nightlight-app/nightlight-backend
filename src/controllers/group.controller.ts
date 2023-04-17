@@ -179,7 +179,7 @@ export const inviteMembersToExistingGroup = async (
   req: Request,
   res: Response
 ) => {
-  const users = req.body;
+  const users = req.body?.users;
   const groupId = req.params?.groupId;
   const userId = req.query.userId as string;
 
