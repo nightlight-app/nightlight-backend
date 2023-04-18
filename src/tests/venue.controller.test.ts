@@ -79,7 +79,7 @@ describe('testing venue with reactions', () => {
   it('should add a reaction via POST /venues/:venueId/reaction (🔥)', done => {
     chai
       .request(server)
-      .post(`/venues/${venueId}/reaction`)
+      .patch(`/venues/${venueId}/reaction`)
       .query({
         userId: userId,
         emoji: emoji1,
@@ -94,7 +94,7 @@ describe('testing venue with reactions', () => {
   it('should add a reaction via POST /venues/:venueId/reaction (🎉)', done => {
     chai
       .request(server)
-      .post(`/venues/${venueId}/reaction`)
+      .patch(`/venues/${venueId}/reaction`)
       .query({
         userId: userId,
         emoji: emoji2,
@@ -110,7 +110,7 @@ describe('testing venue with reactions', () => {
   it('should add a reaction via POST /venues/:venueId/reaction (💩)', done => {
     chai
       .request(server)
-      .post(`/venues/${venueId}/reaction`)
+      .patch(`/venues/${venueId}/reaction`)
       .query({
         userId: userId3,
         emoji: emoji3,
@@ -126,7 +126,7 @@ describe('testing venue with reactions', () => {
   it('should add a reaction via POST /venues/:venueId/reaction (🛡 )', done => {
     chai
       .request(server)
-      .post(`/venues/${venueId}/reaction`)
+      .patch(`/venues/${venueId}/reaction`)
       .query({
         userId: userId4,
         emoji: emoji4,
@@ -143,6 +143,7 @@ describe('testing venue with reactions', () => {
       .get(`/venues/${venueId}/`)
       .query({ userId })
       .then(res => {
+        console.log(res.body.venue.reactions);
         expect(res).to.have.status(200);
         expect(res.body.venue).to.have.keys(VENUE_KEYS_TEST);
         expect(res.body.venue.reactions['🔥']).to.have.keys(REACTION_KEYS_TEST);
@@ -167,7 +168,7 @@ describe('testing venue with reactions', () => {
   it('should delete a reaction for user1 via DELETE /venues/:venueId/reaction/', done => {
     chai
       .request(server)
-      .delete(`/venues/${venueId}/reaction/`)
+      .patch(`/venues/${venueId}/reaction/`)
       .query({ userId: userId, emoji: emoji1 })
       .then(res => {
         expect(res).to.have.status(200);
@@ -178,7 +179,7 @@ describe('testing venue with reactions', () => {
   it('should delete a reaction for user3 via DELETE /venues/:venueId/reaction/', done => {
     chai
       .request(server)
-      .delete(`/venues/${venueId}/reaction/`)
+      .patch(`/venues/${venueId}/reaction/`)
       .query({ userId: userId3, emoji: emoji3 })
       .then(res => {
         expect(res).to.have.status(200);
@@ -193,6 +194,7 @@ describe('testing venue with reactions', () => {
       .query({ userId: userId })
       .send()
       .then(res => {
+        console.log(res.body.venue.reactions);
         expect(res).to.have.status(200);
         expect(res.body.venue).to.have.keys(VENUE_KEYS_TEST);
         expect(res.body.venue.reactions['🔥']).to.have.keys(REACTION_KEYS_TEST);
@@ -217,7 +219,7 @@ describe('testing venue with reactions', () => {
   it('should delete a reaction for user1 via DELETE /venues/:venueId/reaction/ (userId, emoji)', done => {
     chai
       .request(server)
-      .delete(`/venues/${venueId}/reaction/`)
+      .patch(`/venues/${venueId}/reaction/`)
       .query({ userId: userId, emoji: emoji2 })
       .send()
       .then(res => {
@@ -229,7 +231,7 @@ describe('testing venue with reactions', () => {
   it('should delete a reaction for user4 via DELETE /venues/:venueId/reaction/', done => {
     chai
       .request(server)
-      .delete(`/venues/${venueId}/reaction/`)
+      .patch(`/venues/${venueId}/reaction/`)
       .query({ userId: userId4, emoji: emoji4 })
       .then(res => {
         expect(res).to.have.status(200);
@@ -264,15 +266,14 @@ describe('testing venue with reactions', () => {
       });
   });
 
-  const emoji6 = '💩';
   const userId6 = new ObjectId(12354).toString();
   it('should add a reaction for expiration tests via POST /venues/:venueId/reaction (💩)', done => {
     chai
       .request(server)
-      .post(`/venues/${venueId}/reaction`)
+      .patch(`/venues/${venueId}/reaction`)
       .query({
         userId: userId6,
-        emoji: emoji6,
+        emoji: emoji3,
       })
       .then(res => {
         expect(res).to.have.status(200);
@@ -315,6 +316,7 @@ describe('testing venue with reactions', () => {
       .get(`/venues/${venueId}/`)
       .query({ userId: userId6 })
       .then(res => {
+        console.log(res.body.venue.reactions);
         expect(res).to.have.status(200);
         expect(res.body.venue).to.have.keys(VENUE_KEYS_TEST);
         expect(res.body.venue.reactions['🔥']).to.have.keys(REACTION_KEYS_TEST);

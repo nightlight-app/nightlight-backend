@@ -3,10 +3,9 @@ import {
   createVenue,
   getVenue,
   deleteVenue,
-  addReactionToVenue,
-  deleteReactionFromVenue,
   updateVenue,
   getVenues,
+  toggleReactionToVenue,
 } from '../controllers/venue.controller';
 
 const venuesRouter = express.Router();
@@ -16,8 +15,7 @@ venuesRouter.post('/', createVenue);
 venuesRouter.get('/:venueId', getVenue);
 venuesRouter.get('/', getVenues);
 venuesRouter.delete('/:venueId', deleteVenue);
-venuesRouter.post('/:venueId/reaction', addReactionToVenue);
-venuesRouter.delete('/:venueId/reaction', deleteReactionFromVenue);
 venuesRouter.patch('/:venueId', updateVenue);
+venuesRouter.patch('/:venueId/reaction', toggleReactionToVenue);
 
 export = venuesRouter;
