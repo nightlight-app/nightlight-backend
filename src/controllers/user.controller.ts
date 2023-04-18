@@ -178,7 +178,12 @@ export const searchUsers = async (req: Request, res: Response) => {
  * @returns {Object} Returns status code 200 and a success message if the user was deleted successfully. Otherwise, returns an error status with an appropriate message.
  */
 export const deleteUser = async (req: Request, res: Response) => {
-  const userId = req.params?.userId;
+  const userId = req.params.userId as string;
+
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
 
   // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -208,7 +213,12 @@ export const deleteUser = async (req: Request, res: Response) => {
  * Otherwise, returns an error status with an appropriate message.
  */
 export const updateUser = async (req: Request, res: Response) => {
-  const userId = req.params?.userId;
+  const userId = req.params.userId as string;
+
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
 
   // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -242,7 +252,19 @@ export const updateUser = async (req: Request, res: Response) => {
  * @returns {User} Returns status code 200 and an object containing a success message and updated details of the user, otherwise returns an error status with appropriate message.
  */
 export const saveGroup = async (req: Request, res: Response) => {
-  const userId = req.params?.userId;
+  const userId = req.params.userId as string;
+  const group = req.body;
+
+  // Verify that the user object has all the necessary keys
+  const validationError = verifyKeys(group, KeyValidationType.GROUPS);
+  if (validationError !== '') {
+    return res.status(400).send({ message: validationError });
+  }
+
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
 
   // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -255,7 +277,7 @@ export const saveGroup = async (req: Request, res: Response) => {
       { _id: userId },
       {
         $push: {
-          savedGroups: { ...req.body, _id: new mongoose.Types.ObjectId() },
+          savedGroups: { ...group, _id: new mongoose.Types.ObjectId() },
         },
       },
       { new: true, select: '-notificationToken' }
@@ -283,6 +305,16 @@ export const saveGroup = async (req: Request, res: Response) => {
 export const deleteSavedGroup = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const savedGroupId = req.query.savedGroupId as string;
+
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the user ID was provided
+  if (!savedGroupId) {
+    return res.status(400).send({ message: 'No group ID provided!' });
+  }
 
   // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -330,6 +362,16 @@ export const deleteSavedGroup = async (req: Request, res: Response) => {
 export const acceptGroupInvitation = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const groupId = req.query.groupId as string;
+
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the user ID was provided
+  if (!groupId) {
+    return res.status(400).send({ message: 'No group ID provided!' });
+  }
 
   // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -395,6 +437,16 @@ export const declineGroupInvitation = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const groupId = req.query.groupId as string;
 
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the user ID was provided
+  if (!groupId) {
+    return res.status(400).send({ message: 'No group ID provided!' });
+  }
+
   // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -457,6 +509,16 @@ export const declineGroupInvitation = async (req: Request, res: Response) => {
 export const leaveGroup = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const groupId = req.query.groupId as string;
+
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the user ID was provided
+  if (!groupId) {
+    return res.status(400).send({ message: 'No group ID provided!' });
+  }
 
   // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -542,6 +604,11 @@ export const leaveGroup = async (req: Request, res: Response) => {
 export const getFriends = async (req: Request, res: Response) => {
   const userId = req.params?.userId as string;
 
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
   // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -586,6 +653,16 @@ export const getFriends = async (req: Request, res: Response) => {
 export const requestFriend = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const friendId = req.query.friendId as string;
+
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the user ID was provided
+  if (!friendId) {
+    return res.status(400).send({ message: 'No friend user ID provided!' });
+  }
 
   // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -652,6 +729,16 @@ export const requestFriend = async (req: Request, res: Response) => {
 export const acceptFriendRequest = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const friendId = req.query.friendId as string;
+
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the user ID was provided
+  if (!friendId) {
+    return res.status(400).send({ message: 'No friend user ID provided!' });
+  }
 
   // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -720,6 +807,16 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const friendId = req.query.friendId as string;
 
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the user ID was provided
+  if (!friendId) {
+    return res.status(400).send({ message: 'No friend user ID provided!' });
+  }
+
   // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -784,6 +881,16 @@ export const removeFriendRequest = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const friendId = req.query.friendId as string;
 
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the user ID was provided
+  if (!friendId) {
+    return res.status(400).send({ message: 'No friend user ID provided!' });
+  }
+
   // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -802,9 +909,7 @@ export const removeFriendRequest = async (req: Request, res: Response) => {
 
     // Check if the friend exists
     if (targetFriend === null) {
-      return res
-        .status(400)
-        .send({ message: 'User requesting does not exist!' });
+      return res.status(400).send({ message: 'User requesting does not exist!' });
     }
 
     // Find the user in the database and remove the friendId from their friendRequests array
@@ -832,6 +937,16 @@ export const removeFriendRequest = async (req: Request, res: Response) => {
 export const removeFriend = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const friendId = req.query.friendId as string;
+
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the user ID was provided
+  if (!friendId) {
+    return res.status(400).send({ message: 'No friend user ID provided!' });
+  }
 
   // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -879,7 +994,12 @@ export const addNotificationToken = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const notificationToken = req.body.notificationToken as string;
 
-  // Check if the notification token was provided
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the user ID was provided
   if (!notificationToken) {
     return res.status(400).send({ message: 'No notification token provided!' });
   }
@@ -914,6 +1034,11 @@ export const addNotificationToken = async (req: Request, res: Response) => {
  */
 export const removeNotificationToken = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
+
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
 
   // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -1245,9 +1370,7 @@ export const activateEmergency = async (req: Request, res: Response) => {
 
     // TODO LATER: send an SMS to all emergency contacts
 
-    return res
-      .status(200)
-      .send({ message: 'Successfully activated emergency!' });
+    return res.status(200).send({ message: 'Successfully activated emergency!' });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }
@@ -1346,6 +1469,11 @@ export const uploadProfileImg = async (req: Request, res: Response) => {
 
     const userId = req.params?.userId;
     const image = req.file;
+
+    // Check if the user ID was provided
+    if (!userId) {
+      return res.status(400).send({ message: 'No user ID provided!' });
+    }
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).send({ message: 'Invalid user ID!' });
