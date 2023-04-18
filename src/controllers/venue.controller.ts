@@ -218,7 +218,7 @@ export const getVenues = async (req: Request, res: Response) => {
  * @return {Promise} - A promise that resolves when the reaction is successfully added/removed or failed to add/remove
  */
 export const toggleReactionToVenue = async (req: Request, res: Response) => {
-  const venueId = req.params?.venueId as string;
+  const venueId = req.params.venueId as string;
   const userId = req.query.userId as string;
   const emoji = req.query.emoji as Emoji;
 
@@ -251,6 +251,7 @@ export const toggleReactionToVenue = async (req: Request, res: Response) => {
       reaction => reaction.userId === userId && reaction.emoji === emoji
     );
 
+    // If reaction exists, remove it. Otherwise, add it.
     if (existingReaction) {
       // Get venue
       const result = await Venue.findById(venueId);
@@ -275,9 +276,11 @@ export const toggleReactionToVenue = async (req: Request, res: Response) => {
       await result.updateOne({ $set: { reactions: result.reactions } });
 
       // Remove job from queue
-      await nightlightQueue.remove(queueId);
+      nightlightQueue.remove(queueId);
 
-      return res.status(200).send({ message: 'Successfully removed reaction!' });
+      return res.status(200).send({
+        message: 'Successfully deleted reaction from venue: ' + venueId,
+      });
     } else {
       // Add reaction to queue
       const job = await addReactionExpireJob(
@@ -294,7 +297,7 @@ export const toggleReactionToVenue = async (req: Request, res: Response) => {
           .send({ message: 'Failed to react to venue, queue error!' });
       }
 
-      // If existing reaction not found, add it to the array
+      // Add reaction to venue
       const result = await Venue.findByIdAndUpdate(
         venueId,
         {
@@ -309,12 +312,15 @@ export const toggleReactionToVenue = async (req: Request, res: Response) => {
         { new: true }
       );
 
-      // Check if venue was updated
-      if (!result) {
-        return res.status(400).send({ message: 'Failed to add reaction!' });
+      // Check if venue exists
+      if (result === null) {
+        nightlightQueue.remove(job.id);
+        return res.status(400).send({ message: 'Venue does not exist!' });
       }
 
-      return res.status(200).send({ message: 'Successfully added reaction!' });
+      return res
+        .status(200)
+        .send({ message: 'Successfully added reaction to Venue!' });
     }
   } catch (error: any) {
     console.log(error.message);
