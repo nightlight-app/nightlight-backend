@@ -33,6 +33,3 @@ httpServer.listen(process.env.SERVER_PORT, () => {
     );
   }
 });
-
-// Export the server instance to allow use elsewhere
-export default locationService;
