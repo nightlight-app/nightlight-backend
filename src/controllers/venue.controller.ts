@@ -212,15 +212,15 @@ export const getVenues = async (req: Request, res: Response) => {
 };
 
 /**
- * Adds or remvoes a reaction to a venue with specified ID
+ * Adds or removes a reaction to a venue with specified ID
  * @param {Request} req - The request object containing the suggested request parameters.
  * @param {Response} res - The response object holding the returned venue and messages.
  * @return {Promise} - A promise that resolves when the reaction is successfully added/removed or failed to add/remove
  */
 export const toggleReactionToVenue = async (req: Request, res: Response) => {
   const venueId = req.params.venueId as string;
-  const userId = req.query.userId as string;
-  const emoji = req.query.emoji as Emoji;
+  const userId = req.body.userId as string;
+  const emoji = req.body.emoji as Emoji;
 
   // Check if venue ID is valid
   if (!mongoose.Types.ObjectId.isValid(venueId)) {
