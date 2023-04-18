@@ -16,6 +16,6 @@ venuesRouter.get('/:venueId', getVenue);
 venuesRouter.get('/', getVenues);
 venuesRouter.delete('/:venueId', deleteVenue);
 venuesRouter.patch('/:venueId', updateVenue);
-venuesRouter.patch('/:venueId/reaction', toggleReactionToVenue);
+venuesRouter.patch('/:venueId/react', toggleReactionToVenue);
 
 export = venuesRouter;

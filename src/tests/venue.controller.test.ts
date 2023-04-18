@@ -76,10 +76,10 @@ describe('testing venue with reactions', () => {
   });
 
   const emoji1 = '🔥';
-  it('should add a reaction via POST /venues/:venueId/reaction (🔥)', done => {
+  it('should add a reaction via PATCH /venues/:venueId/react (🔥)', done => {
     chai
       .request(server)
-      .patch(`/venues/${venueId}/reaction`)
+      .patch(`/venues/${venueId}/react`)
       .send({
         userId: userId1,
         emoji: emoji1,
@@ -91,10 +91,10 @@ describe('testing venue with reactions', () => {
   });
 
   const emoji2 = '🎉';
-  it('should add a reaction via POST /venues/:venueId/reaction (🎉)', done => {
+  it('should add a reaction via PATCH /venues/:venueId/react (🎉)', done => {
     chai
       .request(server)
-      .patch(`/venues/${venueId}/reaction`)
+      .patch(`/venues/${venueId}/react`)
       .send({
         userId: userId1,
         emoji: emoji2,
@@ -107,10 +107,10 @@ describe('testing venue with reactions', () => {
 
   const emoji3 = '💩';
   const userId3 = new ObjectId(12354).toString();
-  it('should add a reaction via POST /venues/:venueId/reaction (💩)', done => {
+  it('should add a reaction via PATCH /venues/:venueId/react (💩)', done => {
     chai
       .request(server)
-      .patch(`/venues/${venueId}/reaction`)
+      .patch(`/venues/${venueId}/react`)
       .send({
         userId: userId3,
         emoji: emoji3,
@@ -123,10 +123,10 @@ describe('testing venue with reactions', () => {
 
   const emoji4 = '🛡';
   const userId4 = new ObjectId(1235).toString();
-  it('should add a reaction via POST /venues/:venueId/reaction (🛡 )', done => {
+  it('should add a reaction via PATCH /venues/:venueId/react (🛡 )', done => {
     chai
       .request(server)
-      .patch(`/venues/${venueId}/reaction`)
+      .patch(`/venues/${venueId}/react`)
       .send({
         userId: userId4,
         emoji: emoji4,
@@ -164,10 +164,10 @@ describe('testing venue with reactions', () => {
       });
   });
 
-  it('should delete a reaction for user1 via DELETE /venues/:venueId/reaction/', done => {
+  it('should delete a reaction for user1 via PATCH /venues/:venueId/react/', done => {
     chai
       .request(server)
-      .patch(`/venues/${venueId}/reaction/`)
+      .patch(`/venues/${venueId}/react/`)
       .send({ userId: userId1, emoji: emoji1 })
       .then(res => {
         expect(res).to.have.status(200);
@@ -175,10 +175,10 @@ describe('testing venue with reactions', () => {
       });
   });
 
-  it('should delete a reaction for user3 via DELETE /venues/:venueId/reaction/', done => {
+  it('should delete a reaction for user3 via PATCH /venues/:venueId/react/', done => {
     chai
       .request(server)
-      .patch(`/venues/${venueId}/reaction/`)
+      .patch(`/venues/${venueId}/react/`)
       .send({ userId: userId3, emoji: emoji3 })
       .then(res => {
         expect(res).to.have.status(200);
@@ -214,10 +214,10 @@ describe('testing venue with reactions', () => {
       });
   });
 
-  it('should delete a reaction for user1 via DELETE /venues/:venueId/reaction/ (userId, emoji)', done => {
+  it('should delete a reaction for user1 via PATCH /venues/:venueId/react/ (userId, emoji)', done => {
     chai
       .request(server)
-      .patch(`/venues/${venueId}/reaction/`)
+      .patch(`/venues/${venueId}/react/`)
       .send({ userId: userId1, emoji: emoji2 })
       .then(res => {
         expect(res).to.have.status(200);
@@ -225,10 +225,10 @@ describe('testing venue with reactions', () => {
       });
   });
 
-  it('should delete a reaction for user4 via DELETE /venues/:venueId/reaction/', done => {
+  it('should delete a reaction for user4 via PATCH /venues/:venueId/react/', done => {
     chai
       .request(server)
-      .patch(`/venues/${venueId}/reaction/`)
+      .patch(`/venues/${venueId}/react/`)
       .send({ userId: userId4, emoji: emoji4 })
       .then(res => {
         expect(res).to.have.status(200);
@@ -264,10 +264,10 @@ describe('testing venue with reactions', () => {
   });
 
   const userId6 = new ObjectId(12354).toString();
-  it('should add a reaction for expiration tests via POST /venues/:venueId/reaction (💩)', done => {
+  it('should add a reaction for expiration tests via PATCH /venues/:venueId/react (💩)', done => {
     chai
       .request(server)
-      .patch(`/venues/${venueId}/reaction`)
+      .patch(`/venues/${venueId}/react`)
       .send({
         userId: userId6,
         emoji: emoji3,

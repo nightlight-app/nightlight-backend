@@ -65,7 +65,6 @@ export const expireReaction = async (
   emoji: string
 ) => {
   try {
-    console.log('EXPIRING REACTION: ' + userId + ' ' + venueId + ' ' + emoji);
     await Venue.findOneAndUpdate(
       { _id: venueId },
       { $pull: { reactions: { userId: userId, emoji: emoji } } }

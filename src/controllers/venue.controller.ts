@@ -261,13 +261,20 @@ export const toggleReactionToVenue = async (req: Request, res: Response) => {
         return res.status(400).send({ message: 'Venue does not exist!' });
       }
 
-      // Find reaction index
-      const reactionIndex = result.reactions.findIndex(
-        r => r.userId === userId && r.emoji === emoji
-      );
+      // Get reaction to be removed
+      const removedReaction = result.reactions.filter(
+        reaction => reaction.userId === userId && reaction.emoji === emoji
+      )[0];
+
+      // Check if reaction exists
+      if (removedReaction === undefined) {
+        return res.status(400).send({ message: 'Reaction does not exist!' });
+      }
 
       // Remove reaction from venue
-      const removedReaction = result.reactions.splice(reactionIndex, 1)[0];
+      result.reactions = result.reactions.filter(
+        reaction => reaction.userId !== userId || reaction.emoji !== emoji
+      );
 
       // Obtain queue ID
       const queueId = removedReaction.queueId;
