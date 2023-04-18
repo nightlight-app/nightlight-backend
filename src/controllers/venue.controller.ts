@@ -246,9 +246,17 @@ const toggleReactionToVenue = async (req: Request, res: Response) => {
       {
         $addToSet: {
           reactions: {
-            userId: userId,
-            emoji: emoji,
-            queueId: job?.id,
+            $each: [
+              {
+                userId: userId,
+                emoji: emoji,
+                queueId: job?.id,
+              },
+            ],
+            $elemMatch: {
+              userId: { $ne: userId },
+              emoji: { $ne: emoji },
+            },
           },
         },
         $pull: {
