@@ -498,11 +498,11 @@ export const leaveGroup = async (req: Request, res: Response) => {
     }
 
     /*
-     * If there are less than 2 members left in the group, delete the group
+     * If there are less than 2 members left in the group and no invited members, delete the group
      * Else, remove groupId from currentGroup of user
      */
-    if (targetGroup?.members.length <= 2) {
-      // If there are less than 2 members left in the group, delete the group
+    if (targetGroup?.members.length <= 2 && targetGroup?.invitedMembers.length === 0) {
+      // If there are less than 2 members left in the group and no invited members, delete the group
       await Group.findByIdAndDelete(groupId);
 
       // Remove groupId from currentGroup of all members
