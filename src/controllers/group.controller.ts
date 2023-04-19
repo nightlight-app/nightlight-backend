@@ -158,7 +158,7 @@ export const getGroup = async (req: Request, res: Response) => {
 export const deleteGroup = async (req: Request, res: Response) => {
   const groupId = req.params.groupId as string;
 
-  // Check if the user ID was provided
+  // Check if the group ID was provided
   if (!groupId) {
     return res.status(400).send({ message: 'No group ID provided!' });
   }
