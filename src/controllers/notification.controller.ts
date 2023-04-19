@@ -48,6 +48,12 @@ export const addNotificationsToDatabase = async (req: Request, res: Response) =>
   // check if all required fields are present
   const notification = req.body;
 
+  // check if a notification object is present
+  if (!notification) {
+    return res.status(400).send({ message: 'Missing notification object.' });
+  }
+
+  // check if all required fields are present
   const validationError = verifyKeys(
     notification,
     KeyValidationType.NOTIFICATIONS
@@ -100,6 +106,11 @@ export const addNotificationsToDatabase = async (req: Request, res: Response) =>
 export const deleteNotification = async (req: Request, res: Response) => {
   // get notification id from request
   const notificationId = req.params.notificationId as string;
+
+  // check if notification id is present
+  if (!notificationId) {
+    return res.status(400).send({ message: 'Missing notification id.' });
+  }
 
   // check if notification id is valid
   if (!mongoose.Types.ObjectId.isValid(notificationId)) {

@@ -256,7 +256,7 @@ export const saveGroup = async (req: Request, res: Response) => {
   const group = req.body;
 
   // Verify that the user object has all the necessary keys
-  const validationError = verifyKeys(group, KeyValidationType.GROUPS);
+  const validationError = verifyKeys(group, KeyValidationType.SAVED_GROUPS);
   if (validationError !== '') {
     return res.status(400).send({ message: validationError });
   }
@@ -1475,10 +1475,12 @@ export const uploadProfileImg = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'No user ID provided!' });
     }
 
+    // Check if the provided userId is valid
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).send({ message: 'Invalid user ID!' });
     }
 
+    // Check if the image was provided
     if (!image) {
       return res.status(400).send({ message: 'No image provided!' });
     }
