@@ -204,7 +204,7 @@ export const inviteMembersToExistingGroup = async (
     return res.status(400).send({ message: 'No user IDs provided!' });
   }
 
-  // Check if the user ID was provided
+  // Check if the group ID was provided
   if (!groupId) {
     return res.status(400).send({ message: 'No group ID provided!' });
   }
