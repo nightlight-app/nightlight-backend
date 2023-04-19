@@ -25,6 +25,8 @@ import {
   removeFriendRequest,
   activateEmergency,
   deactivateEmergency,
+  goOnline,
+  goOffline,
 } from '../controllers/user.controller';
 
 const usersRouter = express.Router();
@@ -55,5 +57,7 @@ usersRouter.patch('/:userId/update-emergency-contact', updateEmergencyContact);
 usersRouter.patch('/:userId/activate-emergency', activateEmergency);
 usersRouter.patch('/:userId/deactivate-emergency', deactivateEmergency);
 usersRouter.patch('/:userId/upload-profile-img', uploadProfileImg);
+usersRouter.patch('/:userId/goOnline', goOnline);
+usersRouter.patch('/:userId/goOffline', goOffline);
 
 export = usersRouter;

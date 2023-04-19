@@ -10,6 +10,7 @@ import { IMAGE_UPLOAD_OPTIONS } from '../utils/constants';
 import { sendNotifications } from '../utils/notification.utils';
 import { NotificationType } from '../interfaces/Notification.interface';
 import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
+import { LocationData } from '../interfaces/LastActive.interface';
 
 /**
  * Creates a new user in the database based on the information provided in the request body.
@@ -1484,6 +1485,89 @@ export const deactivateEmergency = async (req: Request, res: Response) => {
     // TODO LATER: send an SMS to all emergency contacts
 
     return res.status(200).send({ message: 'Successfully activated emergency!' });
+  } catch (error: any) {
+    return res.status(500).send({ message: error?.message });
+  }
+};
+
+/**
+ * Activates the emergency for the specified user in their current group.
+ *
+ * @param {Request} req - The HTTP request object containing the user ID in the params.
+ * @param {Response} res - The HTTP response object used to send a status code and message.
+ * @returns {Promise} A Promise object representing the completion of the activiation process.
+ */
+export const goOnline = async (req: Request, res: Response) => {
+  const userId = req.params.userId as string;
+
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the provided userId is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  try {
+    // Find the user in the database
+    const targetUser = await User.findByIdAndUpdate(userId, {
+      isActiveNow: true,
+    });
+
+    // Check if the user exists
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    return res.status(200).send({ message: 'Successfully went online!' });
+  } catch (error: any) {
+    return res.status(500).send({ message: error?.message });
+  }
+};
+
+export const goOffline = async (req: Request, res: Response) => {
+  const userId = req.params.userId as string;
+  const location = req.body.location as LocationData;
+
+  // check if the location object was provided
+  if (!location) {
+    return res.status(400).send({ message: 'No location provided!' });
+  }
+
+  // Verify that the user object has all the necessary keys
+  const validationError = verifyKeys(location, KeyValidationType.LOCATIONS);
+  if (validationError !== '') {
+    return res.status(400).send({ message: validationError });
+  }
+
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the provided userId is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  // Create a new lastActive object with the provided location
+  const lastActive = { ...req.body, time: new Date().toUTCString() };
+
+  try {
+    // Find and update the user in the database
+    const targetUser = await User.findByIdAndUpdate(userId, {
+      isActiveNow: false,
+      lastActive: lastActive,
+    });
+
+    // Check if the user exists
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    return res.status(200).send({ message: 'Successfully went offline!' });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }
