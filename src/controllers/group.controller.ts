@@ -19,6 +19,12 @@ export const createGroup = async (req: Request, res: Response) => {
   const userId = req.query.userId as string;
   const group = req.body;
 
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the group was provided
   const validationError = verifyKeys(group, KeyValidationType.GROUPS);
   if (validationError !== '') {
     return res.status(400).send({ message: validationError });
@@ -116,6 +122,11 @@ export const createGroup = async (req: Request, res: Response) => {
 export const getGroup = async (req: Request, res: Response) => {
   const groupId = req.query.groupId as string;
 
+  // Check if the group ID was provided
+  if (!groupId) {
+    return res.status(400).send({ message: 'No group ID provided!' });
+  }
+
   try {
     // check if group id is valid
     if (!mongoose.Types.ObjectId.isValid(groupId)) {
@@ -145,7 +156,12 @@ export const getGroup = async (req: Request, res: Response) => {
  * @return {Promise} - A promise that resolves when the group has been deleted or failed to delete
  */
 export const deleteGroup = async (req: Request, res: Response) => {
-  const groupId = req.params?.groupId;
+  const groupId = req.params.groupId as string;
+
+  // Check if the group ID was provided
+  if (!groupId) {
+    return res.status(400).send({ message: 'No group ID provided!' });
+  }
 
   try {
     // check if group id is valid
@@ -179,9 +195,24 @@ export const inviteMembersToExistingGroup = async (
   req: Request,
   res: Response
 ) => {
-  const users = req.body?.users;
-  const groupId = req.params?.groupId;
+  const users = req.body.users as string[];
+  const groupId = req.params.groupId as string;
   const userId = req.query.userId as string;
+
+  // Check if the user IDs was provided
+  if (!users || users.length === 0) {
+    return res.status(400).send({ message: 'No user IDs provided!' });
+  }
+
+  // Check if the group ID was provided
+  if (!groupId) {
+    return res.status(400).send({ message: 'No group ID provided!' });
+  }
+
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
 
   try {
     // check if group id is valid
@@ -253,8 +284,18 @@ export const inviteMembersToExistingGroup = async (
  */
 export const removeMemberInvitation = async (req: Request, res: Response) => {
   const userId = req.query.userId as string;
+  const groupId = req.params.groupId as string;
 
-  const groupId = req.params?.groupId;
+  // Check if the user ID was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if the group ID was provided
+  if (!groupId) {
+    return res.status(400).send({ message: 'No group ID provided!' });
+  }
+
   try {
     // check if group id is valid
     if (!mongoose.Types.ObjectId.isValid(groupId)) {

@@ -77,6 +77,16 @@ export const GROUP_KEYS_ALL = [
 ];
 
 /**
+ * The necessary keys for a saved group object
+ */
+export const SAVED_GROUP_KEYS = ['name', 'users'];
+
+/**
+ * All possible keys for a saved group object
+ */
+export const SAVED_GROUP_KEYS_ALL = ['__v', '_id', 'name', 'users'];
+
+/**
  * The necessary keys for a venue object
  */
 export const VENUE_KEYS = ['name', 'address', 'location'];
