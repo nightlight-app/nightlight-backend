@@ -1495,7 +1495,7 @@ export const deactivateEmergency = async (req: Request, res: Response) => {
  *
  * @param {Request} req - The HTTP request object containing the user ID in the params.
  * @param {Response} res - The HTTP response object used to send a status code and message.
- * @returns {Promise} A Promise object representing the completion of the activiation process.
+ * @returns {Promise} A Promise object representing the completion of setting the user to online.
  */
 export const goOnline = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
@@ -1533,7 +1533,7 @@ export const goOnline = async (req: Request, res: Response) => {
  *
  * @param {Request} req - The HTTP request object containing the user ID in the params.
  * @param {Response} res - The HTTP response object used to send a status code and message.
- * @returns {Promise} A Promise object representing the completion of the activiation process.
+ * @returns {Promise} A Promise object representing the completion of setting the user to offline.
  */
 export const goOffline = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
