@@ -57,7 +57,7 @@ usersRouter.patch('/:userId/update-emergency-contact', updateEmergencyContact);
 usersRouter.patch('/:userId/activate-emergency', activateEmergency);
 usersRouter.patch('/:userId/deactivate-emergency', deactivateEmergency);
 usersRouter.patch('/:userId/upload-profile-img', uploadProfileImg);
-usersRouter.patch('/:userId/goOnline', goOnline);
-usersRouter.patch('/:userId/goOffline', goOffline);
+usersRouter.patch('/:userId/go-online', goOnline);
+usersRouter.patch('/:userId/go-offline', goOffline);
 
 export = usersRouter;

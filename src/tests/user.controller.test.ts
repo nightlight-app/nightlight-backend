@@ -825,7 +825,7 @@ describe('testing user search', () => {
   });
 });
 
-describe('testing goOnline/goOffline', () => {
+describe('testing go-online/go-offline', () => {
   let userId1: string;
   it('should create a new user via POST /users/', done => {
     chai
@@ -840,10 +840,10 @@ describe('testing goOnline/goOffline', () => {
       });
   });
 
-  it('should set the user to online via PATCH /users/{userId}/goOnline', done => {
+  it('should set the user to online via PATCH /users/{userId}/go-online', done => {
     chai
       .request(server)
-      .patch(`/users/${userId1}/goOnline`)
+      .patch(`/users/${userId1}/go-online`)
       .then(res => {
         expect(res).to.have.status(200);
         done();
@@ -862,10 +862,10 @@ describe('testing goOnline/goOffline', () => {
       });
   });
 
-  it('should set the user to offline via PATCH /users/{userId}/goOffline', done => {
+  it('should set the user to offline via PATCH /users/{userId}/go-offline', done => {
     chai
       .request(server)
-      .patch(`/users/${userId1}/goOffline`)
+      .patch(`/users/${userId1}/go-offline`)
       .send({
         location: {
           latitude: 33.675843,

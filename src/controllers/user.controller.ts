@@ -1491,7 +1491,7 @@ export const deactivateEmergency = async (req: Request, res: Response) => {
 };
 
 /**
- * Activates the emergency for the specified user in their current group.
+ * Activates the "isActiveNow" status for the specified user in their current group.
  *
  * @param {Request} req - The HTTP request object containing the user ID in the params.
  * @param {Response} res - The HTTP response object used to send a status code and message.
@@ -1527,6 +1527,14 @@ export const goOnline = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Deactivates the "isActiveNow" status for the specified user in their current group
+ * and updates the user's last location.
+ *
+ * @param {Request} req - The HTTP request object containing the user ID in the params.
+ * @param {Response} res - The HTTP response object used to send a status code and message.
+ * @returns {Promise} A Promise object representing the completion of the activiation process.
+ */
 export const goOffline = async (req: Request, res: Response) => {
   const userId = req.params.userId as string;
   const location = req.body.location as LocationData;
