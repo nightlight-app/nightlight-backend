@@ -45,6 +45,7 @@ export const expireGroup = async (groupId: string) => {
       {
         notificationType: NotificationType.groupExpired,
         sentDateTime: new Date().toUTCString(),
+        groupId: groupId,
       },
       false
     );
@@ -114,6 +115,13 @@ export const expirePing = async (pingId: string) => {
       {
         notificationType: NotificationType.pingExpiredSender,
         sentDateTime: new Date().toUTCString(),
+        pingId: pingId,
+        recipientId: ping?.recipientId.toString(),
+        recipientFirstName: recipientUser?.firstName,
+        recipientLastName: recipientUser?.lastName,
+        senderId: ping.senderId.toString(),
+        senderFirstName: senderUser?.firstName,
+        senderLastName: senderUser?.lastName,
       },
       true
     );
@@ -126,6 +134,13 @@ export const expirePing = async (pingId: string) => {
       {
         notificationType: NotificationType.pingExpiredRecipient,
         sentDateTime: new Date().toUTCString(),
+        pingId: pingId,
+        recipientId: ping?.recipientId.toString(),
+        recipientFirstName: recipientUser?.firstName,
+        recipientLastName: recipientUser?.lastName,
+        senderId: ping.senderId.toString(),
+        senderFirstName: senderUser?.firstName,
+        senderLastName: senderUser?.lastName,
       },
       true
     );
