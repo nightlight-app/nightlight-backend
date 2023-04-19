@@ -11,6 +11,10 @@ import { sendNotifications } from '../utils/notification.utils';
 import { NotificationType } from '../interfaces/Notification.interface';
 import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
 import { LocationData } from '../interfaces/LastActive.interface';
+import {
+  addFriendRequestResponseJob,
+  addGroupInviteResponseJob,
+} from '../queue/jobs';
 
 /**
  * Creates a new user in the database based on the information provided in the request body.
@@ -407,6 +411,9 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'Group does not exist!' });
     }
 
+    // Remove the invite notification from the user's notifications
+    await addGroupInviteResponseJob(userId, groupId);
+
     // send notifications to all invited users that they have been invited to the group
     sendNotifications(
       [
@@ -481,6 +488,9 @@ export const declineGroupInvitation = async (req: Request, res: Response) => {
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
+
+    // Remove the invite notification from the user's notifications
+    await addGroupInviteResponseJob(userId, groupId);
 
     sendNotifications(
       [
@@ -817,6 +827,9 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
       false
     );
 
+    // Remove the invite notification from the user's notifications
+    await addFriendRequestResponseJob(userId, friendId);
+
     return res
       .status(200)
       .send({ message: 'Successfully accepted friend request!' });
@@ -877,6 +890,9 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
+
+    // Remove the invite notification from the user's notifications
+    await addFriendRequestResponseJob(userId, friendId);
 
     sendNotifications(
       [friendId],
@@ -954,6 +970,9 @@ export const removeFriendRequest = async (req: Request, res: Response) => {
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
+
+    // Remove the invite notification from the user's notifications
+    await addFriendRequestResponseJob(userId, friendId);
 
     res.status(200).send({ message: 'Successfully removed friend request!' });
   } catch (error: any) {

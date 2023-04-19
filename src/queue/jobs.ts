@@ -82,3 +82,51 @@ export const addPingExpireJob = async (pingId: string, delay: number) => {
     console.log(error.message);
   }
 };
+
+/**
+ * Add group invite response job to the nightlightQueue.
+ * @param {string} userId - The ID of the user that responded to the group invite
+ * @param {string} groupId - The ID of the group that the user responded to
+ */
+export const addGroupInviteResponseJob = async (
+  userId: string,
+  groupId: string
+) => {
+  try {
+    await nightlightQueue.add(
+      'groupInviteResponse',
+      {
+        type: 'groupInviteResponse',
+        userId: userId,
+        groupId: groupId,
+      },
+      { removeOnComplete: true, removeOnFail: true }
+    );
+  } catch (error: any) {
+    console.log(error.message);
+  }
+};
+
+/**
+ * Add friend request response job to the nightlightQueue.
+ * @param {string} userId - The ID of the user that responded to the friend request
+ * @param {string} friendId - The ID of the friend that the user responded to
+ */
+export const addFriendRequestResponseJob = async (
+  userId: string,
+  friendId: string
+) => {
+  try {
+    await nightlightQueue.add(
+      'friendRequestResponse',
+      {
+        type: 'friendRequestResponse',
+        userId: userId,
+        friendId: friendId,
+      },
+      { removeOnComplete: true, removeOnFail: true }
+    );
+  } catch (error: any) {
+    console.log(error.message);
+  }
+};
