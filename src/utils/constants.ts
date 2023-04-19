@@ -43,6 +43,7 @@ export const USER_KEYS_ALL = [
   'imgUrlProfileSmall',
   'invitedGroups',
   'lastActive',
+  'isActiveNow',
   'savedGroups',
   'notificationToken',
   'currentGroup',
@@ -145,6 +146,16 @@ export const PING_KEYS_ALL = [
   'expirationDatetime',
   'status',
 ];
+
+/**
+ * The necessary keys for a location object
+ */
+export const LOCATION_KEYS = ['latitude', 'longitude'];
+
+/**
+ * All possible keys for a location object
+ */
+export const LOCATION_KEYS_ALL = ['latitude', 'longitude'];
 
 /**
  * The necessary keys for an emergency contact object

@@ -825,6 +825,88 @@ describe('testing user search', () => {
   });
 });
 
+describe('testing go-online/go-offline', () => {
+  let userId1: string;
+  it('should create a new user via POST /users/', done => {
+    chai
+      .request(server)
+      .post('/users/')
+      .send(TEST_USER_1)
+      .then(res => {
+        userId1 = res.body.user._id;
+        expect(res).to.have.status(201);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
+        done();
+      });
+  });
+
+  it('should set the user to online via PATCH /users/{userId}/go-online', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId1}/go-online`)
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('should get the user with the online status via GET /users/{userId}', done => {
+    chai
+      .request(server)
+      .get(`/users/`)
+      .query({ userIds: userId1 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users[0].isActiveNow).to.be.true;
+        done();
+      });
+  });
+
+  it('should set the user to offline via PATCH /users/{userId}/go-offline', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId1}/go-offline`)
+      .send({
+        location: {
+          latitude: 33.675843,
+          longitude: 56.765849,
+        },
+      })
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('should get the user with the offline status via GET /users/{userId}', done => {
+    chai
+      .request(server)
+      .get(`/users/`)
+      .query({ userIds: userId1 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users[0].isActiveNow).to.be.false;
+        expect(res.body.users[0].lastActive.location.latitude).to.equal(
+          33.675843
+        );
+        expect(res.body.users[0].lastActive.location.longitude).to.equal(
+          56.765849
+        );
+        done();
+      });
+  });
+
+  it('should delete the user via DELETE /users/{userId}', done => {
+    chai
+      .request(server)
+      .delete(`/users/${userId1}`)
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+});
+
 /* TEST USER ERRORS */
 describe('testing User Error', () => {
   let userId1: string;
