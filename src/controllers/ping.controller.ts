@@ -99,6 +99,13 @@ export const sendPing = async (req: Request, res: Response) => {
       {
         notificationType: NotificationType.pingReceived,
         sentDateTime: new Date().toUTCString(),
+        pingId: finalPing._id.toString(),
+        recipientId: ping.recipientId.toString(),
+        recipientFirstName: recipientUser.firstName,
+        recipientLastName: recipientUser.lastName,
+        senderId: ping.senderId.toString(),
+        senderFirstName: senderUser.firstName,
+        senderLastName: senderUser.lastName,
       },
       true
     );
@@ -173,6 +180,14 @@ export const respondToPing = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'Recipient not found' });
     }
 
+    // Find the sender
+    const senderUser = await User.findById(ping.senderId);
+
+    // Check if the user exists
+    if (senderUser === null) {
+      return res.status(400).send({ message: 'Sender not found' });
+    }
+
     // Add the ping to the sender's list of pings
     const responseValue =
       response === PingStatus.RESPONDED_OKAY ? 'okay ✅' : 'not okay 🚨';
@@ -188,6 +203,13 @@ export const respondToPing = async (req: Request, res: Response) => {
             ? NotificationType.pingRespondedOkay
             : NotificationType.pingRespondedNotOkay,
         sentDateTime: new Date().toUTCString(),
+        pingId: ping._id.toString(),
+        recipientId: ping.recipientId.toString(),
+        recipientFirstName: recipientUser.firstName,
+        recipientLastName: recipientUser.lastName,
+        senderId: ping.senderId.toString(),
+        senderFirstName: senderUser.firstName,
+        senderLastName: senderUser.lastName,
       },
       true
     );
@@ -271,6 +293,13 @@ export const removePing = async (req: Request, res: Response) => {
       {
         notificationType: NotificationType.pingRemoved,
         sentDateTime: new Date().toUTCString(),
+        pingId: removedPing._id.toString(),
+        recipientId: removedPing.recipientId.toString(),
+        recipientFirstName: recipientUser.firstName,
+        recipientLastName: recipientUser.lastName,
+        senderId: removedPing.senderId.toString(),
+        senderFirstName: senderUser.firstName,
+        senderLastName: senderUser.lastName,
       },
       false
     );

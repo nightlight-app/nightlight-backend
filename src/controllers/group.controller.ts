@@ -89,6 +89,11 @@ export const createGroup = async (req: Request, res: Response) => {
       {
         notificationType: NotificationType.groupInvite,
         sentDateTime: new Date().toUTCString(),
+        senderId: userId,
+        senderFirstName: targetUser.firstName,
+        senderLastName: targetUser.lastName,
+        groupId: newGroup._id.toString(),
+        groupName: newGroup.name,
       },
       true
     );
@@ -253,6 +258,11 @@ export const inviteMembersToExistingGroup = async (
         {
           notificationType: NotificationType.groupInvite,
           sentDateTime: new Date().toUTCString(),
+          senderId: userId,
+          senderFirstName: targetUser.firstName,
+          senderLastName: targetUser.lastName,
+          groupId: groupId,
+          groupName: targetGroup.name,
         },
         true
       );

@@ -421,6 +421,11 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
       {
         notificationType: NotificationType.groupInviteAccepted,
         sentDateTime: new Date().toUTCString(),
+        senderId: userId,
+        senderFirstName: targetUser.firstName,
+        senderLastName: targetUser.lastName,
+        groupId: groupId,
+        groupName: targetGroup.name,
       },
       true
     );
@@ -490,6 +495,11 @@ export const declineGroupInvitation = async (req: Request, res: Response) => {
       {
         notificationType: NotificationType.groupInviteDeclined,
         sentDateTime: new Date().toUTCString(),
+        senderId: userId,
+        senderFirstName: targetUser.firstName,
+        senderLastName: targetUser.lastName,
+        groupId: groupId,
+        groupName: targetGroup.name,
       },
       false
     );
@@ -541,6 +551,14 @@ export const leaveGroup = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'Group does not exist!' });
     }
 
+    // Find target user
+    const targetUser = await User.findById(userId);
+
+    // Check if the user exists
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
     /*
      * If there are less than 2 members left in the group, delete the group
      * Else, remove groupId from currentGroup of user
@@ -573,6 +591,11 @@ export const leaveGroup = async (req: Request, res: Response) => {
         {
           notificationType: NotificationType.groupDeleted,
           sentDateTime: new Date().toUTCString(),
+          senderId: userId,
+          senderFirstName: targetUser.firstName,
+          senderLastName: targetUser.lastName,
+          groupId: groupId,
+          groupName: targetGroup.name,
         },
         false
       );
@@ -708,6 +731,9 @@ export const requestFriend = async (req: Request, res: Response) => {
       {
         notificationType: NotificationType.friendRequest,
         sentDateTime: new Date().toUTCString(),
+        senderId: userId,
+        senderFirstName: targetUser.firstName,
+        senderLastName: targetUser.lastName,
       },
       true
     );
@@ -783,6 +809,9 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
       {
         notificationType: NotificationType.friendRequestAccepted,
         sentDateTime: new Date().toUTCString(),
+        senderId: userId,
+        senderFirstName: targetUser.firstName,
+        senderLastName: targetUser.lastName,
       },
       false
     );
@@ -858,6 +887,9 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
       {
         notificationType: NotificationType.friendRequestDeclined,
         sentDateTime: new Date().toUTCString(),
+        senderId: userId,
+        senderFirstName: targetUser.firstName,
+        senderLastName: targetUser.lastName,
       },
       false
     );
@@ -1363,6 +1395,10 @@ export const activateEmergency = async (req: Request, res: Response) => {
         {
           notificationType: NotificationType.activateEmergency,
           sentDateTime: new Date().toUTCString(),
+          senderId: userId,
+          senderFirstName: targetUser.firstName,
+          senderLastName: targetUser.lastName,
+          groupId: targetGroup._id.toString(),
         },
         true
       );
@@ -1436,6 +1472,10 @@ export const deactivateEmergency = async (req: Request, res: Response) => {
         {
           notificationType: NotificationType.deactivateEmergency,
           sentDateTime: new Date().toUTCString(),
+          senderId: userId,
+          senderFirstName: targetUser.firstName,
+          senderLastName: targetUser.lastName,
+          groupId: targetGroup._id.toString(),
         },
         true
       );
@@ -1443,9 +1483,7 @@ export const deactivateEmergency = async (req: Request, res: Response) => {
 
     // TODO LATER: send an SMS to all emergency contacts
 
-    return res
-      .status(200)
-      .send({ message: 'Successfully deactivated emergency!' });
+    return res.status(200).send({ message: 'Successfully activated emergency!' });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }
