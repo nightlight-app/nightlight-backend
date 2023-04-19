@@ -2,12 +2,14 @@ import Ping from '../models/Ping.model';
 import { Request, Response } from 'express';
 import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
 import User from '../models/User.model';
-import { addPingExpireJob } from '../queue/jobs';
+// MARK: QUEUE REMOVED
+// import { addPingExpireJob } from '../queue/jobs';
 import { sendNotifications } from '../utils/notification.utils';
 import { NotificationType } from '../interfaces/Notification.interface';
 import { PingStatus } from '../interfaces/Ping.interface';
 import mongoose from 'mongoose';
-import { nightlightQueue } from '../queue/setup/queue.setup';
+// MARK: QUEUE REMOVED
+// import { nightlightQueue } from '../queue/setup/queue.setup';
 
 /**
  * Sends a ping from the sender to the recipient.
@@ -50,9 +52,11 @@ export const sendPing = async (req: Request, res: Response) => {
       new Date().getTime() - new Date(ping.expirationDateTime).getTime();
 
     // Add the ping expiration to the queue
+    // MARK: QUEUE REMOVED
     //const job = await addPingExpireJob(savedPing._id.toString(), delay);
 
     // Check if the job was added to the queue
+    // MARK: QUEUE REMOVED
     // if (!job) {
     //   return res
     //     .status(400)
@@ -169,7 +173,8 @@ export const respondToPing = async (req: Request, res: Response) => {
 
     if (ping.queueId) {
       // Remove the ping expiration from the queue
-      nightlightQueue.remove(ping.queueId);
+      // MARK: QUEUE REMOVED
+      // nightlightQueue.remove(ping.queueId);
     }
 
     // Add the ping to the recipient's list of pings
@@ -254,7 +259,8 @@ export const removePing = async (req: Request, res: Response) => {
 
     // Remove the ping expiration from the queue
     if (removedPing.queueId) {
-      nightlightQueue.remove(removedPing.queueId);
+      // MARK: QUEUE REMOVED
+      // nightlightQueue.remove(removedPing.queueId);
     }
 
     // Remove the ping from the recipient's list of pings

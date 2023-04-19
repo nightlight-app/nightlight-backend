@@ -5,7 +5,8 @@ import { Venue as VenueInterface } from '../interfaces/Venue.interface';
 import Venue from '../models/Venue.model';
 import { REACTION_EMOJIS, REACTION_EXPIRY_DURATION } from '../utils/constants';
 import { Emoji } from '../utils/venue.utils';
-import { addReactionExpireJob } from '../queue/jobs';
+// MARK: QUEUE REMOVED
+// import { addReactionExpireJob } from '../queue/jobs';
 import { nightlightQueue } from '../queue/setup/queue.setup';
 import { verifyKeys, KeyValidationType } from '../utils/validation.utils';
 
@@ -334,13 +335,16 @@ export const toggleReactionToVenue = async (req: Request, res: Response) => {
       await result.updateOne({ $set: { reactions: result.reactions } });
 
       // Remove job from queue
-      nightlightQueue.remove(queueId);
+      // MARK: QUEUE REMOVED
+      // nightlightQueue.remove(queueId);
 
       return res.status(200).send({
         message: 'Successfully deleted reaction from venue: ' + venueId,
       });
     } else {
       // Add reaction to queue
+      // MARK: QUEUE REMOVED
+      /*
       const job = await addReactionExpireJob(
         userId,
         venueId,
@@ -348,12 +352,14 @@ export const toggleReactionToVenue = async (req: Request, res: Response) => {
         REACTION_EXPIRY_DURATION
       );
 
+
       // Check if job was added to queue
       if (job === null || job?.id === undefined) {
         return res
           .status(400)
           .send({ message: 'Failed to react to venue, queue error!' });
       }
+      */
 
       // Add reaction to venue
       const result = await Venue.findByIdAndUpdate(
@@ -363,7 +369,7 @@ export const toggleReactionToVenue = async (req: Request, res: Response) => {
             reactions: {
               userId: userId,
               emoji: emoji,
-              queueId: job?.id,
+              queueId: '',
             },
           },
         },
@@ -372,7 +378,8 @@ export const toggleReactionToVenue = async (req: Request, res: Response) => {
 
       // Check if venue exists
       if (result === null) {
-        nightlightQueue.remove(job.id);
+        // MARK: QUEUE REMOVED
+        // nightlightQueue.remove(job.id);
         return res.status(400).send({ message: 'Venue does not exist!' });
       }
 

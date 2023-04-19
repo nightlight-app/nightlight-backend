@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 import { NotificationType } from '../interfaces/Notification.interface';
 import Group from '../models/Group.model';
 import User from '../models/User.model';
-import { addGroupExpireJob } from '../queue/jobs';
+// MARK: QUEUE REMOVED
+// import { addGroupExpireJob } from '../queue/jobs';
 import { inviteUsersToGroup } from '../utils/group.utils';
 import { sendNotifications } from '../utils/notification.utils';
 import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
@@ -73,7 +74,8 @@ export const createGroup = async (req: Request, res: Response) => {
     const result = inviteUsersToGroup(newGroup._id, newGroup.invitedMembers);
 
     // add the group to the expire queue
-    addGroupExpireJob(newGroup._id.toString(), GROUP_EXPIRY_DURATION);
+    // MARK: QUEUE REMOVED
+    //addGroupExpireJob(newGroup._id.toString(), GROUP_EXPIRY_DURATION);
 
     // convert all user ids to strings for notification sending
     const stringIds = newGroup.invitedMembers.map(id => id.toString());
