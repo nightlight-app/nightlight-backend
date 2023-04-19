@@ -16,6 +16,11 @@ const queueOptions = {
   }),
 };
 
+// Log errors to the console
+queueOptions.connection.on('error', err => {
+  console.error('Redis connection error:', err);
+});
+
 /**
  * Create a new queue that will be used to process jobs.
  * Also can be used to retrieve the existing queue.
