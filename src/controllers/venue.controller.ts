@@ -18,14 +18,22 @@ import { verifyKeys, KeyValidationType } from '../utils/validation.utils';
 export const createVenue = async (req: Request, res: Response) => {
   const venue = req.body;
 
+  // check if a venue was provided
+  if (!venue) {
+    return res.status(400).send({ message: 'No venue provided!' });
+  }
+
+  // check if the venue has all the necessary keys
   const validationError = verifyKeys(venue, KeyValidationType.VENUES);
   if (validationError !== '') {
     return res.status(400).send({ message: validationError });
   }
 
+  // create a new venue from the request body
   const newVenue = new Venue(venue);
 
   try {
+    // save the venue to the database
     await newVenue.save();
 
     return res
@@ -37,19 +45,31 @@ export const createVenue = async (req: Request, res: Response) => {
 };
 
 export const getVenue = async (req: Request, res: Response) => {
+  const venueId = req.params?.venueId;
+  const userId = req.query.userId as string;
+
+  // check if a venue id was provided
+  if (!venueId) {
+    return res.status(400).send({ message: 'No venue ID provided!' });
+  }
+
+  // check if a user id was provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // check if the venue id is valid
+  if (!mongoose.Types.ObjectId.isValid(venueId)) {
+    return res.status(400).send({ message: 'Invalid venue ID!' });
+  }
+
+  // check if the user id is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  // get the venue from the database with the aggregated and reshaped reactions
   try {
-    const venueId = req.params?.venueId;
-
-    if (!mongoose.Types.ObjectId.isValid(venueId)) {
-      return res.status(400).send({ message: 'Invalid venue ID!' });
-    }
-
-    const userId = req.query.userId as string;
-
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).send({ message: 'Invalid user ID!' });
-    }
-
     const targetVenue: VenueInterface[] = await Venue.aggregate([
       {
         $match: {
@@ -104,6 +124,7 @@ export const getVenue = async (req: Request, res: Response) => {
       },
     ]);
 
+    // check if the venue exists
     if (targetVenue.length == 0) {
       return res.status(400).send({ message: 'Venue does not exist!' });
     }
@@ -127,7 +148,17 @@ export const getVenue = async (req: Request, res: Response) => {
  */
 export const getVenues = async (req: Request, res: Response) => {
   const userId = req.query.userId as string;
-  const count = Number(req.query?.count);
+  const count = Number(req.query.count);
+
+  // Check if a userId is provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if a count is provided
+  if (!count) {
+    return res.status(400).send({ message: 'No page count provided!' });
+  }
 
   // Check if the user ID is valid
   if (!mongoose.Types.ObjectId.isValid(userId as string)) {
@@ -222,6 +253,21 @@ export const toggleReactionToVenue = async (req: Request, res: Response) => {
   const userId = req.body.userId as string;
   const emoji = req.body.emoji as Emoji;
 
+  // Check if venue ID is provided
+  if (!venueId) {
+    return res.status(400).send({ message: 'No venue ID provided!' });
+  }
+
+  // Check if user ID is provided
+  if (!userId) {
+    return res.status(400).send({ message: 'No user ID provided!' });
+  }
+
+  // Check if emoji is provided
+  if (!emoji) {
+    return res.status(400).send({ message: 'No emoji provided!' });
+  }
+
   // Check if venue ID is valid
   if (!mongoose.Types.ObjectId.isValid(venueId)) {
     return res.status(400).send({ message: 'Invalid venue ID!' });
@@ -244,6 +290,11 @@ export const toggleReactionToVenue = async (req: Request, res: Response) => {
     // Check if venue exists
     if (!venue) {
       return res.status(400).send({ message: 'Venue does not exist!' });
+    }
+
+    // Check if venue ID is valid
+    if (!mongoose.Types.ObjectId.isValid(venueId)) {
+      return res.status(400).send({ message: 'Invalid venue ID!' });
     }
 
     // Check if a reaction object with userId and emoji already exists
@@ -342,7 +393,12 @@ export const toggleReactionToVenue = async (req: Request, res: Response) => {
  * @return {Promise} - A promise that resolves when the venue is successfully deleted or failed to delete
  */
 export const deleteVenue = async (req: Request, res: Response) => {
-  const venueId = req.params?.venueId;
+  const venueId = req.params.venueId as string;
+
+  // Check if venue ID is provided
+  if (!venueId) {
+    return res.status(400).send({ message: 'No venue ID provided!' });
+  }
 
   // Check if venue ID is valid
   if (!mongoose.Types.ObjectId.isValid(venueId)) {
@@ -372,6 +428,11 @@ export const deleteVenue = async (req: Request, res: Response) => {
  */
 export const updateVenue = async (req: Request, res: Response) => {
   const venueId = req.params.venueId as string;
+
+  // Check if venue ID is provided
+  if (!venueId) {
+    return res.status(400).send({ message: 'No venue ID provided!' });
+  }
 
   // Check if venue ID is valid
   if (!mongoose.Types.ObjectId.isValid(venueId)) {
