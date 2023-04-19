@@ -1031,7 +1031,7 @@ export const addNotificationToken = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'No user ID provided!' });
   }
 
-  // Check if the user ID was provided
+  // Check if the notification token was provided
   if (!notificationToken) {
     return res.status(400).send({ message: 'No notification token provided!' });
   }
