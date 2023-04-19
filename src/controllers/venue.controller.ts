@@ -212,121 +212,123 @@ export const getVenues = async (req: Request, res: Response) => {
 };
 
 /**
- * Adds a reaction to a venue with specified ID
+ * Adds or removes a reaction to a venue with specified ID
  * @param {Request} req - The request object containing the suggested request parameters.
  * @param {Response} res - The response object holding the returned venue and messages.
- * @return {Promise} - A promise that resolves when the reaction is successfully added or failed to add
+ * @return {Promise} - A promise that resolves when the reaction is successfully added/removed or failed to add/remove
  */
-export const addReactionToVenue = async (req: Request, res: Response) => {
+export const toggleReactionToVenue = async (req: Request, res: Response) => {
+  const venueId = req.params.venueId as string;
+  const userId = req.body.userId as string;
+  const emoji = req.body.emoji as Emoji;
+
+  // Check if venue ID is valid
+  if (!mongoose.Types.ObjectId.isValid(venueId)) {
+    return res.status(400).send({ message: 'Invalid venue ID!' });
+  }
+
+  // Check if user ID is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  // Check if emoji is valid
+  if (!REACTION_EMOJIS.includes(emoji)) {
+    return res.status(400).send({ message: 'Invalid emoji!' });
+  }
+
   try {
-    const venueId = req.params?.venueId;
-    const userId = req.query.userId as string;
-    const emoji = req.query.emoji as Emoji;
+    // Find the venue by venueId and reactions that match userId and emoji
+    const venue = await Venue.findById(venueId);
 
-    // Check if venue ID is valid
-    if (!mongoose.Types.ObjectId.isValid(venueId)) {
-      return res.status(400).send({ message: 'Invalid venue ID!' });
+    // Check if venue exists
+    if (!venue) {
+      return res.status(400).send({ message: 'Venue does not exist!' });
     }
 
-    // Check if user ID is valid
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).send({ message: 'Invalid user ID!' });
-    }
-
-    // Add reaction to queue
-    const job = await addReactionExpireJob(
-      userId,
-      venueId,
-      emoji,
-      REACTION_EXPIRY_DURATION
+    // Check if a reaction object with userId and emoji already exists
+    const existingReaction = venue.reactions.find(
+      reaction => reaction.userId === userId && reaction.emoji === emoji
     );
 
-    // Check if job was added to queue
-    if (job === null || job?.id === undefined) {
-      return res
-        .status(400)
-        .send({ message: 'Failed to react to venue, queue error!' });
-    }
+    // If reaction exists, remove it. Otherwise, add it.
+    if (existingReaction) {
+      // Get venue
+      const result = await Venue.findById(venueId);
 
-    // Add reaction to venue
-    const result = await Venue.findByIdAndUpdate(
-      venueId,
-      {
-        $push: {
-          reactions: {
-            userId: userId,
-            emoji: emoji,
-            queueId: job?.id,
+      // Check if venue exists
+      if (result === null) {
+        return res.status(400).send({ message: 'Venue does not exist!' });
+      }
+
+      // Get reaction to be removed
+      const removedReaction = result.reactions.filter(
+        reaction => reaction.userId === userId && reaction.emoji === emoji
+      )[0];
+
+      // Check if reaction exists
+      if (removedReaction === undefined) {
+        return res.status(400).send({ message: 'Reaction does not exist!' });
+      }
+
+      // Remove reaction from venue
+      result.reactions = result.reactions.filter(
+        reaction => reaction.userId !== userId || reaction.emoji !== emoji
+      );
+
+      // Obtain queue ID
+      const queueId = removedReaction.queueId;
+
+      // Remove reaction from queue
+      await result.updateOne({ $set: { reactions: result.reactions } });
+
+      // Remove job from queue
+      nightlightQueue.remove(queueId);
+
+      return res.status(200).send({
+        message: 'Successfully deleted reaction from venue: ' + venueId,
+      });
+    } else {
+      // Add reaction to queue
+      const job = await addReactionExpireJob(
+        userId,
+        venueId,
+        emoji,
+        REACTION_EXPIRY_DURATION
+      );
+
+      // Check if job was added to queue
+      if (job === null || job?.id === undefined) {
+        return res
+          .status(400)
+          .send({ message: 'Failed to react to venue, queue error!' });
+      }
+
+      // Add reaction to venue
+      const result = await Venue.findByIdAndUpdate(
+        venueId,
+        {
+          $push: {
+            reactions: {
+              userId: userId,
+              emoji: emoji,
+              queueId: job?.id,
+            },
           },
         },
-      },
-      { new: true }
-    );
+        { new: true }
+      );
 
-    // Check if venue exists
-    if (result === null) {
-      nightlightQueue.remove(job.id);
-      return res.status(400).send({ message: 'Venue does not exist!' });
+      // Check if venue exists
+      if (result === null) {
+        nightlightQueue.remove(job.id);
+        return res.status(400).send({ message: 'Venue does not exist!' });
+      }
+
+      return res
+        .status(200)
+        .send({ message: 'Successfully added reaction to Venue!' });
     }
-
-    return res
-      .status(200)
-      .send({ message: 'Successfully added reaction to Venue!', body: result });
-  } catch (error: any) {
-    return res.status(500).send({ message: error.message });
-  }
-};
-
-/**
- * Remove a reaction to a venue with specified ID
- * @param {Request} req - The request object containing the suggested request parameters.
- * @param {Response} res - The response object holding the returned venue and messages.
- * @return {Promise} - A promise that resolves when the reaction is successfully removed or failed to remove
- */
-export const deleteReactionFromVenue = async (req: Request, res: Response) => {
-  try {
-    const venueId = req.params.venueId;
-    const userId = req.query.userId as string;
-    const emoji = req.query.emoji as Emoji;
-
-    // Check if venue ID is valid
-    if (!mongoose.Types.ObjectId.isValid(venueId)) {
-      return res.status(400).send({ message: 'Invalid venue ID!' });
-    }
-
-    // Check if user ID is valid
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).send({ message: 'Invalid user ID!' });
-    }
-
-    // Get venue
-    const result = await Venue.findOne({ _id: venueId });
-
-    // Check if venue exists
-    if (result === null) {
-      return res.status(400).send({ message: 'Venue does not exist!' });
-    }
-
-    // Find reaction index
-    const reactionIndex = result.reactions.findIndex(
-      r => r.userId === userId && r.emoji === emoji
-    );
-
-    // Remove reaction from venue
-    const removedReaction = result.reactions.splice(reactionIndex, 1)[0];
-
-    // Obtain queue ID
-    const queueId = removedReaction.queueId;
-
-    // Remove reaction from queue
-    await result.updateOne({ $set: { reactions: result.reactions } });
-
-    // Remove job from queue
-    nightlightQueue.remove(queueId);
-
-    return res.status(200).send({
-      message: 'Successfully deleted reaction from venue: ' + venueId,
-    });
   } catch (error: any) {
     console.log(error.message);
     return res.status(500).send({ message: error.message });

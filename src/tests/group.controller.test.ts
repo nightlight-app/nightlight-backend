@@ -41,7 +41,7 @@ const connectToMongo = async (): Promise<void> => {
 
 before(async () => {
   await connectToMongo();
-  server = app.listen(6060);
+  server = app.listen(6070);
   await nightlightQueue.drain();
   await User.deleteMany({});
   await Group.deleteMany({});

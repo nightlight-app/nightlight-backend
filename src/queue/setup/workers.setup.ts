@@ -25,6 +25,10 @@ const workerOptions: WorkerOptions = {
  * @returns {Promise<void>} completion of the worker after handling the job
  */
 const workerHandler = async (job: Job<NightlightQueueJob>) => {
+  console.log(
+    `[Queue] Job # ${job.id} received by worker. Job type: ${job.data.type}.`
+  );
+
   switch (job.data.type) {
     case 'groupExpire':
       await expireGroup(job.data.groupId);
