@@ -199,7 +199,7 @@ export const inviteMembersToExistingGroup = async (
   const groupId = req.params.groupId as string;
   const userId = req.query.userId as string;
 
-  // Check if the user ID was provided
+  // Check if the user IDs was provided
   if (!users || users.length === 0) {
     return res.status(400).send({ message: 'No user IDs provided!' });
   }
