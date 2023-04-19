@@ -975,7 +975,7 @@ export const removeFriend = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'No user ID provided!' });
   }
 
-  // Check if the user ID was provided
+  // Check if the friend user ID was provided
   if (!friendId) {
     return res.status(400).send({ message: 'No friend user ID provided!' });
   }
