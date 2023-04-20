@@ -360,6 +360,7 @@ describe('testing group actions', () => {
       .patch(`/users/${userIdFriend5}/accept-group-invitation`)
       .query({ groupId: groupId })
       .then(res => {
+        console.log(res.body);
         expect(res).to.have.status(200);
         setTimeout(() => {
           done();
