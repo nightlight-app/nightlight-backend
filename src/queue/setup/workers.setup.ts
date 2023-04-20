@@ -6,7 +6,7 @@ import {
   expireGroup,
   expirePing,
   expireReaction,
-  removeFriendReqestNotification,
+  removeFriendRequestNotification,
   removeGroupInviteNotification,
 } from '../workers';
 
@@ -50,7 +50,7 @@ const workerHandler = async (job: Job<NightlightQueueJob>) => {
       await removeGroupInviteNotification(job.data.userId, job.data.groupId);
       return;
     case 'friendRequestResponse':
-      await removeFriendReqestNotification(job.data.userId, job.data.friendId);
+      await removeFriendRequestNotification(job.data.userId, job.data.friendId);
       return;
     default:
       // exit if the job type is not recognized
