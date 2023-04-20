@@ -9,7 +9,7 @@ import { nightlightQueue } from './setup/queue.setup';
  */
 export const addGroupExpireJob = async (groupId: string, delay: number) => {
   // override delay if environment is test
-  if (process.env.ENVIRONMENT === 'test') delay = 3000;
+  if (process.env.ENVIRONMENT === 'test') delay = 4000;
 
   try {
     await nightlightQueue.add(
@@ -93,15 +93,17 @@ export const addGroupInviteResponseJob = async (
   groupId: string
 ) => {
   try {
-    await nightlightQueue.add(
+    const job = await nightlightQueue.add(
       'groupInviteResponse',
       {
         type: 'groupInviteResponse',
         userId: userId,
         groupId: groupId,
       },
-      { removeOnComplete: true, removeOnFail: true }
+      { delay: 0, removeOnComplete: true, removeOnFail: true }
     );
+
+    return job;
   } catch (error: any) {
     console.log(error.message);
   }
@@ -124,7 +126,7 @@ export const addFriendRequestResponseJob = async (
         userId: userId,
         friendId: friendId,
       },
-      { removeOnComplete: true, removeOnFail: true }
+      { delay: 0, removeOnComplete: true, removeOnFail: true }
     );
   } catch (error: any) {
     console.log(error.message);

@@ -161,9 +161,9 @@ export const removeGroupInviteNotification = async (
 ) => {
   try {
     await Notification.findOneAndDelete({
-      userId: new ObjectId(userId),
+      userId: userId,
       notificationType: NotificationType.friendRequest,
-      groupId: new ObjectId(groupId),
+      groupId: groupId,
     });
   } catch (error: any) {
     console.log(error.message);
@@ -181,9 +181,9 @@ export const removeFriendReqestNotification = async (
 ) => {
   try {
     await Notification.findOneAndDelete({
-      userId: new ObjectId(userId),
+      userId: userId,
       notificationType: NotificationType.friendRequest,
-      friendId: new ObjectId(friendId),
+      friendId: friendId,
     });
   } catch (error: any) {
     console.log(error.message);

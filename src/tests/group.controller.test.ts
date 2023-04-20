@@ -330,7 +330,6 @@ describe('testing group actions', () => {
       });
   });
 
-  /*
   it('should fetch the notifications via GET /users/:userId/notifications', done => {
     chai
       .request(server)
@@ -339,7 +338,6 @@ describe('testing group actions', () => {
       .then(res => {
         expect(res).to.have.status(200);
         const notifications = res.body.notifications;
-        console.log(notifications);
         // one of the notifications should be the friend request from 3 to 2
         expect(notifications).to.satisfy((nots: any[]) => {
           return nots.some(
@@ -354,7 +352,6 @@ describe('testing group actions', () => {
       })
       .catch(err => done(err));
   });
-  */
 
   it('should accept group invitation and add member to group (userIdFriend5)', done => {
     chai
@@ -362,15 +359,13 @@ describe('testing group actions', () => {
       .patch(`/users/${userIdFriend5}/accept-group-invitation`)
       .query({ groupId: groupId })
       .then(res => {
-        console.log(res.body);
         expect(res).to.have.status(200);
         setTimeout(() => {
           done();
-        }, 3000);
+        }, 2000);
       });
   });
 
-  /*
   it('should fetch the notifications after invite accepted via GET /users/:userId/notifications', done => {
     chai
       .request(server)
@@ -379,7 +374,6 @@ describe('testing group actions', () => {
       .then(res => {
         expect(res).to.have.status(200);
         const notifications = res.body.notifications;
-        console.log(notifications);
         // one of the notifications should be the friend request from 3 to 2
         expect(notifications).to.satisfy((nots: any[]) => {
           return nots.every(
@@ -394,7 +388,6 @@ describe('testing group actions', () => {
       })
       .catch(err => done(err));
   });
-  */
 
   it('should return group information after invitation accepted', done => {
     chai
