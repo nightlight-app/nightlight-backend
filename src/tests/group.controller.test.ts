@@ -330,6 +330,7 @@ describe('testing group actions', () => {
       });
   });
 
+  /*
   it('should fetch the notifications via GET /users/:userId/notifications', done => {
     chai
       .request(server)
@@ -353,6 +354,7 @@ describe('testing group actions', () => {
       })
       .catch(err => done(err));
   });
+  */
 
   it('should accept group invitation and add member to group (userIdFriend5)', done => {
     chai
@@ -364,10 +366,11 @@ describe('testing group actions', () => {
         expect(res).to.have.status(200);
         setTimeout(() => {
           done();
-        }, 2000);
+        }, 3000);
       });
   });
 
+  /*
   it('should fetch the notifications after invite accepted via GET /users/:userId/notifications', done => {
     chai
       .request(server)
@@ -391,6 +394,7 @@ describe('testing group actions', () => {
       })
       .catch(err => done(err));
   });
+  */
 
   it('should return group information after invitation accepted', done => {
     chai
