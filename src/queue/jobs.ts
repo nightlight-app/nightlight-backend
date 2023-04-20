@@ -9,7 +9,7 @@ import { nightlightQueue } from './setup/queue.setup';
  */
 export const addGroupExpireJob = async (groupId: string, delay: number) => {
   // override delay if environment is test
-  if (process.env.ENVIRONMENT === 'test') delay = 3000;
+  if (process.env.ENVIRONMENT === 'test') delay = 4000;
 
   try {
     await nightlightQueue.add(
@@ -78,6 +78,56 @@ export const addPingExpireJob = async (pingId: string, delay: number) => {
     );
 
     return job;
+  } catch (error: any) {
+    console.log(error.message);
+  }
+};
+
+/**
+ * Add group invite response job to the nightlightQueue.
+ * @param {string} userId - The ID of the user that responded to the group invite
+ * @param {string} groupId - The ID of the group that the user responded to
+ */
+export const addGroupInviteResponseJob = async (
+  userId: string,
+  groupId: string
+) => {
+  try {
+    const job = await nightlightQueue.add(
+      'groupInviteResponse',
+      {
+        type: 'groupInviteResponse',
+        userId: userId,
+        groupId: groupId,
+      },
+      { delay: 0, removeOnComplete: true, removeOnFail: true }
+    );
+
+    return job;
+  } catch (error: any) {
+    console.log(error.message);
+  }
+};
+
+/**
+ * Add friend request response job to the nightlightQueue.
+ * @param {string} userId - The ID of the user that responded to the friend request
+ * @param {string} friendId - The ID of the friend that the user responded to
+ */
+export const addFriendRequestResponseJob = async (
+  userId: string,
+  friendId: string
+) => {
+  try {
+    await nightlightQueue.add(
+      'friendRequestResponse',
+      {
+        type: 'friendRequestResponse',
+        userId: userId,
+        friendId: friendId,
+      },
+      { delay: 0, removeOnComplete: true, removeOnFail: true }
+    );
   } catch (error: any) {
     console.log(error.message);
   }

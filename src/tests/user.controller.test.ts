@@ -606,6 +606,28 @@ describe('testing friend requests', () => {
       .catch(err => done(err));
   });
 
+  it('should fetch the notifications via GET /users/:userId/notifications', done => {
+    chai
+      .request(server)
+      .get(`/notifications/`)
+      .query({ userId: userId2 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        const notifications = res.body.notifications;
+        // one of the notifications should be the friend request from 3 to 2
+        expect(notifications).to.satisfy((nots: any[]) => {
+          return nots.some(
+            not =>
+              not.userId === userId2 &&
+              not.data.notificationType === 'friendRequest' &&
+              not.data.senderId === userId3
+          );
+        });
+        done();
+      })
+      .catch(err => done(err));
+  });
+
   it('should decline a friend request via PATCH /users/:userId/accept-friend-request', done => {
     chai
       .request(server)
@@ -613,9 +635,35 @@ describe('testing friend requests', () => {
       .query({ friendId: userId3 })
       .then(res => {
         expect(res).to.have.status(200);
-        done();
+        setTimeout(() => {
+          done();
+        }, 2000);
       });
   });
+
+  it('should fetch the notifications after request declined via GET /users/:userId/notifications', done => {
+    chai
+      .request(server)
+      .get(`/notifications/`)
+      .query({ userId: userId2 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        const notifications = res.body.notifications;
+        // one of the notifications should be the friend request from 3 to 2
+        expect(notifications).to.satisfy((nots: any[]) => {
+          return nots.every(
+            not =>
+              not.userId !== userId2 &&
+              not.data.notificationType !== 'friendRequest' &&
+              not.data.senderId !== userId3
+          );
+        });
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  // GET NOTIFICATIONS AGAIN
 
   it('should fetch a user via GET to check friend requests after decline /users/?userIds={userId}', done => {
     chai

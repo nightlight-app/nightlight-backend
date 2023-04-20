@@ -4,7 +4,12 @@ import { Emoji } from '../utils/venue.utils';
  * The list of jobs that the queue can handle
  * @options groupExpire, reactionExpire
  */
-export type JobsList = 'groupExpire' | 'reactionExpire' | 'pingExpire';
+export type JobsList =
+  | 'groupExpire'
+  | 'reactionExpire'
+  | 'pingExpire'
+  | 'groupInviteResponse'
+  | 'friendRequestResponse';
 
 /**
  * Interface representing a group expire job.
@@ -47,12 +52,42 @@ export interface PingExpireJob {
 }
 
 /**
+ * Represents a job to expire a ping.
+ * @interface GroupInviteResponseJob
+ *
+ * @property {string} type - The type of the job, which should always be `'groupInviteResponse'`.
+ * @property {string} userId - The ID of the user who responded to the group invite.
+ * @property {string} groupId - The ID of the group that the user responded to.
+ */
+export interface GroupInviteResponseJob {
+  type: 'groupInviteResponse';
+  userId: string;
+  groupId: string;
+}
+
+/**
+ * Represents a job to expire a ping.
+ * @interface FriendRequestResponseJob
+ *
+ * @property {string} type - The type of the job, which should always be `'groupInviteResponse'`.
+ * @property {string} userId - The ID of the user who responded to the group invite.
+ * @property {string} friendId - The ID of the friend that the user responded to.
+ */
+export interface FriendRequestResponseJob {
+  type: 'friendRequestResponse';
+  userId: string;
+  friendId: string;
+}
+
+/**
  * Generic type for the jobs that the queue can handle.
  * This is the union of all the jobs that the queue can handle.
  *
- * @options GroupExpireJob, ReactionExpireJob
+ * @options GroupExpireJob, ReactionExpireJob, PingExpireJob, GroupInviteResponseJob, FriendRequestResponseJob
  */
 export type NightlightQueueJob =
   | GroupExpireJob
   | ReactionExpireJob
-  | PingExpireJob;
+  | PingExpireJob
+  | GroupInviteResponseJob
+  | FriendRequestResponseJob;

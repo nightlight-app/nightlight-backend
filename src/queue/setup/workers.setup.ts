@@ -2,7 +2,13 @@ import { Job, Worker, WorkerOptions } from 'bullmq';
 import { connectMongoDB } from '../../config/mongodb.config';
 import { NIGHTLIGHT_QUEUE } from '../../utils/constants';
 import { NightlightQueueJob } from '../jobs.interface';
-import { expireGroup, expirePing, expireReaction } from '../workers';
+import {
+  expireGroup,
+  expirePing,
+  expireReaction,
+  removeFriendRequestNotification,
+  removeGroupInviteNotification,
+} from '../workers';
 
 let redisHost = process.env.REDIS_HOST || '';
 
@@ -39,6 +45,12 @@ const workerHandler = async (job: Job<NightlightQueueJob>) => {
       return;
     case 'pingExpire':
       await expirePing(job.data.pingId);
+      return;
+    case 'groupInviteResponse':
+      await removeGroupInviteNotification(job.data.userId, job.data.groupId);
+      return;
+    case 'friendRequestResponse':
+      await removeFriendRequestNotification(job.data.userId, job.data.friendId);
       return;
     default:
       // exit if the job type is not recognized
