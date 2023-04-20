@@ -183,7 +183,7 @@ export const removeFriendRequestNotification = async (
     await Notification.findOneAndDelete({
       userId: userId,
       notificationType: NotificationType.friendRequest,
-      friendId: friendId,
+      'data.senderId': friendId,
     });
   } catch (error: any) {
     console.log(error.message);
