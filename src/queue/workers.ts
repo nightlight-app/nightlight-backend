@@ -163,7 +163,7 @@ export const removeGroupInviteNotification = async (
     await Notification.findOneAndDelete({
       userId: userId,
       notificationType: NotificationType.groupInvite,
-      groupId: groupId,
+      'data.groupId': groupId,
     });
   } catch (error: any) {
     console.log(error.message);
