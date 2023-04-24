@@ -1,12 +1,7 @@
 import mongoose, { ConnectOptions } from 'mongoose';
-import createServer from '../server';
-import chai, { assert, expect } from 'chai';
-import {
-  sendNotifications,
-  sendNotificationToUser,
-} from '../utils/notification.utils';
+import chai, { assert } from 'chai';
+import { sendNotifications } from '../utils/notification.utils';
 import { ObjectId } from 'mongodb';
-import { NOTIFICATION_KEYS_TEST } from './data/testData';
 import { useTestingDatabase } from '../../src/config/mongodb.config';
 require('dotenv').config();
 
