@@ -51,11 +51,16 @@ export const TEST_USER_1: User = {
   isEmergency: false,
   birthday: new Date().toUTCString(),
   currentGroup: undefined,
-  invitedGroups: undefined,
+  invitedGroups: [],
   friends: [],
   friendRequests: [],
   lastActive: TEST_LAST_ACTIVE_1,
   savedGroups: [TEST_SAVED_GROUP_1, TEST_SAVED_GROUP_2],
+  sentPings: [],
+  receivedPings: [],
+  emergencyContacts: [],
+  isActiveNow: false,
+  sentFriendRequests: [],
 };
 
 export const UPDATE_USER_1_TO_USER_2: any = {
@@ -115,7 +120,7 @@ export const TEST_USER_2: User = {
   isEmergency: false,
   birthday: new Date().toUTCString(),
   currentGroup: undefined,
-  invitedGroups: undefined,
+  invitedGroups: [],
   friends: [
     new mongoose.Types.ObjectId(987654),
     new mongoose.Types.ObjectId(16724),
@@ -123,6 +128,11 @@ export const TEST_USER_2: User = {
   friendRequests: [],
   lastActive: TEST_LAST_ACTIVE_2,
   savedGroups: [TEST_SAVED_GROUP_3, TEST_SAVED_GROUP_4],
+  sentPings: [],
+  receivedPings: [],
+  emergencyContacts: [],
+  isActiveNow: false,
+  sentFriendRequests: [],
 };
 
 export const TEST_USER_3: User = {
@@ -138,7 +148,7 @@ export const TEST_USER_3: User = {
   isEmergency: false,
   birthday: new Date().toUTCString(),
   currentGroup: undefined,
-  invitedGroups: undefined,
+  invitedGroups: [],
   friends: [
     new mongoose.Types.ObjectId(987654),
     new mongoose.Types.ObjectId(16724),
@@ -146,6 +156,11 @@ export const TEST_USER_3: User = {
   friendRequests: [],
   lastActive: TEST_LAST_ACTIVE_2,
   savedGroups: [TEST_SAVED_GROUP_3, TEST_SAVED_GROUP_4],
+  sentPings: [],
+  receivedPings: [],
+  emergencyContacts: [],
+  isActiveNow: false,
+  sentFriendRequests: [],
 };
 
 export const TEST_USER_4: User = {
@@ -161,11 +176,16 @@ export const TEST_USER_4: User = {
   isEmergency: false,
   birthday: new Date().toUTCString(),
   currentGroup: undefined,
-  invitedGroups: undefined,
+  invitedGroups: [],
   friends: [],
   friendRequests: [],
   lastActive: TEST_LAST_ACTIVE_2,
   savedGroups: [TEST_SAVED_GROUP_3, TEST_SAVED_GROUP_4],
+  sentPings: [],
+  receivedPings: [],
+  emergencyContacts: [],
+  isActiveNow: false,
+  sentFriendRequests: [],
 };
 
 export const TEST_USER_5: User = {
@@ -181,11 +201,16 @@ export const TEST_USER_5: User = {
   isEmergency: false,
   birthday: new Date().toUTCString(),
   currentGroup: undefined,
-  invitedGroups: undefined,
+  invitedGroups: [],
   friends: [],
   friendRequests: [],
   lastActive: TEST_LAST_ACTIVE_2,
   savedGroups: [TEST_SAVED_GROUP_3, TEST_SAVED_GROUP_4],
+  sentPings: [],
+  receivedPings: [],
+  emergencyContacts: [],
+  isActiveNow: false,
+  sentFriendRequests: [],
 };
 
 export const SEARCH_USER_1: User = {
@@ -201,11 +226,16 @@ export const SEARCH_USER_1: User = {
   isEmergency: false,
   birthday: new Date().toUTCString(),
   currentGroup: undefined,
-  invitedGroups: undefined,
+  invitedGroups: [],
   friends: [],
   friendRequests: [],
   lastActive: TEST_LAST_ACTIVE_1,
   savedGroups: [TEST_SAVED_GROUP_1, TEST_SAVED_GROUP_2],
+  sentPings: [],
+  receivedPings: [],
+  emergencyContacts: [],
+  isActiveNow: false,
+  sentFriendRequests: [],
 };
 
 export const SEARCH_USER_2: User = {
@@ -221,11 +251,16 @@ export const SEARCH_USER_2: User = {
   isEmergency: false,
   birthday: new Date().toUTCString(),
   currentGroup: undefined,
-  invitedGroups: undefined,
+  invitedGroups: [],
   friends: [],
   friendRequests: [],
   lastActive: TEST_LAST_ACTIVE_1,
   savedGroups: [TEST_SAVED_GROUP_1, TEST_SAVED_GROUP_2],
+  sentPings: [],
+  receivedPings: [],
+  emergencyContacts: [],
+  isActiveNow: false,
+  sentFriendRequests: [],
 };
 
 export const SEARCH_USER_3: User = {
@@ -241,11 +276,16 @@ export const SEARCH_USER_3: User = {
   isEmergency: false,
   birthday: new Date().toUTCString(),
   currentGroup: undefined,
-  invitedGroups: undefined,
+  invitedGroups: [],
   friends: [],
   friendRequests: [],
   lastActive: TEST_LAST_ACTIVE_1,
   savedGroups: [TEST_SAVED_GROUP_1, TEST_SAVED_GROUP_2],
+  sentPings: [],
+  receivedPings: [],
+  emergencyContacts: [],
+  isActiveNow: false,
+  sentFriendRequests: [],
 };
 
 /* Groups */
@@ -328,6 +368,7 @@ export const USER_KEYS_TEST = [
   'lastName',
   'phone',
   'isEmergency',
+  'isActiveNow',
   'lastActive',
   'savedGroups',
   'emergencyContacts',

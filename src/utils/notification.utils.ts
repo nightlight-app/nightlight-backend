@@ -96,7 +96,6 @@ export const sendNotifications = async (
  */
 export const sendNotificationToExpo = async (notification: ExpoNotification) => {
   try {
-    console.log({ ...notification });
     // send notification to expo to be sent to device
     await axios.post(
       'https://exp.host/--/api/v2/push/send',

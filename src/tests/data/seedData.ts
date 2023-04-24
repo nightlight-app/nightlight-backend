@@ -1,8 +1,9 @@
 import { faker } from '@faker-js/faker';
 import mongoose from 'mongoose';
 import { Group } from '../../interfaces/Group.interface';
-import { User } from '../../interfaces/User.interface';
+import { EmergencyContact, User } from '../../interfaces/User.interface';
 import { Venue } from '../../interfaces/Venue.interface';
+import { SavedGroup } from '../../interfaces/SavedGroup.interface';
 
 /**
  * Creates a random user that can be sent as a post to the backend. Utilizes faker.js npm package for value generation
@@ -27,13 +28,15 @@ export const createUser = (
     email: faker.internet.email(),
     phone: faker.phone.number(),
     isEmergency: false,
+    isActiveNow: false,
     birthday: new Date(
       faker.date.between('1990-01-01T00:00:00.000Z', '2001-01-01T00:00:00.000Z')
     ).toUTCString(),
     currentGroup: currentGroup,
-    invitedGroups: invitedGroups,
+    invitedGroups: invitedGroups || ([] as mongoose.Types.ObjectId[]),
     friends: friends || ([] as mongoose.Types.ObjectId[]),
     friendRequests: [] as mongoose.Types.ObjectId[],
+    sentFriendRequests: [] as mongoose.Types.ObjectId[],
     lastActive: {
       location: {
         latitude: Number(faker.address.latitude()),
@@ -43,7 +46,10 @@ export const createUser = (
         faker.date.between('1990-01-01T00:00:00.000Z', '2001-01-01T00:00:00.000Z')
       ).toUTCString(),
     },
-    savedGroups: [],
+    emergencyContacts: [] as EmergencyContact[],
+    savedGroups: [] as SavedGroup[],
+    sentPings: [] as mongoose.Types.ObjectId[],
+    receivedPings: [] as mongoose.Types.ObjectId[],
   };
 };
 
@@ -58,10 +64,6 @@ export const createGroup = () => {
     invitedMembers: [] as mongoose.Types.ObjectId[],
     creationDatetime: new Date().toUTCString(),
     expirationDatetime: new Date().toUTCString(),
-    expectedDestination: {
-      latitude: Number(faker.address.latitude()),
-      longitude: Number(faker.address.longitude()),
-    },
   } as Group;
 };
 
