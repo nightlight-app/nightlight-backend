@@ -404,10 +404,13 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
     }
 
     // Remove groupId from invited groups and add to currentGroup
-    await User.findByIdAndUpdate(userId, {
-      $pull: { invitedGroups: groupId },
-      currentGroup: groupId,
-    });
+    await User.updateOne(
+      { _id: userId },
+      {
+        $pull: { invitedGroups: groupId },
+        currentGroup: groupId,
+      }
+    );
 
     // Remove userId from invitedMembers in group and add to members in group
     const targetGroup = await Group.findByIdAndUpdate(groupId, {
