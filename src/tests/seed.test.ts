@@ -6,6 +6,7 @@ import {
   createGroup,
   createUser,
   createVenue,
+  SEED_USERS,
   SEED_VENUES,
 } from './data/seedData';
 import {
@@ -19,7 +20,9 @@ import Venue from '../models/Venue.model';
 import { Server } from 'http';
 import Notification from '../models/Notification.model';
 import { useTestingDatabase } from '../../src/config/mongodb.config';
-require('dotenv').config();
+import Ping from '../models/Ping.model';
+import dotenv from 'dotenv';
+dotenv.config();
 
 chai.use(chaiHttp);
 chai.should();
@@ -43,6 +46,7 @@ before(async () => {
   await User.deleteMany({});
   await Group.deleteMany({});
   await Venue.deleteMany({});
+  await Ping.deleteMany({});
   await Notification.deleteMany({});
 });
 
@@ -78,6 +82,20 @@ describe('seed database for prod', () => {
     });
   }
 
+  // add in the other users
+  for (let i = 0; i < 5; ++i) {
+    it('seed data - users', done => {
+      chai
+        .request(server)
+        .post('/users/')
+        .send(SEED_USERS[i])
+        .then(res => {
+          expect(res).to.have.status(201);
+          done();
+        });
+    });
+  }
+
   const final_user = createUser(undefined, [], userIds);
 
   // post final user (main user)
@@ -104,6 +122,7 @@ describe('seed database for prod', () => {
         members: [mainUserId],
       })
       .then(res => {
+        console.log(res.body.group);
         groupId = res.body.group._id;
         expect(res).to.have.status(200);
         expect(res.body.group).to.have.keys([
@@ -133,7 +152,7 @@ describe('seed database for prod', () => {
   }
 
   // loop for multiple venues to be  added
-  for (let i = 0; i < 10; ++i) {
+  for (let i = 0; i < SEED_VENUES.length; ++i) {
     // create venue from venues list
     const venue = createVenue(SEED_VENUES[i].name, SEED_VENUES[i].address);
     it('seed data - venues', done => {

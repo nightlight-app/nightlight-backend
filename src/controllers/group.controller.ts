@@ -72,8 +72,11 @@ export const createGroup = async (req: Request, res: Response) => {
     // invite all users in the invitedMembers array to the group
     const result = inviteUsersToGroup(newGroup._id, newGroup.invitedMembers);
 
+    const delay =
+      new Date().getTime() - new Date(group.expirationDatetime).getTime();
+
     // add the group to the expire queue
-    addGroupExpireJob(newGroup._id.toString(), GROUP_EXPIRY_DURATION);
+    addGroupExpireJob(newGroup._id.toString(), delay);
 
     // convert all user ids to strings for notification sending
     const stringIds = newGroup.invitedMembers.map(id => id.toString());
