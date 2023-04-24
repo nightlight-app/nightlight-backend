@@ -389,16 +389,25 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
   }
 
   try {
-    // Remove groupId from invited groups and add to currentGroup
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      $pull: { invitedGroups: groupId },
-      currentGroup: groupId,
-    });
+    const targetUser = await User.findById(userId);
 
     // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
+
+    // Check if the user is already in a group
+    if (targetUser?.currentGroup) {
+      return res
+        .status(400)
+        .send({ message: 'User already has a current group!' });
+    }
+
+    // Remove groupId from invited groups and add to currentGroup
+    await User.findByIdAndUpdate(userId, {
+      $pull: { invitedGroups: groupId },
+      currentGroup: groupId,
+    });
 
     // Remove userId from invitedMembers in group and add to members in group
     const targetGroup = await Group.findByIdAndUpdate(groupId, {
