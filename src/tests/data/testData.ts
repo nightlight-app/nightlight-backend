@@ -322,7 +322,7 @@ export const TEST_VENUE: Venue = {
 /* Notification */
 export const TEST_NOTIFICATION: MongoNotification = {
   _id: new mongoose.Types.ObjectId(),
-  userId: new mongoose.Types.ObjectId(123).toString(),
+  recipientId: new mongoose.Types.ObjectId(123).toString(),
   title: 'Friend Request',
   body: 'You have a friend request!',
   data: {

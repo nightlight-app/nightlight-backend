@@ -47,7 +47,7 @@ export const sendNotifications = async (
     if (mongoose.Types.ObjectId.isValid(id)) {
       // add notification to database
       const notification = await sendNotificationToUser({
-        userId: id,
+        recipientId: id,
         title,
         body,
         data,
@@ -123,7 +123,7 @@ export const sendNotificationToExpo = async (notification: ExpoNotification) => 
  * If any other errors occurs, it will be silently logged and undefined will be returned.
  *
  * Params are the same as the MongoNotification interface.
- * @param userId The ID of the user the notification is being sent to
+ * @param friendId The ID of the user the notification is being sent to
  * @param title The title of the new notification.
  * @param body The body of the new notification.
  * @param data Any additional data to attach to the notification.
