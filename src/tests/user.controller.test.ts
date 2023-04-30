@@ -654,9 +654,9 @@ describe('testing friend requests', () => {
           return nots.every(
             not =>
               !(
-                not.recipientId == userId2 &&
-                not.data.notificationType == 'friendRequest' &&
-                not.data.senderId == userId3
+                not.recipientId === userId2 &&
+                not.data.notificationType === 'friendRequest' &&
+                not.data.senderId === userId3
               )
           );
         });

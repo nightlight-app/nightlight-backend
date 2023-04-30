@@ -379,10 +379,10 @@ describe('testing group actions', () => {
           return nots.every(
             not =>
               !(
-                not.data.notificationType == 'groupInvite' &&
-                not.data.groupId == groupId &&
-                not.data.senderId == userIdMain &&
-                not.recipientId == userIdFriend5
+                not.data.notificationType === 'groupInvite' &&
+                not.data.groupId === groupId &&
+                not.data.senderId === userIdMain &&
+                not.recipientId === userIdFriend5
               )
           );
         });
