@@ -618,7 +618,7 @@ describe('testing friend requests', () => {
         expect(notifications).to.satisfy((nots: any[]) => {
           return nots.some(
             not =>
-              not.userId === userId2 &&
+              not.recipientId === userId2 &&
               not.data.notificationType === 'friendRequest' &&
               not.data.senderId === userId3
           );
@@ -653,17 +653,17 @@ describe('testing friend requests', () => {
         expect(notifications).to.satisfy((nots: any[]) => {
           return nots.every(
             not =>
-              not.userId !== userId2 &&
-              not.data.notificationType !== 'friendRequest' &&
-              not.data.senderId !== userId3
+              !(
+                not.recipientId == userId2 &&
+                not.data.notificationType == 'friendRequest' &&
+                not.data.senderId == userId3
+              )
           );
         });
         done();
       })
       .catch(err => done(err));
   });
-
-  // GET NOTIFICATIONS AGAIN
 
   it('should fetch a user via GET to check friend requests after decline /users/?userIds={userId}', done => {
     chai

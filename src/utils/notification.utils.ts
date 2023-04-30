@@ -18,16 +18,18 @@ import axios from 'axios';
  * If the userId is invalid, the function will return undefined. If a userId in the array is invalid, the function
  * will ignore that userId and continue to send notifications to the other valid userIds.
  *
- * @param {string[]} userIds - The id or ids of the user(s) to receive the notification.
+ * @param {string[]} recipientIds - The id or ids of the user(s) to receive the notification.
  * @param {string} title - The title of the notification.
  * @param {string} body - The content of the notification.
+ * @param {NotificationSpecificData} data - Data to include with the notification.
+ * @param {boolean} isPush - Whether or not the notification is a push notification.
  * @param {number} delay - Optional delay until the notification should be shown to the user. (set as 0 for now)
- * @param {NotificationData} data - Optional data to include with the notification.
+
  *
  * @return {Promise<Notification[]>} - Returns a promise that resolves to an array of notifications.
  */
 export const sendNotifications = async (
-  userIds: string[],
+  recipientIds: string[],
   title: string,
   body: string,
   data: NotificationSpecificData,
@@ -37,12 +39,12 @@ export const sendNotifications = async (
   // array of notifications to return
   let notifications: NotificationDocument[] = [];
   // Exit function if userId is an empty array
-  if (userIds.length === 0) {
+  if (recipientIds.length === 0) {
     return notifications;
   }
 
   // Javascript will not wait for promises to resolve in a for loop or mapping, so we must collect all the promises
-  const promises = userIds.map(async id => {
+  const promises = recipientIds.map(async id => {
     // check if current user id is valid
     if (mongoose.Types.ObjectId.isValid(id)) {
       // add notification to database
@@ -123,7 +125,7 @@ export const sendNotificationToExpo = async (notification: ExpoNotification) => 
  * If any other errors occurs, it will be silently logged and undefined will be returned.
  *
  * Params are the same as the MongoNotification interface.
- * @param friendId The ID of the user the notification is being sent to
+ * @param recipientId The ID of the user the notification is being sent to
  * @param title The title of the new notification.
  * @param body The body of the new notification.
  * @param data Any additional data to attach to the notification.

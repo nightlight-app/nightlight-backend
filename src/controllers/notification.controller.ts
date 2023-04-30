@@ -22,7 +22,7 @@ export const getNotifications = async (req: Request, res: Response) => {
 
   try {
     // find all notifications for the given user
-    const notifications = await Notification.find({ userId: userId });
+    const notifications = await Notification.find({ recipientId: userId });
 
     // return found notifications
     return res.status(200).send({

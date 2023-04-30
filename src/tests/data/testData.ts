@@ -398,7 +398,7 @@ export const VENUE_KEYS_TEST = [
 export const NOTIFICATION_KEYS_TEST = [
   '__v',
   '_id',
-  'userId',
+  'recipientId',
   'title',
   'body',
   'data',
