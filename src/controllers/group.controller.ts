@@ -72,6 +72,7 @@ export const createGroup = async (req: Request, res: Response) => {
     // invite all users in the invitedMembers array to the group
     const result = inviteUsersToGroup(newGroup._id, newGroup.invitedMembers);
 
+    // calculate group expiry duration based on `expirationDatetime`
     const delay =
       new Date().getTime() - new Date(group.expirationDatetime).getTime();
 

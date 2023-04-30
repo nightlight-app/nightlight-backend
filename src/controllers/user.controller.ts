@@ -404,13 +404,15 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
     }
 
     // Remove groupId from invited groups and add to currentGroup
-    await User.updateOne(
-      { _id: userId },
-      {
-        $pull: { invitedGroups: groupId },
-        currentGroup: groupId,
-      }
+    targetUser.invitedGroups = targetUser.invitedGroups.filter(
+      group => group._id.toString() !== groupId
     );
+
+    // Add groupId to currentGroup
+    targetUser.currentGroup = new mongoose.Types.ObjectId(groupId);
+
+    // Remove groupId from invited groups and add to currentGroup
+    await targetUser.save();
 
     // Remove userId from invitedMembers in group and add to members in group
     const targetGroup = await Group.findByIdAndUpdate(groupId, {
