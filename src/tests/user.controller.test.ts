@@ -332,7 +332,7 @@ describe('testing save groups', () => {
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
         expect(res.body.users[0].savedGroups[2]).to.have.keys(SAVED_GROUP_KEYS);
         expect(res.body.users[0].savedGroups[2].name).to.equal('Test group');
-        expect(res.body.users[0].savedGroups[2].users).to.have.length(3);
+        expect(res.body.users[0].savedGroups[2].members).to.have.length(3);
         done();
       });
   });

@@ -112,7 +112,7 @@ const userSchema = new mongoose.Schema({
     {
       _id: Schema.Types.ObjectId,
       name: String,
-      users: [
+      members: [
         {
           type: Schema.Types.ObjectId,
           ref: 'User',
