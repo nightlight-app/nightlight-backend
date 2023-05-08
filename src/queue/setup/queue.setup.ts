@@ -13,8 +13,14 @@ const queueOptions = {
   connection: new Redis({
     host: redisHost,
     port: parseInt(process.env.REDIS_PORT || '6379'),
+    password: process.env.REDIS_PASSWORD,
   }),
 };
+
+// Log errors to the console
+queueOptions.connection.on('error', err => {
+  console.error('Redis connection error:', err);
+});
 
 /**
  * Create a new queue that will be used to process jobs.

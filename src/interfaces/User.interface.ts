@@ -35,6 +35,7 @@ export interface User {
   lastName: string;
   email: string;
   phone: string;
+  isActiveNow?: boolean;
   isEmergency?: boolean;
   birthday?: string;
   currentGroup?: mongoose.Types.ObjectId;

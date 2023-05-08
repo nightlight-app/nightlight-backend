@@ -330,6 +330,29 @@ describe('testing group actions', () => {
       });
   });
 
+  it('should fetch the notifications via GET /users/:userId/notifications', done => {
+    chai
+      .request(server)
+      .get(`/notifications/`)
+      .query({ userId: userIdFriend5 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        const notifications = res.body.notifications;
+        // one of the notifications should be the friend request from 3 to 2
+        expect(notifications).to.satisfy((nots: any[]) => {
+          return nots.some(
+            not =>
+              not.data.notificationType === 'groupInvite' &&
+              not.data.groupId === groupId &&
+              not.data.senderId === userIdMain &&
+              not.userId === userIdFriend5
+          );
+        });
+        done();
+      })
+      .catch(err => done(err));
+  });
+
   it('should accept group invitation and add member to group (userIdFriend5)', done => {
     chai
       .request(server)
@@ -337,8 +360,33 @@ describe('testing group actions', () => {
       .query({ groupId: groupId })
       .then(res => {
         expect(res).to.have.status(200);
-        done();
+        setTimeout(() => {
+          done();
+        }, 2000);
       });
+  });
+
+  it('should fetch the notifications after invite accepted via GET /users/:userId/notifications', done => {
+    chai
+      .request(server)
+      .get(`/notifications/`)
+      .query({ userId: userIdFriend5 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        const notifications = res.body.notifications;
+        // one of the notifications should be the friend request from 3 to 2
+        expect(notifications).to.satisfy((nots: any[]) => {
+          return nots.every(
+            not =>
+              not.data.notificationType !== 'groupInvite' &&
+              not.data.groupId !== groupId &&
+              not.data.senderId !== userIdMain &&
+              not.userId !== userIdFriend5
+          );
+        });
+        done();
+      })
+      .catch(err => done(err));
   });
 
   it('should return group information after invitation accepted', done => {

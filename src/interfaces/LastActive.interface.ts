@@ -8,9 +8,18 @@
  * @property {String} time - The date and time (UTC) when the user was last active.
  */
 export interface LastActive {
-  location: {
-    latitude: number;
-    longitude: number;
-  };
+  location: LocationData;
   time: String;
+}
+
+/**
+ * An interface representing a location
+ * @interface LocationData
+ *
+ * @property {number} latitude - The latitude coordinate of the user's last location.
+ * @property {number} longitude - The longitude coordinate of the user's last location.
+ */
+export interface LocationData {
+  latitude: number;
+  longitude: number;
 }

@@ -55,6 +55,13 @@ export class LocationService {
       // listen for the locationUpdate event
       socket.on('locationUpdate', (arg: LocationUpdateData) => {
         const { groupId, userId, location } = arg;
+        if (
+          groupId === undefined ||
+          userId === undefined ||
+          location === undefined
+        ) {
+          return;
+        }
         // console.log(
         //   `[${groupId}] [${userId}] [${location.latitude}, ${location.longitude}]`
         // );

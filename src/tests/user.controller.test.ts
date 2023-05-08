@@ -606,6 +606,28 @@ describe('testing friend requests', () => {
       .catch(err => done(err));
   });
 
+  it('should fetch the notifications via GET /users/:userId/notifications', done => {
+    chai
+      .request(server)
+      .get(`/notifications/`)
+      .query({ userId: userId2 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        const notifications = res.body.notifications;
+        // one of the notifications should be the friend request from 3 to 2
+        expect(notifications).to.satisfy((nots: any[]) => {
+          return nots.some(
+            not =>
+              not.userId === userId2 &&
+              not.data.notificationType === 'friendRequest' &&
+              not.data.senderId === userId3
+          );
+        });
+        done();
+      })
+      .catch(err => done(err));
+  });
+
   it('should decline a friend request via PATCH /users/:userId/accept-friend-request', done => {
     chai
       .request(server)
@@ -613,9 +635,35 @@ describe('testing friend requests', () => {
       .query({ friendId: userId3 })
       .then(res => {
         expect(res).to.have.status(200);
-        done();
+        setTimeout(() => {
+          done();
+        }, 2000);
       });
   });
+
+  it('should fetch the notifications after request declined via GET /users/:userId/notifications', done => {
+    chai
+      .request(server)
+      .get(`/notifications/`)
+      .query({ userId: userId2 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        const notifications = res.body.notifications;
+        // one of the notifications should be the friend request from 3 to 2
+        expect(notifications).to.satisfy((nots: any[]) => {
+          return nots.every(
+            not =>
+              not.userId !== userId2 &&
+              not.data.notificationType !== 'friendRequest' &&
+              not.data.senderId !== userId3
+          );
+        });
+        done();
+      })
+      .catch(err => done(err));
+  });
+
+  // GET NOTIFICATIONS AGAIN
 
   it('should fetch a user via GET to check friend requests after decline /users/?userIds={userId}', done => {
     chai
@@ -822,6 +870,88 @@ describe('testing user search', () => {
         done();
       })
       .catch(err => done(err));
+  });
+});
+
+describe('testing go-online/go-offline', () => {
+  let userId1: string;
+  it('should create a new user via POST /users/', done => {
+    chai
+      .request(server)
+      .post('/users/')
+      .send(TEST_USER_1)
+      .then(res => {
+        userId1 = res.body.user._id;
+        expect(res).to.have.status(201);
+        expect(res.body.user).to.have.keys(USER_KEYS_TEST);
+        done();
+      });
+  });
+
+  it('should set the user to online via PATCH /users/{userId}/go-online', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId1}/go-online`)
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('should get the user with the online status via GET /users/{userId}', done => {
+    chai
+      .request(server)
+      .get(`/users/`)
+      .query({ userIds: userId1 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users[0].isActiveNow).to.be.true;
+        done();
+      });
+  });
+
+  it('should set the user to offline via PATCH /users/{userId}/go-offline', done => {
+    chai
+      .request(server)
+      .patch(`/users/${userId1}/go-offline`)
+      .send({
+        location: {
+          latitude: 33.675843,
+          longitude: 56.765849,
+        },
+      })
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('should get the user with the offline status via GET /users/{userId}', done => {
+    chai
+      .request(server)
+      .get(`/users/`)
+      .query({ userIds: userId1 })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body.users[0].isActiveNow).to.be.false;
+        expect(res.body.users[0].lastActive.location.latitude).to.equal(
+          33.675843
+        );
+        expect(res.body.users[0].lastActive.location.longitude).to.equal(
+          56.765849
+        );
+        done();
+      });
+  });
+
+  it('should delete the user via DELETE /users/{userId}', done => {
+    chai
+      .request(server)
+      .delete(`/users/${userId1}`)
+      .then(res => {
+        expect(res).to.have.status(200);
+        done();
+      });
   });
 });
 

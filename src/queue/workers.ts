@@ -7,6 +7,7 @@ import Venue from '../models/Venue.model';
 import { sendNotifications } from '../utils/notification.utils';
 import Ping from '../models/Ping.model';
 import { PingStatus } from '../interfaces/Ping.interface';
+import Notification from '../models/Notification.model';
 
 /**
  * Expire a group from the database after the queue job has been processed
@@ -144,6 +145,46 @@ export const expirePing = async (pingId: string) => {
       },
       true
     );
+  } catch (error: any) {
+    console.log(error.message);
+  }
+};
+
+/**
+ * Remove a group invite notification from the database after the queue job has been processed
+ * @param {string} userId - The ID of the user who received the notification
+ * @param {string} groupId - The ID of the group that the notification was for
+ */
+export const removeGroupInviteNotification = async (
+  userId: string,
+  groupId: string
+) => {
+  try {
+    await Notification.findOneAndDelete({
+      userId: userId,
+      notificationType: NotificationType.groupInvite,
+      'data.groupId': groupId,
+    });
+  } catch (error: any) {
+    console.log(error.message);
+  }
+};
+
+/**
+ * Remove a friend request notification from the database after the queue job has been processed
+ * @param {string} userId - The ID of the user who received the notification
+ * @param {string} friendId - The ID of the friend that the notification was for
+ */
+export const removeFriendRequestNotification = async (
+  userId: string,
+  friendId: string
+) => {
+  try {
+    await Notification.findOneAndDelete({
+      userId: userId,
+      notificationType: NotificationType.friendRequest,
+      'data.senderId': friendId,
+    });
   } catch (error: any) {
     console.log(error.message);
   }
