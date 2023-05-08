@@ -789,29 +789,62 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid friend ID!' });
   }
 
+  // Convert user ID to mongoose ObjectId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Convert friend ID to mongoose ObjectId
+  const friendObjectId = new mongoose.Types.ObjectId(friendId);
+
   try {
     // Find the user in the database and add the friendId to their friend array while removing it from their friendRequests array
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      $push: { friends: friendId },
-      $pull: { friendRequests: friendId },
-    });
+    const targetUser = await User.findById(userObjectId);
+
+    // Find the friend in the database and add the userId to their friend array
+    const targetFriendUser = await User.findById(friendObjectId);
 
     // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
-    // Find the friend in the database and add the userId to their friend array
-    const targetFriendUser = await User.findByIdAndUpdate(friendId, {
-      $pull: { sentFriendRequests: userId },
-      $push: { friends: userId },
-    });
-
     // Check if the friend exists
     if (targetFriendUser === null) {
       return res.status(400).send({ message: 'Friend does not exist!' });
     }
 
+    // Disallow friend acceptance if the invite was not sent
+    if (
+      !targetUser.friendRequests.includes(friendObjectId) ||
+      !targetFriendUser.sentFriendRequests.includes(userObjectId)
+    ) {
+      return res.status(400).send({ message: 'Friend request not found!' });
+    }
+
+    // Add the friendId to the user's friends array
+    targetUser.friends.push(friendObjectId);
+
+    // Remove the friendId from the user's friendRequests array
+    targetUser.friendRequests = targetUser.friendRequests.filter(
+      (id: mongoose.Types.ObjectId) => id !== friendObjectId
+    );
+
+    // Remove the userId from the friend's sentFriendRequests array
+    targetFriendUser.sentFriendRequests =
+      targetFriendUser.sentFriendRequests.filter(
+        (id: mongoose.Types.ObjectId) => id !== userObjectId
+      );
+
+    // Add the userId to the friend's friends array
+    targetFriendUser.friends.push(userObjectId);
+
+    // Save the updated user and friend to the database
+    await targetUser.save();
+    await targetFriendUser.save();
+
+    // Remove the invite notification from the user's notifications
+    await addFriendRequestResponseJob(userId, friendId);
+
+    // Send a notification to the friend that they have received a friend request
     sendNotifications(
       [friendId],
       'Friend request accepted! 🎉',
@@ -828,9 +861,6 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
       },
       false
     );
-
-    // Remove the invite notification from the user's notifications
-    await addFriendRequestResponseJob(userId, friendId);
 
     return res
       .status(200)
