@@ -823,19 +823,19 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
     // Add the friendId to the user's friends array
     targetUser.friends.push(friendObjectId);
 
+    // Add the userId to the friend's friends array
+    targetFriendUser.friends.push(userObjectId);
+
     // Remove the friendId from the user's friendRequests array
     targetUser.friendRequests = targetUser.friendRequests.filter(
-      (id: mongoose.Types.ObjectId) => id !== friendObjectId
+      (id: mongoose.Types.ObjectId) => !id.equals(friendObjectId)
     );
 
     // Remove the userId from the friend's sentFriendRequests array
     targetFriendUser.sentFriendRequests =
       targetFriendUser.sentFriendRequests.filter(
-        (id: mongoose.Types.ObjectId) => id !== userObjectId
+        (id: mongoose.Types.ObjectId) => !id.equals(userObjectId)
       );
-
-    // Add the userId to the friend's friends array
-    targetFriendUser.friends.push(userObjectId);
 
     // Save the updated user and friend to the database
     await targetUser.save();
@@ -935,12 +935,12 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
 
     // Remove the friendId from the user's friendRequests array
     targetUser.friendRequests = targetUser.friendRequests.filter(
-      (id: mongoose.Types.ObjectId) => id !== friendObjectId
+      (id: mongoose.Types.ObjectId) => !id.equals(friendObjectId)
     );
 
     // Remove the userId from the friend's sentFriendRequests array
     targetFriend.sentFriendRequests = targetFriend.sentFriendRequests.filter(
-      (id: mongoose.Types.ObjectId) => id !== userObjectId
+      (id: mongoose.Types.ObjectId) => !id.equals(userObjectId)
     );
 
     // Save the updated user and friend to the database
