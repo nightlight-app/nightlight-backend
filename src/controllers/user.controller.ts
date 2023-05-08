@@ -99,7 +99,9 @@ export const getUsers = async (req: Request, res: Response) => {
       { notificationToken: 0 }
     )
       .populate('sentPings')
-      .populate('receivedPings');
+      .populate('receivedPings')
+      .populate('currentGroup')
+      .populate('friends');
 
     // Check if the user exists
     if (targetUsers.length === 0 || !targetUsers) {

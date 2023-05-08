@@ -417,7 +417,7 @@ describe('testing group actions', () => {
           'currentGroup',
         ]);
         expect(res.body.users[0].invitedGroups).to.have.length(0);
-        expect(res.body.users[0].currentGroup).to.equal(groupId);
+        expect(res.body.users[0].currentGroup._id).to.equal(groupId);
         done();
       });
   });
@@ -475,7 +475,7 @@ describe('testing group actions', () => {
           'currentGroup',
         ]);
         expect(res.body.users[0].invitedGroups).to.have.length(0);
-        expect(res.body.users[0].currentGroup).to.equal(groupId);
+        expect(res.body.users[0].currentGroup._id).to.equal(groupId);
         done();
       });
   });
