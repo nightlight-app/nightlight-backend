@@ -296,36 +296,52 @@ export const removeMemberInvitation = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'No group ID provided!' });
   }
 
+  // check if group id is valid
+  if (!mongoose.Types.ObjectId.isValid(groupId)) {
+    return res.status(400).send({ message: 'Invalid group ID!' });
+  }
+
+  // check if user id is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  // Create an ObjectId from the user ID
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Create an ObjectId from the group ID
+  const groupObjectId = new mongoose.Types.ObjectId(groupId);
+
   try {
-    // check if group id is valid
-    if (!mongoose.Types.ObjectId.isValid(groupId)) {
-      return res.status(400).send({ message: 'Invalid group ID!' });
-    }
-
-    // check if user id is valid
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).send({ message: 'Invalid user ID!' });
-    }
-
     // remove user from the group's invitedMembers array
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      $pull: { invitedGroups: groupId },
-    });
+    const targetUser = await User.findById(userObjectId);
+
+    // remove group from the user's invitedGroups array
+    const targetGroup = await Group.findById(groupObjectId);
 
     // check if user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
-    // remove group from the user's invitedGroups array
-    const targetGroup = await Group.findByIdAndUpdate(groupId, {
-      $pull: { invitedMembers: userId },
-    });
-
     // check if group exists
     if (targetGroup === null) {
       return res.status(400).send({ message: 'Group does not exist!' });
     }
+
+    // remove group from the user's invitedGroups array
+    targetUser.invitedGroups = targetUser.invitedGroups.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(groupObjectId)
+    );
+
+    // remove user from the group's invitedMembers array
+    targetGroup.invitedMembers = targetGroup.invitedMembers.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(userObjectId)
+    );
+
+    // save the user and group to the database
+    await targetUser.save();
+    await targetGroup.save();
 
     return res
       .status(200)

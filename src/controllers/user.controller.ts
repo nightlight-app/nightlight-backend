@@ -390,28 +390,73 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid group ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Create a new ObjectId from the groupId
+  const groupObjectId = new mongoose.Types.ObjectId(groupId);
+
   try {
     // Remove groupId from invited groups and add to currentGroup
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      $pull: { invitedGroups: groupId },
-      currentGroup: groupId,
-    });
+    const targetUser = await User.findById(userObjectId);
+
+    // Remove userId from invitedMembers in group and add to members in group
+    const targetGroup = await Group.findById(groupObjectId);
 
     // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
-    // Remove userId from invitedMembers in group and add to members in group
-    const targetGroup = await Group.findByIdAndUpdate(groupId, {
-      $pull: { invitedMembers: userId },
-      $push: { members: userId },
-    });
-
     // Check if the group exists
     if (targetGroup === null) {
       return res.status(400).send({ message: 'Group does not exist!' });
     }
+
+    // Check if the user is already in the group
+    if (
+      targetGroup.members.includes(userObjectId) &&
+      targetUser.currentGroup?.equals(groupObjectId)
+    ) {
+      return res.status(400).send({ message: 'User is already in this group!' });
+    }
+
+    // Check if the user is already in a group
+    if (targetUser.currentGroup) {
+      return res
+        .status(400)
+        .send({ message: 'User is already in another group!' });
+    }
+
+    // Disallow user from joining group if invitation does not exist
+    if (
+      !targetUser.invitedGroups.includes(groupObjectId) ||
+      !targetGroup.invitedMembers.includes(userObjectId)
+    ) {
+      return res
+        .status(400)
+        .send({ message: 'User has not been invited to this group!' });
+    }
+
+    // Remove groupId from invited group
+    targetUser.invitedGroups = targetUser.invitedGroups.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(groupObjectId)
+    );
+
+    // Add groupId to currentGroup
+    targetUser.currentGroup = groupObjectId;
+
+    // Remove userId from invitedMembers in group
+    targetGroup.invitedMembers = targetGroup.invitedMembers.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(userObjectId)
+    );
+
+    // Add userId to members in group
+    targetGroup.members.push(userObjectId);
+
+    // Save the updated user and group
+    await targetUser.save();
+    await targetGroup.save();
 
     // Remove the invite notification from the user's notifications
     await addGroupInviteResponseJob(userId, groupId);
@@ -472,16 +517,15 @@ export const declineGroupInvitation = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid group ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Create a new ObjectId from the groupId
+  const groupObjectId = new mongoose.Types.ObjectId(groupId);
+
   try {
     // Remove groupId from invited groups
-    const targetGroup = await Group.findByIdAndUpdate(groupId, {
-      $pull: { invitedMembers: userId },
-    });
-
-    // Check if the group exists
-    if (targetGroup === null) {
-      return res.status(400).send({ message: 'Group does not exist!' });
-    }
+    const targetGroup = await Group.findById(groupObjectId);
 
     // Find target user
     const targetUser = await User.findById(userId);
@@ -491,9 +535,39 @@ export const declineGroupInvitation = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
+    // Check if the group exists
+    if (targetGroup === null) {
+      return res.status(400).send({ message: 'Group does not exist!' });
+    }
+
+    // Disallow user from declining group invitation if invitation does not exist
+    if (
+      !targetUser.invitedGroups.includes(groupObjectId) ||
+      !targetGroup.invitedMembers.includes(userObjectId)
+    ) {
+      return res
+        .status(400)
+        .send({ message: 'User has not been invited to this group!' });
+    }
+
+    // Remove groupId from invited groups
+    targetUser.invitedGroups = targetUser.invitedGroups.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(groupObjectId)
+    );
+
+    // Remove userId from invitedMembers in group
+    targetGroup.invitedMembers = targetGroup.invitedMembers.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(userObjectId)
+    );
+
+    // Save the updated user and group
+    await targetUser.save();
+    await targetGroup.save();
+
     // Remove the invite notification from the user's notifications
     await addGroupInviteResponseJob(userId, groupId);
 
+    // Send notifications to all invited users that the invitation has been declined
     sendNotifications(
       [
         ...targetGroup.members
