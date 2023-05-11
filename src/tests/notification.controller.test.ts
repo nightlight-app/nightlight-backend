@@ -203,7 +203,7 @@ describe('test notification controller errors', () => {
         delay: -3,
       })
       .then(res => {
-        expect(res).to.have.status(500);
+        expect(res).to.have.status(400);
         expect(res.body.message).to.equal('Delay must be a positive number.');
         done();
       });
