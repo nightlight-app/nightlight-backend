@@ -3,6 +3,8 @@ import User from '../models/User.model';
 import { sendNotifications } from './notification.utils';
 
 /**
+ * DEPRECATED FUNCTION (keeping for possible future use)
+ *
  * Adds the groupId to the invitedGroups array of the user document
  * @param groupId the id of the group that the users are being invited to join
  * @param invitedUsers array of user ids to be invited to the group of groupId
