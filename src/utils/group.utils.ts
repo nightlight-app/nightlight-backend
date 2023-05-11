@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import User from '../models/User.model';
-import { sendNotifications } from './notification.utils';
 
 /**
  * DEPRECATED FUNCTION (keeping for possible future use)
