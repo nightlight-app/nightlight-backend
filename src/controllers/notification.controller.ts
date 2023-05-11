@@ -25,7 +25,7 @@ export const getNotifications = async (req: Request, res: Response) => {
 
   try {
     // find all notifications for the given user
-    const notifications = await Notification.findById({ userId: userObjectId });
+    const notifications = await Notification.find({ userId: userObjectId });
 
     if (!notifications) {
       return res
