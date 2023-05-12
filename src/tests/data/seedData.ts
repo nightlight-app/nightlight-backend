@@ -31,9 +31,9 @@ export const createUser = (
       faker.date.between('1990-01-01T00:00:00.000Z', '2001-01-01T00:00:00.000Z')
     ).toUTCString(),
     currentGroup: currentGroup,
-    invitedGroups: invitedGroups,
+    receivedGroupInvites: invitedGroups,
     friends: friends || ([] as mongoose.Types.ObjectId[]),
-    friendRequests: [] as mongoose.Types.ObjectId[],
+    receivedFriendRequests: [] as mongoose.Types.ObjectId[],
     lastActive: {
       location: {
         latitude: Number(faker.address.latitude()),

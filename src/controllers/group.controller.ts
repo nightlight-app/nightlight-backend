@@ -69,7 +69,7 @@ export const createGroup = async (req: Request, res: Response) => {
     // invite all users in the invitedMembers array to the group
     await User.updateMany(
       { _id: { $in: newGroup.invitedMembers } },
-      { $push: { invitedGroups: newGroup._id } }
+      { $push: { receivedGroupInvites: newGroup._id } }
     );
 
     // save the user to the database with the new group id
@@ -270,7 +270,7 @@ export const inviteMembersToExistingGroup = async (
     // invite all users in the invitedMembers array to the group
     await User.updateMany(
       { _id: { $in: usersObjectId } },
-      { $push: { invitedGroups: groupObjectId } }
+      { $push: { receivedGroupInvites: groupObjectId } }
     );
 
     // save the user and group to the database
@@ -344,7 +344,7 @@ export const removeMemberInvitation = async (req: Request, res: Response) => {
     // remove user from the group's invitedMembers array
     const targetUser = await User.findById(userObjectId);
 
-    // remove group from the user's invitedGroups array
+    // remove group from the user's receivedGroupInvites array
     const targetGroup = await Group.findById(groupObjectId);
 
     // check if user exists
@@ -357,8 +357,8 @@ export const removeMemberInvitation = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'Group does not exist!' });
     }
 
-    // remove group from the user's invitedGroups array
-    targetUser.invitedGroups = targetUser.invitedGroups.filter(
+    // remove group from the user's receivedGroupInvites array
+    targetUser.receivedGroupInvites = targetUser.receivedGroupInvites.filter(
       (id: mongoose.Types.ObjectId) => !id.equals(groupObjectId)
     );
 

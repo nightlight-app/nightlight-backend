@@ -17,7 +17,7 @@ export const inviteUsersToGroup = (
   try {
     invitedUsers.forEach(async (userId: mongoose.Types.ObjectId | string) => {
       await User.findByIdAndUpdate(userId, {
-        $push: { invitedGroups: groupId },
+        $push: { receivedGroupInvites: groupId },
       });
     });
 

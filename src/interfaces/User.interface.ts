@@ -39,9 +39,9 @@ export interface User {
   isEmergency?: boolean;
   birthday?: string;
   currentGroup?: mongoose.Types.ObjectId;
-  invitedGroups?: mongoose.Types.ObjectId[];
+  receivedGroupInvites?: mongoose.Types.ObjectId[];
   friends?: mongoose.Types.ObjectId[];
-  friendRequests?: mongoose.Types.ObjectId[];
+  receivedFriendRequests?: mongoose.Types.ObjectId[];
   sentFriendRequests?: mongoose.Types.ObjectId[];
   lastActive?: LastActive;
   savedGroups?: SavedGroup[];

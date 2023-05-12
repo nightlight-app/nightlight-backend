@@ -508,7 +508,7 @@ describe('testing friend requests', () => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
         expect(user._id).to.equal(userId2);
-        expect(user.friendRequests).to.have.length(2);
+        expect(user.receivedFriendRequests).to.have.length(2);
         done();
       })
       .catch(err => done(err));
@@ -534,7 +534,7 @@ describe('testing friend requests', () => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
         expect(user._id).to.equal(userId2);
-        expect(user.friendRequests).to.have.length(1);
+        expect(user.receivedFriendRequests).to.have.length(1);
         done();
       })
       .catch(err => done(err));
@@ -586,7 +586,7 @@ describe('testing friend requests', () => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
         expect(user._id).to.equal(userId2);
-        expect(user.friendRequests).to.have.length(1);
+        expect(user.receivedFriendRequests).to.have.length(1);
         done();
       })
       .catch(err => done(err));
@@ -674,7 +674,7 @@ describe('testing friend requests', () => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
         expect(user._id).to.equal(userId2);
-        expect(user.friendRequests).to.have.length(0);
+        expect(user.receivedFriendRequests).to.have.length(0);
         done();
       })
       .catch(err => done(err));

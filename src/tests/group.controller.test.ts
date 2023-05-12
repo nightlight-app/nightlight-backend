@@ -201,7 +201,7 @@ describe('testing group actions', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
-        expect(res.body.users[0].invitedGroups).to.include(groupId);
+        expect(res.body.users[0].receivedGroupInvites).to.include(groupId);
         done();
       });
   });
@@ -214,7 +214,7 @@ describe('testing group actions', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
-        expect(res.body.users[0].invitedGroups).to.include(groupId);
+        expect(res.body.users[0].receivedGroupInvites).to.include(groupId);
         done();
       });
   });
@@ -227,7 +227,7 @@ describe('testing group actions', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
-        expect(res.body.users[0].invitedGroups).to.include(groupId);
+        expect(res.body.users[0].receivedGroupInvites).to.include(groupId);
         done();
       });
   });
@@ -416,7 +416,7 @@ describe('testing group actions', () => {
           ...USER_KEYS_TEST,
           'currentGroup',
         ]);
-        expect(res.body.users[0].invitedGroups).to.have.length(0);
+        expect(res.body.users[0].receivedGroupInvites).to.have.length(0);
         expect(res.body.users[0].currentGroup._id).to.equal(groupId);
         done();
       });
@@ -441,7 +441,7 @@ describe('testing group actions', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys([...USER_KEYS_TEST]);
-        expect(res.body.users[0].invitedGroups).to.have.length(0);
+        expect(res.body.users[0].receivedGroupInvites).to.have.length(0);
         expect(res.body.users[0].currentGroup).to.be.undefined;
         done();
       });
@@ -474,7 +474,7 @@ describe('testing group actions', () => {
           ...USER_KEYS_TEST,
           'currentGroup',
         ]);
-        expect(res.body.users[0].invitedGroups).to.have.length(0);
+        expect(res.body.users[0].receivedGroupInvites).to.have.length(0);
         expect(res.body.users[0].currentGroup._id).to.equal(groupId);
         done();
       });
@@ -513,7 +513,7 @@ describe('testing group actions', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0].currentGroup).to.be.undefined;
-        expect(res.body.users[0].invitedGroups).to.not.include(groupId);
+        expect(res.body.users[0].receivedGroupInvites).to.not.include(groupId);
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
         done();
       });
@@ -672,7 +672,7 @@ describe('testing group deletion after less than 2 members', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
-        expect(res.body.users[0].invitedGroups).to.include(groupId);
+        expect(res.body.users[0].receivedGroupInvites).to.include(groupId);
         done();
       });
   });
@@ -685,7 +685,7 @@ describe('testing group deletion after less than 2 members', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
-        expect(res.body.users[0].invitedGroups).to.include(groupId);
+        expect(res.body.users[0].receivedGroupInvites).to.include(groupId);
         done();
       });
   });
@@ -698,7 +698,7 @@ describe('testing group deletion after less than 2 members', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
-        expect(res.body.users[0].invitedGroups).to.include(groupId);
+        expect(res.body.users[0].receivedGroupInvites).to.include(groupId);
         done();
       });
   });
@@ -798,7 +798,7 @@ describe('testing group deletion after less than 2 members', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys([...USER_KEYS_TEST]);
-        expect(res.body.users[0].invitedGroups).to.have.length(0);
+        expect(res.body.users[0].receivedGroupInvites).to.have.length(0);
         expect(res.body.users[0].currentGroup).to.be.undefined;
         done();
       });
@@ -823,7 +823,7 @@ describe('testing group deletion after less than 2 members', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys([...USER_KEYS_TEST]);
-        expect(res.body.users[0].invitedGroups).to.have.length(0);
+        expect(res.body.users[0].receivedGroupInvites).to.have.length(0);
         expect(res.body.users[0].currentGroup).to.be.undefined;
         done();
       });
@@ -848,7 +848,7 @@ describe('testing group deletion after less than 2 members', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.users[0]).to.have.keys([...USER_KEYS_TEST]);
-        expect(res.body.users[0].invitedGroups).to.have.length(0);
+        expect(res.body.users[0].receivedGroupInvites).to.have.length(0);
         expect(res.body.users[0].currentGroup).to.be.undefined;
         done();
       });
