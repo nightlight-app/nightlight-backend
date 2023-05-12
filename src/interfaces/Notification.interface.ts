@@ -129,6 +129,18 @@ export interface GroupExpiredData extends NotificationData {
 }
 
 /**
+ * @interface GroupDeletedData
+ * Interface for the data that is specific to a notification type.
+ *
+ * @property {string} groupId - The ID of the group that the notification is related to.
+ * @property {string} groupName - The name of the group that the notification is related to.
+ */
+export interface GroupDeletedData extends NotificationData {
+  groupId: string;
+  groupName: string;
+}
+
+/**
  * @interface EmergencyNotificationData
  * Interface for the data that is specific to a notification type.
  *
@@ -169,4 +181,5 @@ export type NotificationSpecificData =
   | GroupNotificationData
   | EmergencyNotificationData
   | PingNotificationData
-  | GroupExpiredData;
+  | GroupExpiredData
+  | GroupDeletedData;

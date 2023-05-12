@@ -686,7 +686,7 @@ export const leaveGroup = async (req: Request, res: Response) => {
       // Remove groupId from currentGroup of all members
       await User.updateMany(
         { _id: { $in: targetGroup.members } },
-        { currentGroup: undefined }
+        { currentGroup: undefined, lastActive: undefined }
       );
 
       // Remove groupId from receivedGroupInvites of all members since the group has been deleted
@@ -726,6 +726,9 @@ export const leaveGroup = async (req: Request, res: Response) => {
 
       // Remove groupId from currentGroup of user
       targetUser.currentGroup = undefined;
+
+      // Remove lastActive location from user
+      targetUser.lastActive = undefined;
 
       // Check if the user exists
       if (targetUser === null) {

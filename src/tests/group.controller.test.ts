@@ -440,7 +440,9 @@ describe('testing group actions', () => {
       .query({ userIds: userIdFriend5 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.users[0]).to.have.keys([...USER_KEYS_TEST]);
+        expect(res.body.users[0]).to.have.keys(
+          USER_KEYS_TEST.filter(key => key !== 'lastActive')
+        );
         expect(res.body.users[0].receivedGroupInvites).to.have.length(0);
         expect(res.body.users[0].currentGroup).to.be.undefined;
         done();
@@ -797,7 +799,9 @@ describe('testing group deletion after less than 2 members', () => {
       .query({ userIds: userIdFriend1 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.users[0]).to.have.keys([...USER_KEYS_TEST]);
+        expect(res.body.users[0]).to.have.keys(
+          USER_KEYS_TEST.filter(key => key !== 'lastActive')
+        );
         expect(res.body.users[0].receivedGroupInvites).to.have.length(0);
         expect(res.body.users[0].currentGroup).to.be.undefined;
         done();
@@ -822,7 +826,9 @@ describe('testing group deletion after less than 2 members', () => {
       .query({ userIds: userIdFriend2 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.users[0]).to.have.keys([...USER_KEYS_TEST]);
+        expect(res.body.users[0]).to.have.keys(
+          USER_KEYS_TEST.filter(key => key !== 'lastActive')
+        );
         expect(res.body.users[0].receivedGroupInvites).to.have.length(0);
         expect(res.body.users[0].currentGroup).to.be.undefined;
         done();
@@ -847,7 +853,9 @@ describe('testing group deletion after less than 2 members', () => {
       .query({ userIds: userIdFriend3 })
       .then(res => {
         expect(res).to.have.status(200);
-        expect(res.body.users[0]).to.have.keys([...USER_KEYS_TEST]);
+        expect(res.body.users[0]).to.have.keys(
+          USER_KEYS_TEST.filter(key => key !== 'lastActive')
+        );
         expect(res.body.users[0].receivedGroupInvites).to.have.length(0);
         expect(res.body.users[0].currentGroup).to.be.undefined;
         done();

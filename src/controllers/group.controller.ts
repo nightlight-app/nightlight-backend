@@ -172,15 +172,36 @@ export const deleteGroup = async (req: Request, res: Response) => {
   const groupObjectId = new mongoose.Types.ObjectId(groupId);
 
   try {
-    // delete group from database
-    const result = await Group.deleteOne({ _id: groupObjectId });
+    // Find group to delete
+    const targetGroup = await Group.findById(groupObjectId);
 
-    // TODO: remove group from expire queue - task added in notion
-
-    // check if group was deleted
-    if (result.deletedCount === 0) {
-      return res.status(400).send({ message: 'Group not found!' });
+    // Check if group exists
+    if (targetGroup === null) {
+      return res.status(400).send({ message: 'Group does not exist!' });
     }
+
+    // Remove currentGroup and lastActive from all users in the group
+    await User.updateMany(
+      { _id: { $in: targetGroup.members } },
+      { currentGroup: undefined, lastActive: undefined }
+    );
+
+    // Remove the group from the database
+    await targetGroup.remove();
+
+    // Send notification to members that group has been deleted
+    sendNotifications(
+      [...targetGroup.members.map(id => id.toString())],
+      'Group deleted! 😢',
+      'Your group has been deleted.',
+      {
+        notificationType: NotificationType.groupDeleted,
+        sentDateTime: new Date().toUTCString(),
+        groupId: targetGroup._id.toString(),
+        groupName: targetGroup.name,
+      },
+      true
+    );
 
     return res.status(200).send({ message: 'Successfully deleted group!' });
   } catch (error: any) {
