@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
-import mongoose from 'mongoose';
-import { Group } from '../../interfaces/Group.interface';
-import { User } from '../../interfaces/User.interface';
-import { Venue } from '../../interfaces/Venue.interface';
+import type { Group } from '../../interfaces/Group.interface';
+import type { User } from '../../interfaces/User.interface';
+import type { Venue } from '../../interfaces/Venue.interface';
+import type mongoose from 'mongoose';
 
 /**
  * Creates a random user that can be sent as a post to the backend. Utilizes faker.js npm package for value generation
@@ -15,44 +15,42 @@ export const createUser = (
   currentGroup?: mongoose.Types.ObjectId,
   invitedGroups?: mongoose.Types.ObjectId[],
   friends?: mongoose.Types.ObjectId[]
-): User => {
-  return {
-    firebaseUid: faker.random.alphaNumeric(32),
-    notificationToken: undefined,
-    imgUrlProfileSmall: faker.internet.url(),
-    imgUrlProfileLarge: faker.internet.url(),
-    imgUrlCover: faker.internet.url(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    phone: faker.phone.number(),
-    isEmergency: false,
-    birthday: new Date(
+): User => ({
+  firebaseUid: faker.random.alphaNumeric(32),
+  notificationToken: undefined,
+  imgUrlProfileSmall: faker.internet.url(),
+  imgUrlProfileLarge: faker.internet.url(),
+  imgUrlCover: faker.internet.url(),
+  firstName: faker.name.firstName(),
+  lastName: faker.name.lastName(),
+  email: faker.internet.email(),
+  phone: faker.phone.number(),
+  isEmergency: false,
+  birthday: new Date(
+    faker.date.between('1990-01-01T00:00:00.000Z', '2001-01-01T00:00:00.000Z')
+  ).toUTCString(),
+  currentGroup: currentGroup,
+  invitedGroups: invitedGroups,
+  friends: friends || ([] as mongoose.Types.ObjectId[]),
+  friendRequests: [] as mongoose.Types.ObjectId[],
+  lastActive: {
+    location: {
+      latitude: Number(faker.address.latitude()),
+      longitude: Number(faker.address.longitude()),
+    },
+    time: new Date(
       faker.date.between('1990-01-01T00:00:00.000Z', '2001-01-01T00:00:00.000Z')
     ).toUTCString(),
-    currentGroup: currentGroup,
-    invitedGroups: invitedGroups,
-    friends: friends || ([] as mongoose.Types.ObjectId[]),
-    friendRequests: [] as mongoose.Types.ObjectId[],
-    lastActive: {
-      location: {
-        latitude: Number(faker.address.latitude()),
-        longitude: Number(faker.address.longitude()),
-      },
-      time: new Date(
-        faker.date.between('1990-01-01T00:00:00.000Z', '2001-01-01T00:00:00.000Z')
-      ).toUTCString(),
-    },
-    savedGroups: [],
-  };
-};
+  },
+  savedGroups: [],
+});
 
 /**
  * Creates a random group that can be sent as a post to the backend. Utilizes faker.js npm package for value generation
  * @returns completed group object
  */
-export const createGroup = () => {
-  return {
+export const createGroup = () =>
+  ({
     name: faker.word.adjective(),
     members: [] as mongoose.Types.ObjectId[],
     invitedMembers: [] as mongoose.Types.ObjectId[],
@@ -62,8 +60,7 @@ export const createGroup = () => {
       latitude: Number(faker.address.latitude()),
       longitude: Number(faker.address.longitude()),
     },
-  } as Group;
-};
+  } as Group);
 
 /**
  * Creates a new venue that can be sent as a post to the backend. Utilizes faker.js npm package for value generation
@@ -71,8 +68,8 @@ export const createGroup = () => {
  * @param address designates the intended address of the venue object, random if not included
  * @returns
  */
-export const createVenue = (name?: string, address?: string) => {
-  return {
+export const createVenue = (name?: string, address?: string) =>
+  ({
     name: name || faker.word.adjective(),
     address: address || faker.address.streetAddress(),
     reactions: [],
@@ -80,8 +77,7 @@ export const createVenue = (name?: string, address?: string) => {
       latitude: Number(faker.address.latitude()),
       longitude: Number(faker.address.longitude()),
     },
-  } as Venue;
-};
+  } as Venue);
 
 /*
  * CONSTANTS

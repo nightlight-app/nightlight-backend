@@ -1,4 +1,4 @@
-import { ServiceAccount } from 'firebase-admin';
+import type { ServiceAccount } from 'firebase-admin';
 
 /**
  * Expiry duration of jobs in the queue

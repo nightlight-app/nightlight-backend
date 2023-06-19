@@ -1,5 +1,4 @@
 import mongoose, { Schema } from 'mongoose';
-import { EmergencyContact } from '../interfaces/User.interface';
 
 /**
  * Represents the schema for a user in the database.

@@ -1,5 +1,5 @@
-import { Emoji } from '../utils/venue.utils';
 import { nightlightQueue } from './setup/queue.setup';
+import type { Emoji } from '../utils/venue.utils';
 
 /**
  * Add group expire job to the nightlightQueue.

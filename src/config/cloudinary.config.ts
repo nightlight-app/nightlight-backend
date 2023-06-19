@@ -1,7 +1,7 @@
+import { MAX_FILE_SIZE } from '../utils/constants';
 import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
 import multer from 'multer';
-import { MAX_FILE_SIZE } from '../utils/constants';
 
 dotenv.config();
 

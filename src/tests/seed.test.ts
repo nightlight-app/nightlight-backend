@@ -1,7 +1,4 @@
-import mongoose, { ConnectOptions } from 'mongoose';
-import createServer from '../server';
-import chai, { expect } from 'chai';
-import chaiHttp from 'chai-http';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
   createGroup,
   createUser,
@@ -13,13 +10,19 @@ import {
   USER_KEYS_TEST,
   VENUE_KEYS_TEST,
 } from './data/testData';
+import createServer from '../server';
 import User from '../models/User.model';
 import Group from '../models/Group.model';
 import Venue from '../models/Venue.model';
-import { Server } from 'http';
 import Notification from '../models/Notification.model';
 import { useTestingDatabase } from '../../src/config/mongodb.config';
-require('dotenv').config();
+import chaiHttp from 'chai-http';
+import chai, { expect } from 'chai';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import type { Server } from 'http';
+import type { ConnectOptions } from 'mongoose';
+dotenv.config();
 
 chai.use(chaiHttp);
 chai.should();
@@ -55,10 +58,10 @@ before(async () => {
  *
  */
 describe('seed database for prod', () => {
-  let userIds = [] as mongoose.Types.ObjectId[];
+  const userIds = [] as mongoose.Types.ObjectId[];
   let mainUserId: mongoose.Types.ObjectId;
   let groupId: string;
-  let venueIds = [] as mongoose.Types.ObjectId[];
+  const venueIds = [] as mongoose.Types.ObjectId[];
 
   // loop for multiple users to be added
   for (let i = 0; i < 5; ++i) {

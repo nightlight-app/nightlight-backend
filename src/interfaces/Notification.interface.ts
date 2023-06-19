@@ -1,5 +1,6 @@
-import mongoose from 'mongoose';
-import { Document } from 'mongoose';
+/* eslint-disable autofix/no-unused-vars */
+import type mongoose from 'mongoose';
+import type { Document } from 'mongoose';
 
 /**
  * @interface MongoNotification

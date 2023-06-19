@@ -1,20 +1,20 @@
-import { Request, Response } from 'express';
 import User from '../models/User.model';
-import mongoose from 'mongoose';
 import Group from '../models/Group.model';
-import { v2 as cloudinary } from 'cloudinary';
 import { upload } from '../config/cloudinary.config';
-import { MulterError } from 'multer';
-import streamifier from 'streamifier';
 import { IMAGE_UPLOAD_OPTIONS } from '../utils/constants';
 import { sendNotifications } from '../utils/notification.utils';
 import { NotificationType } from '../interfaces/Notification.interface';
 import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
-import { LocationData } from '../interfaces/LastActive.interface';
 import {
   addFriendRequestResponseJob,
   addGroupInviteResponseJob,
 } from '../queue/jobs';
+import streamifier from 'streamifier';
+import { MulterError } from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
+import mongoose from 'mongoose';
+import type { LocationData } from '../interfaces/LastActive.interface';
+import type { Request, Response } from 'express';
 
 /**
  * Creates a new user in the database based on the information provided in the request body.

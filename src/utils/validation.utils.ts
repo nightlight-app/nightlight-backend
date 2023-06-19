@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import {
   EMERGENCY_CONTACT_KEYS,
   GROUP_KEYS,
@@ -27,7 +28,7 @@ import {
  *
  * @return a comma-separated, formatted string of any missing or extra keys, or an empty string if all keys are present.
  */
-export const verifyKeys = (obj: any, keys: string[][]): String => {
+export const verifyKeys = (obj: any, keys: string[][]): string => {
   const mandatoryKeys = keys[0];
   const allKeys = keys[1];
 

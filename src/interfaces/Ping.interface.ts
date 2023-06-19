@@ -1,4 +1,5 @@
-import mongoose from 'mongoose';
+/* eslint-disable autofix/no-unused-vars */
+import type mongoose from 'mongoose';
 
 /**
  * Defines the interface for a Ping message between two users.

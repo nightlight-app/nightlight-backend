@@ -1,13 +1,12 @@
-/** source/controllers/posts.ts */
-import { Request, Response } from 'express';
-import mongoose from 'mongoose';
-import { Venue as VenueInterface } from '../interfaces/Venue.interface';
 import Venue from '../models/Venue.model';
 import { REACTION_EMOJIS, REACTION_EXPIRY_DURATION } from '../utils/constants';
-import { Emoji } from '../utils/venue.utils';
 import { addReactionExpireJob } from '../queue/jobs';
 import { nightlightQueue } from '../queue/setup/queue.setup';
 import { verifyKeys, KeyValidationType } from '../utils/validation.utils';
+import mongoose from 'mongoose';
+import type { Emoji } from '../utils/venue.utils';
+import type { Venue as VenueInterface } from '../interfaces/Venue.interface';
+import type { Request, Response } from 'express';
 
 /**
  * Create a new venue

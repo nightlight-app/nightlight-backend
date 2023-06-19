@@ -1,7 +1,3 @@
-import mongoose, { ConnectOptions } from 'mongoose';
-import createServer from '../server';
-import chai, { expect } from 'chai';
-import chaiHttp from 'chai-http';
 import {
   SAVED_GROUP,
   SAVED_GROUP_KEYS,
@@ -17,15 +13,20 @@ import {
   UPDATE_USER_1_TO_USER_2,
   USER_KEYS_TEST,
 } from './data/testData';
-import { ObjectId } from 'mongodb';
-import { Server } from 'http';
+import createServer from '../server';
 import { useTestingDatabase } from '../../src/config/mongodb.config';
 import Group from '../models/Group.model';
 import User from '../models/User.model';
 import Venue from '../models/Venue.model';
 import Notification from '../models/Notification.model';
-
-require('dotenv').config();
+import { ObjectId } from 'mongodb';
+import chaiHttp from 'chai-http';
+import chai, { expect } from 'chai';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import type { Server } from 'http';
+import type { ConnectOptions } from 'mongoose';
+dotenv.config();
 
 chai.use(chaiHttp);
 chai.should();
@@ -387,6 +388,7 @@ describe('testing save groups', () => {
         userId2 = res.body.user._id;
         expect(res).to.have.status(201);
         expect(res.body.user).to.have.keys(USER_KEYS_TEST);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         testData.friends?.push(new mongoose.Types.ObjectId(userId2!));
         done();
       });
@@ -400,6 +402,7 @@ describe('testing save groups', () => {
       .send(TEST_USER_2)
       .then(res => {
         userId3 = res.body.user._id;
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         testData.friends?.push(new mongoose.Types.ObjectId(userId3!));
         expect(res).to.have.status(201);
         expect(res.body.user).to.have.keys(USER_KEYS_TEST);
@@ -615,14 +618,14 @@ describe('testing friend requests', () => {
         expect(res).to.have.status(200);
         const notifications = res.body.notifications;
         // one of the notifications should be the friend request from 3 to 2
-        expect(notifications).to.satisfy((nots: any[]) => {
-          return nots.some(
+        expect(notifications).to.satisfy((nots: any[]) =>
+          nots.some(
             not =>
               not.userId === userId2 &&
               not.data.notificationType === 'friendRequest' &&
               not.data.senderId === userId3
-          );
-        });
+          )
+        );
         done();
       })
       .catch(err => done(err));
@@ -650,14 +653,14 @@ describe('testing friend requests', () => {
         expect(res).to.have.status(200);
         const notifications = res.body.notifications;
         // one of the notifications should be the friend request from 3 to 2
-        expect(notifications).to.satisfy((nots: any[]) => {
-          return nots.every(
+        expect(notifications).to.satisfy((nots: any[]) =>
+          nots.every(
             not =>
               not.userId !== userId2 &&
               not.data.notificationType !== 'friendRequest' &&
               not.data.senderId !== userId3
-          );
-        });
+          )
+        );
         done();
       })
       .catch(err => done(err));

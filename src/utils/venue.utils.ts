@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 // Type for the emoji reaction options
 export type Emoji = '🔥' | '⚠️' | '🛡' | '💩' | '🎉';
 
@@ -24,7 +25,7 @@ const decodeEmojiMap: { [key: string]: string } = {
 };
 
 /**
- * Convert text to emoji
+ * Convert text to emoji (don't use hasOwnProperty because it's a string)
  * @param inputWord the text to convert
  * @returns emoji as a string or null if the inputWord is not in the map
  */

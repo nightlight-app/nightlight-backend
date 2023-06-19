@@ -1,6 +1,5 @@
-import mongoose from 'mongoose';
 import User from '../models/User.model';
-import { sendNotifications } from './notification.utils';
+import type mongoose from 'mongoose';
 
 /**
  * Adds the groupId to the invitedGroups array of the user document

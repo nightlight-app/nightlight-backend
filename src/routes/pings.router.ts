@@ -1,9 +1,9 @@
-import express from 'express';
 import {
   removePing,
   respondToPing,
   sendPing,
 } from '../controllers/ping.controller';
+import express from 'express';
 
 const pingsRouter = express.Router();
 

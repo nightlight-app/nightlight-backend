@@ -1,4 +1,3 @@
-import express from 'express';
 import {
   createVenue,
   getVenue,
@@ -7,6 +6,7 @@ import {
   getVenues,
   toggleReactionToVenue,
 } from '../controllers/venue.controller';
+import express from 'express';
 
 const venuesRouter = express.Router();
 

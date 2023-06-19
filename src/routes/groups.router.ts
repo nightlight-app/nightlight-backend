@@ -1,4 +1,3 @@
-import express from 'express';
 import {
   createGroup,
   deleteGroup,
@@ -6,6 +5,7 @@ import {
   inviteMembersToExistingGroup,
   removeMemberInvitation,
 } from '../controllers/group.controller';
+import express from 'express';
 
 const groupsRouter = express.Router();
 

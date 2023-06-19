@@ -1,5 +1,5 @@
-import { assert } from 'chai';
 import { decodeEmoji, encodeEmoji } from '../utils/venue.utils';
+import { assert } from 'chai';
 
 describe('testing venue utils', () => {
   it('mapEmoji() TEST #1', done => {

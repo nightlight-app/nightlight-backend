@@ -1,13 +1,13 @@
 import Ping from '../models/Ping.model';
-import { Request, Response } from 'express';
 import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
 import User from '../models/User.model';
-import { addPingExpireJob } from '../queue/jobs';
+
 import { sendNotifications } from '../utils/notification.utils';
 import { NotificationType } from '../interfaces/Notification.interface';
 import { PingStatus } from '../interfaces/Ping.interface';
-import mongoose from 'mongoose';
 import { nightlightQueue } from '../queue/setup/queue.setup';
+import mongoose from 'mongoose';
+import type { Request, Response } from 'express';
 
 /**
  * Sends a ping from the sender to the recipient.
@@ -46,8 +46,8 @@ export const sendPing = async (req: Request, res: Response) => {
     }
 
     // Calculate the delay for the ping expiration
-    const delay =
-      new Date().getTime() - new Date(ping.expirationDateTime).getTime();
+    //const delay =
+    //  new Date().getTime() - new Date(ping.expirationDateTime).getTime();
 
     // Add the ping expiration to the queue
     //const job = await addPingExpireJob(savedPing._id.toString(), delay);
