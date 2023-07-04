@@ -152,7 +152,7 @@ export const removeGroupInviteNotification = async (
   groupId: string
 ) => {
   try {
-    const test = await Notification.findOneAndDelete({
+    await Notification.findOneAndDelete({
       recipientId: userId,
       'data.notificationType': NotificationType.groupInvite,
       'data.groupId': groupId,
@@ -172,7 +172,7 @@ export const removeFriendRequestNotification = async (
   friendId: string
 ) => {
   try {
-    const test = await Notification.findOneAndDelete({
+    await Notification.findOneAndDelete({
       recipientId: userId,
       'data.notificationType': NotificationType.friendRequest,
       'data.senderId': friendId,

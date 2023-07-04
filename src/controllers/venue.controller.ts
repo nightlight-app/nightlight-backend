@@ -110,7 +110,7 @@ export const getVenue = async (req: Request, res: Response) => {
                               cond: {
                                 $and: [
                                   { $eq: ['$$this.emoji', '$$emoji'] },
-                                  { $eq: ['$$this.userId', userId] },
+                                  { $eq: ['$$this.userId', userObjectId] },
                                 ],
                               },
                             },
@@ -216,7 +216,7 @@ export const getVenues = async (req: Request, res: Response) => {
                               cond: {
                                 $and: [
                                   { $eq: ['$$this.emoji', '$$emoji'] },
-                                  { $eq: ['$$this.userId', userId] },
+                                  { $eq: ['$$this.userId', userObjectId] },
                                 ],
                               },
                             },
