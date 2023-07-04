@@ -62,7 +62,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Run prettier-check
-        run: npm run prettier-check
+        run: npm run format:check
   eslint-check:
     runs-on: ubuntu-latest
 
@@ -74,4 +74,4 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Run eslint
-        run: npm run eslint
+        run: npm run lint
