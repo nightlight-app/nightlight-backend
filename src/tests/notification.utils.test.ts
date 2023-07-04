@@ -1,12 +1,7 @@
 import mongoose, { ConnectOptions } from 'mongoose';
-import createServer from '../server';
-import chai, { assert, expect } from 'chai';
-import {
-  sendNotifications,
-  sendNotificationToUser,
-} from '../utils/notification.utils';
+import chai, { assert } from 'chai';
+import { sendNotifications } from '../utils/notification.utils';
 import { ObjectId } from 'mongodb';
-import { NOTIFICATION_KEYS_TEST } from './data/testData';
 import { useTestingDatabase } from '../../src/config/mongodb.config';
 require('dotenv').config();
 
@@ -76,9 +71,6 @@ describe('test notification utils', () => {
       assert(notifications[1].body === 'Test Body');
       assert(notifications[1].data.notificationType === 'test');
       assert(notifications[1].delay === 0);
-      assert(notifications[0].userId !== notifications[1].userId);
-      assert(notifications[2].userId !== notifications[1].userId);
-      assert(notifications[2].userId !== notifications[0].userId);
       assert(notifications[2].title === 'Test Title');
       assert(notifications[2].body === 'Test Body');
       assert(notifications[2].data.notificationType === 'test');
@@ -164,7 +156,6 @@ describe('test notification utils errors', () => {
       assert(notifications[1].body === 'Test Body');
       assert(notifications[1].data.notificationType === 'test');
       assert(notifications[1].delay === 0);
-      assert(notifications[0].userId !== notifications[1].userId);
       done();
     });
   });

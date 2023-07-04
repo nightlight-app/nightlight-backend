@@ -26,7 +26,7 @@ const TEST_LAST_ACTIVE_1: LastActive = {
 const TEST_SAVED_GROUP_1: SavedGroup = {
   _id: new mongoose.Types.ObjectId(),
   name: 'My new group!',
-  users: [
+  members: [
     new mongoose.Types.ObjectId(233456),
     new mongoose.Types.ObjectId(345675),
   ],
@@ -35,7 +35,10 @@ const TEST_SAVED_GROUP_1: SavedGroup = {
 const TEST_SAVED_GROUP_2: SavedGroup = {
   _id: new mongoose.Types.ObjectId(),
   name: 'My side friend group',
-  users: [new mongoose.Types.ObjectId(2456), new mongoose.Types.ObjectId(34675)],
+  members: [
+    new mongoose.Types.ObjectId(2456),
+    new mongoose.Types.ObjectId(34675),
+  ],
 };
 
 export const TEST_USER_1: User = {
@@ -56,6 +59,11 @@ export const TEST_USER_1: User = {
   receivedFriendRequests: [],
   lastActive: TEST_LAST_ACTIVE_1,
   savedGroups: [TEST_SAVED_GROUP_1, TEST_SAVED_GROUP_2],
+  sentPings: [],
+  receivedPings: [],
+  emergencyContacts: [],
+  isActiveNow: false,
+  sentFriendRequests: [],
 };
 
 export const UPDATE_USER_1_TO_USER_2: any = {
@@ -68,7 +76,7 @@ export const UPDATE_USER_1_TO_USER_2: any = {
 export const SAVED_GROUP: SavedGroup = {
   _id: new mongoose.Types.ObjectId(),
   name: 'Test group',
-  users: [
+  members: [
     new mongoose.Types.ObjectId(2234566),
     new mongoose.Types.ObjectId(987475),
     new mongoose.Types.ObjectId(23456765),
@@ -87,7 +95,7 @@ const TEST_LAST_ACTIVE_2: LastActive = {
 const TEST_SAVED_GROUP_3: SavedGroup = {
   _id: new mongoose.Types.ObjectId(),
   name: 'A cool friend group!',
-  users: [
+  members: [
     new mongoose.Types.ObjectId(2234566),
     new mongoose.Types.ObjectId(987475),
   ],
@@ -96,7 +104,7 @@ const TEST_SAVED_GROUP_3: SavedGroup = {
 const TEST_SAVED_GROUP_4: SavedGroup = {
   _id: new mongoose.Types.ObjectId(),
   name: 'A not-so-cool friend group',
-  users: [
+  members: [
     new mongoose.Types.ObjectId(2098765),
     new mongoose.Types.ObjectId(346925),
   ],
@@ -123,6 +131,11 @@ export const TEST_USER_2: User = {
   receivedFriendRequests: [],
   lastActive: TEST_LAST_ACTIVE_2,
   savedGroups: [TEST_SAVED_GROUP_3, TEST_SAVED_GROUP_4],
+  sentPings: [],
+  receivedPings: [],
+  emergencyContacts: [],
+  isActiveNow: false,
+  sentFriendRequests: [],
 };
 
 export const TEST_USER_3: User = {
@@ -146,6 +159,11 @@ export const TEST_USER_3: User = {
   receivedFriendRequests: [],
   lastActive: TEST_LAST_ACTIVE_2,
   savedGroups: [TEST_SAVED_GROUP_3, TEST_SAVED_GROUP_4],
+  sentPings: [],
+  receivedPings: [],
+  emergencyContacts: [],
+  isActiveNow: false,
+  sentFriendRequests: [],
 };
 
 export const TEST_USER_4: User = {
@@ -166,6 +184,11 @@ export const TEST_USER_4: User = {
   receivedFriendRequests: [],
   lastActive: TEST_LAST_ACTIVE_2,
   savedGroups: [TEST_SAVED_GROUP_3, TEST_SAVED_GROUP_4],
+  sentPings: [],
+  receivedPings: [],
+  emergencyContacts: [],
+  isActiveNow: false,
+  sentFriendRequests: [],
 };
 
 export const TEST_USER_5: User = {
@@ -186,6 +209,11 @@ export const TEST_USER_5: User = {
   receivedFriendRequests: [],
   lastActive: TEST_LAST_ACTIVE_2,
   savedGroups: [TEST_SAVED_GROUP_3, TEST_SAVED_GROUP_4],
+  sentPings: [],
+  receivedPings: [],
+  emergencyContacts: [],
+  isActiveNow: false,
+  sentFriendRequests: [],
 };
 
 export const SEARCH_USER_1: User = {
@@ -206,6 +234,11 @@ export const SEARCH_USER_1: User = {
   receivedFriendRequests: [],
   lastActive: TEST_LAST_ACTIVE_1,
   savedGroups: [TEST_SAVED_GROUP_1, TEST_SAVED_GROUP_2],
+  sentPings: [],
+  receivedPings: [],
+  emergencyContacts: [],
+  isActiveNow: false,
+  sentFriendRequests: [],
 };
 
 export const SEARCH_USER_2: User = {
@@ -226,6 +259,11 @@ export const SEARCH_USER_2: User = {
   receivedFriendRequests: [],
   lastActive: TEST_LAST_ACTIVE_1,
   savedGroups: [TEST_SAVED_GROUP_1, TEST_SAVED_GROUP_2],
+  sentPings: [],
+  receivedPings: [],
+  emergencyContacts: [],
+  isActiveNow: false,
+  sentFriendRequests: [],
 };
 
 export const SEARCH_USER_3: User = {
@@ -246,6 +284,11 @@ export const SEARCH_USER_3: User = {
   receivedFriendRequests: [],
   lastActive: TEST_LAST_ACTIVE_1,
   savedGroups: [TEST_SAVED_GROUP_1, TEST_SAVED_GROUP_2],
+  sentPings: [],
+  receivedPings: [],
+  emergencyContacts: [],
+  isActiveNow: false,
+  sentFriendRequests: [],
 };
 
 /* Groups */
@@ -282,7 +325,7 @@ export const TEST_VENUE: Venue = {
 /* Notification */
 export const TEST_NOTIFICATION: MongoNotification = {
   _id: new mongoose.Types.ObjectId(),
-  userId: new mongoose.Types.ObjectId(123).toString(),
+  recipientId: new mongoose.Types.ObjectId(123).toString(),
   title: 'Friend Request',
   body: 'You have a friend request!',
   data: {
@@ -328,6 +371,7 @@ export const USER_KEYS_TEST = [
   'lastName',
   'phone',
   'isEmergency',
+  'isActiveNow',
   'lastActive',
   'savedGroups',
   'emergencyContacts',
@@ -357,7 +401,7 @@ export const VENUE_KEYS_TEST = [
 export const NOTIFICATION_KEYS_TEST = [
   '__v',
   '_id',
-  'userId',
+  'recipientId',
   'title',
   'body',
   'data',
@@ -379,4 +423,4 @@ export const REACTION_KEYS_TEST = ['count', 'didReact'];
 
 export const VENUE_KEYS_EMOJIS_TEST = [...REACTION_EMOJIS];
 
-export const SAVED_GROUP_KEYS = ['_id', 'name', 'users'];
+export const SAVED_GROUP_KEYS = ['_id', 'name', 'members'];

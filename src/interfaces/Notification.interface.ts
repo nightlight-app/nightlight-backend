@@ -14,7 +14,7 @@ import { Document } from 'mongoose';
  */
 export interface MongoNotification {
   _id?: mongoose.Types.ObjectId;
-  userId: string;
+  recipientId: string;
   title: string;
   body: string;
   data: NotificationSpecificData;
@@ -71,7 +71,6 @@ export enum NotificationType {
  * It contains information such as the user ID, title, body, data, and delay for displaying notifications.
  */
 export interface NotificationDocument extends Document {
-  userId: mongoose.Types.ObjectId;
   title: string;
   body: string;
   data: NotificationSpecificData;
@@ -164,12 +163,12 @@ export interface EmergencyNotificationData extends NotificationData {
  */
 export interface PingNotificationData extends NotificationData {
   pingId: string;
-  recipientId: string;
-  recipientFirstName: string;
-  recipientLastName: string;
   senderId: string;
   senderFirstName: string;
   senderLastName: string;
+  recipientId: string;
+  recipientFirstName: string;
+  recipientLastName: string;
 }
 
 /**

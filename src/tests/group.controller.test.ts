@@ -345,7 +345,7 @@ describe('testing group actions', () => {
               not.data.notificationType === 'groupInvite' &&
               not.data.groupId === groupId &&
               not.data.senderId === userIdMain &&
-              not.userId === userIdFriend5
+              not.recipientId === userIdFriend5
           );
         });
         done();
@@ -378,10 +378,12 @@ describe('testing group actions', () => {
         expect(notifications).to.satisfy((nots: any[]) => {
           return nots.every(
             not =>
-              not.data.notificationType !== 'groupInvite' &&
-              not.data.groupId !== groupId &&
-              not.data.senderId !== userIdMain &&
-              not.userId !== userIdFriend5
+              !(
+                not.data.notificationType === 'groupInvite' &&
+                not.data.groupId === groupId &&
+                not.data.senderId === userIdMain &&
+                not.recipientId === userIdFriend5
+              )
           );
         });
         done();

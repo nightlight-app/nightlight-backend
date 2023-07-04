@@ -83,7 +83,7 @@ export const addNotificationsToDatabase = async (req: Request, res: Response) =>
       if (mongoose.Types.ObjectId.isValid(id)) {
         // add notification to database via utils function
         await sendNotificationToUser({
-          userId: id,
+          recipientId: id,
           title: notification.title,
           body: notification.body,
           data: notification.data,

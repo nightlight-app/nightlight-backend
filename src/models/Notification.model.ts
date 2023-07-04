@@ -12,7 +12,7 @@ import mongoose, { Schema } from 'mongoose';
  * @property {number} delay - Delay in displaying the notification.
  */
 const notificationSchema = new mongoose.Schema({
-  userId: {
+  recipientId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,

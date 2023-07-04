@@ -332,7 +332,7 @@ describe('testing save groups', () => {
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
         expect(res.body.users[0].savedGroups[2]).to.have.keys(SAVED_GROUP_KEYS);
         expect(res.body.users[0].savedGroups[2].name).to.equal('Test group');
-        expect(res.body.users[0].savedGroups[2].users).to.have.length(3);
+        expect(res.body.users[0].savedGroups[2].members).to.have.length(3);
         done();
       });
   });
@@ -618,7 +618,7 @@ describe('testing friend requests', () => {
         expect(notifications).to.satisfy((nots: any[]) => {
           return nots.some(
             not =>
-              not.userId === userId2 &&
+              not.recipientId === userId2 &&
               not.data.notificationType === 'friendRequest' &&
               not.data.senderId === userId3
           );
@@ -653,17 +653,17 @@ describe('testing friend requests', () => {
         expect(notifications).to.satisfy((nots: any[]) => {
           return nots.every(
             not =>
-              not.userId !== userId2 &&
-              not.data.notificationType !== 'friendRequest' &&
-              not.data.senderId !== userId3
+              !(
+                not.recipientId === userId2 &&
+                not.data.notificationType === 'friendRequest' &&
+                not.data.senderId === userId3
+              )
           );
         });
         done();
       })
       .catch(err => done(err));
   });
-
-  // GET NOTIFICATIONS AGAIN
 
   it('should fetch a user via GET to check friend requests after decline /users/?userIds={userId}', done => {
     chai

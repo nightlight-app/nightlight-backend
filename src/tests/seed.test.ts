@@ -106,10 +106,7 @@ describe('seed database for prod', () => {
       .then(res => {
         groupId = res.body.group._id;
         expect(res).to.have.status(200);
-        expect(res.body.group).to.have.keys([
-          ...GROUP_KEYS_TEST,
-          'expectedDestination',
-        ]);
+        expect(res.body.group).to.have.keys([...GROUP_KEYS_TEST]);
         done();
       });
   });
