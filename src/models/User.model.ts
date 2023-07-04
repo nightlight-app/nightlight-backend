@@ -83,7 +83,7 @@ const userSchema = new mongoose.Schema({
       ref: 'User',
     },
   ],
-  friendRequests: [
+  receivedFriendRequests: [
     {
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -99,7 +99,7 @@ const userSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'Group',
   },
-  invitedGroups: [
+  receivedGroupInvites: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Group',

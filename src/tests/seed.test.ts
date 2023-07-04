@@ -111,7 +111,7 @@ describe('seed database for prod', () => {
       });
   });
 
-  for (let i = 0; i < 5; ++i) {
+  for (let i = 0; i < userIds.length; ++i) {
     it('seed data - accept group invitation', done => {
       chai
         .request(server)
@@ -123,6 +123,7 @@ describe('seed database for prod', () => {
         )
         .send()
         .then(res => {
+          console.log(res.body);
           expect(res).to.have.status(200);
           done();
         });
