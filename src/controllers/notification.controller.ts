@@ -20,9 +20,18 @@ export const getNotifications = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Missing userId query parameter.' });
   }
 
+  // Create a new mongoose ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
   try {
     // find all notifications for the given user
-    const notifications = await Notification.find({ userId: userId });
+    const notifications = await Notification.find({ userId: userObjectId });
+
+    if (!notifications) {
+      return res
+        .status(200)
+        .send({ message: 'No notifications found for user.', notifications: [] });
+    }
 
     // return found notifications
     return res.status(200).send({
@@ -64,7 +73,7 @@ export const addNotificationsToDatabase = async (req: Request, res: Response) =>
 
   // check if delay is a positive number
   if (req.body.delay < 0) {
-    return res.status(500).send({ message: 'Delay must be a positive number.' });
+    return res.status(400).send({ message: 'Delay must be a positive number.' });
   }
 
   try {
@@ -74,7 +83,7 @@ export const addNotificationsToDatabase = async (req: Request, res: Response) =>
       if (mongoose.Types.ObjectId.isValid(id)) {
         // add notification to database via utils function
         await sendNotificationToUser({
-          userId: id,
+          recipientId: id,
           title: notification.title,
           body: notification.body,
           data: notification.data,
@@ -117,15 +126,18 @@ export const deleteNotification = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid notification id.' });
   }
 
+  // Create a new mongoose ObjectId from the notificationId
+  const notificationObjectId = new mongoose.Types.ObjectId(notificationId);
+
   try {
     // delete notification from database
     const targetNotification = await Notification.findByIdAndRemove(
-      notificationId
+      notificationObjectId
     );
 
     // check if notification was found and return error if not
     if (!targetNotification) {
-      return res.status(404).send({ message: 'Notification not found.' });
+      return res.status(400).send({ message: 'Notification not found.' });
     }
 
     // return deleted notification

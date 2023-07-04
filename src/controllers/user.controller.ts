@@ -25,12 +25,17 @@ import type { Request, Response } from 'express';
 export const createUser = async (req: Request, res: Response) => {
   const user = req.body;
 
+  if (!user) {
+    return res.status(400).send({ message: 'No user data provided!' });
+  }
+
   // Verify that the user object has all the necessary keys
   const validationError = verifyKeys(user, KeyValidationType.USERS);
   if (validationError !== '') {
     return res.status(400).send({ message: validationError });
   }
 
+  // Create a new user object
   const newUser = new User(user);
 
   try {
@@ -64,12 +69,13 @@ export const getUsers = async (req: Request, res: Response) => {
   // Determine which query parameter was provided (prefer userId over firebaseUid)
   const queryType = userIds ? '_id' : 'firebaseUid';
 
+  // Create a list of user IDs or firebase UIDs
   let idList;
   if (userIds) idList = userIds.split(',');
   if (firebaseUids) idList = firebaseUids.split(',');
 
   // Check if the user ID or firebase UID was provided
-  if (!idList)
+  if (!idList || idList.length === 0)
     return res
       .status(400)
       .send({ message: 'No user IDs or firebase UIDs provided!' });
@@ -99,7 +105,9 @@ export const getUsers = async (req: Request, res: Response) => {
       { notificationToken: 0 }
     )
       .populate('sentPings')
-      .populate('receivedPings');
+      .populate('receivedPings')
+      .populate('currentGroup')
+      .populate('friends');
 
     // Check if the user exists
     if (targetUsers.length === 0 || !targetUsers) {
@@ -116,6 +124,7 @@ export const getUsers = async (req: Request, res: Response) => {
 
 /**
  * Searches for users based on the provided query string and returns a list of users that match the query.
+ * Will be replaced in the future using the mongo search indexing features.
  *
  * @param {Request} req - Express request object containing the query parameters, including the query string.
  * @param {Response} res - Express response object used to send the response back to the client.
@@ -195,9 +204,12 @@ export const deleteUser = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
   try {
     // Delete the user from the database
-    const result = await User.deleteOne({ _id: userId });
+    const result = await User.deleteOne({ _id: userObjectId });
 
     // Check if the user was deleted
     if (result.deletedCount === 0) {
@@ -230,12 +242,19 @@ export const updateUser = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Create an object id from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
   try {
     // Find the user in the database and update the user data, omitting the notificationToken from the response
-    const targetUser = await User.findByIdAndUpdate({ _id: userId }, req.body, {
-      new: true,
-      select: '-notificationToken',
-    });
+    const targetUser = await User.findByIdAndUpdate(
+      { _id: userObjectId },
+      req.body,
+      {
+        new: true,
+        select: '-notificationToken',
+      }
+    );
 
     // Check if the user exists
     if (targetUser === null) {
@@ -276,10 +295,13 @@ export const saveGroup = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
   try {
     // Find the user in the database and update the user data, omitting the notificationToken from the response
     const targetUser = await User.findByIdAndUpdate(
-      { _id: userId },
+      userObjectId,
       {
         $push: {
           savedGroups: { ...group, _id: new mongoose.Types.ObjectId() },
@@ -292,6 +314,7 @@ export const saveGroup = async (req: Request, res: Response) => {
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
+
     return res
       .status(200)
       .send({ message: 'Successfully updated user!', user: targetUser });
@@ -331,13 +354,19 @@ export const deleteSavedGroup = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid saved group ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Create a new ObjectId from the savedGroupId
+  const savedGroupObjectId = new mongoose.Types.ObjectId(savedGroupId);
+
   try {
     // Find the user in the database and update the user data, omitting the notificationToken from the response
     const targetUser = await User.findByIdAndUpdate(
-      { _id: userId },
+      userObjectId,
       {
         $pull: {
-          savedGroups: { _id: savedGroupId },
+          savedGroups: { _id: savedGroupObjectId },
         },
       },
       {
@@ -350,6 +379,7 @@ export const deleteSavedGroup = async (req: Request, res: Response) => {
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
+
     return res
       .status(200)
       .send({ message: 'Successfully updated user!', user: targetUser });
@@ -388,28 +418,73 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid group ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Create a new ObjectId from the groupId
+  const groupObjectId = new mongoose.Types.ObjectId(groupId);
+
   try {
     // Remove groupId from invited groups and add to currentGroup
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      $pull: { invitedGroups: groupId },
-      currentGroup: groupId,
-    });
+    const targetUser = await User.findById(userObjectId);
+
+    // Remove userId from invitedMembers in group and add to members in group
+    const targetGroup = await Group.findById(groupObjectId);
 
     // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
-    // Remove userId from invitedMembers in group and add to members in group
-    const targetGroup = await Group.findByIdAndUpdate(groupId, {
-      $pull: { invitedMembers: userId },
-      $push: { members: userId },
-    });
-
     // Check if the group exists
     if (targetGroup === null) {
       return res.status(400).send({ message: 'Group does not exist!' });
     }
+
+    // Check if the user is already in the group
+    if (
+      targetGroup.members.includes(userObjectId) &&
+      targetUser.currentGroup?.equals(groupObjectId)
+    ) {
+      return res.status(400).send({ message: 'User is already in this group!' });
+    }
+
+    // Check if the user is already in a group
+    if (targetUser.currentGroup) {
+      return res
+        .status(400)
+        .send({ message: 'User is already in another group!' });
+    }
+
+    // Disallow user from joining group if invitation does not exist
+    if (
+      !targetUser.receivedGroupInvites.includes(groupObjectId) ||
+      !targetGroup.invitedMembers.includes(userObjectId)
+    ) {
+      return res
+        .status(400)
+        .send({ message: 'User has not been invited to this group!' });
+    }
+
+    // Remove groupId from invited group
+    targetUser.receivedGroupInvites = targetUser.receivedGroupInvites.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(groupObjectId)
+    );
+
+    // Add groupId to currentGroup
+    targetUser.currentGroup = groupObjectId;
+
+    // Remove userId from invitedMembers in group
+    targetGroup.invitedMembers = targetGroup.invitedMembers.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(userObjectId)
+    );
+
+    // Add userId to members in group
+    targetGroup.members.push(userObjectId);
+
+    // Save the updated user and group
+    await targetUser.save();
+    await targetGroup.save();
 
     // Remove the invite notification from the user's notifications
     await addGroupInviteResponseJob(userId, groupId);
@@ -470,16 +545,15 @@ export const declineGroupInvitation = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid group ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Create a new ObjectId from the groupId
+  const groupObjectId = new mongoose.Types.ObjectId(groupId);
+
   try {
     // Remove groupId from invited groups
-    const targetGroup = await Group.findByIdAndUpdate(groupId, {
-      $pull: { invitedMembers: userId },
-    });
-
-    // Check if the group exists
-    if (targetGroup === null) {
-      return res.status(400).send({ message: 'Group does not exist!' });
-    }
+    const targetGroup = await Group.findById(groupObjectId);
 
     // Find target user
     const targetUser = await User.findById(userId);
@@ -489,9 +563,39 @@ export const declineGroupInvitation = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
+    // Check if the group exists
+    if (targetGroup === null) {
+      return res.status(400).send({ message: 'Group does not exist!' });
+    }
+
+    // Disallow user from declining group invitation if invitation does not exist
+    if (
+      !targetUser.receivedGroupInvites.includes(groupObjectId) ||
+      !targetGroup.invitedMembers.includes(userObjectId)
+    ) {
+      return res
+        .status(400)
+        .send({ message: 'User has not been invited to this group!' });
+    }
+
+    // Remove groupId from invited groups
+    targetUser.receivedGroupInvites = targetUser.receivedGroupInvites.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(groupObjectId)
+    );
+
+    // Remove userId from invitedMembers in group
+    targetGroup.invitedMembers = targetGroup.invitedMembers.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(userObjectId)
+    );
+
+    // Save the updated user and group
+    await targetUser.save();
+    await targetGroup.save();
+
     // Remove the invite notification from the user's notifications
     await addGroupInviteResponseJob(userId, groupId);
 
+    // Send notifications to all invited users that the invitation has been declined
     sendNotifications(
       [
         ...targetGroup.members
@@ -551,19 +655,23 @@ export const leaveGroup = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid group ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Create a new ObjectId from the groupId
+  const groupObjectId = new mongoose.Types.ObjectId(groupId);
+
   try {
     // Remove userId from members in group
-    const targetGroup = await Group.findByIdAndUpdate(groupId, {
-      $pull: { members: userId },
-    });
-
-    if (targetGroup === null) {
-      // Check if the group exists
-      return res.status(400).send({ message: 'Group does not exist!' });
-    }
+    const targetGroup = await Group.findById(groupObjectId);
 
     // Find target user
-    const targetUser = await User.findById(userId);
+    const targetUser = await User.findById(userObjectId);
+
+    // Check if the group exists
+    if (targetGroup === null) {
+      return res.status(400).send({ message: 'Group does not exist!' });
+    }
 
     // Check if the user exists
     if (targetUser === null) {
@@ -574,20 +682,17 @@ export const leaveGroup = async (req: Request, res: Response) => {
      * If there are less than 2 members left in the group, delete the group
      * Else, remove groupId from currentGroup of user
      */
-    if (targetGroup?.members.length <= 2) {
-      // If there are less than 2 members left in the group, delete the group
-      await Group.findByIdAndDelete(groupId);
-
+    if (targetGroup.members.length <= 2) {
       // Remove groupId from currentGroup of all members
       await User.updateMany(
         { _id: { $in: targetGroup.members } },
-        { currentGroup: undefined }
+        { currentGroup: undefined, lastActive: undefined }
       );
 
-      // Remove groupId from invitedGroups of all members since the group has been deleted
+      // Remove groupId from receivedGroupInvites of all members since the group has been deleted
       await User.updateMany(
         { _id: { $in: targetGroup.invitedMembers } },
-        { $pull: { invitedGroups: groupId } }
+        { $pull: { receivedGroupInvites: groupId } }
       );
 
       // Send notifications to all members that the group has been deleted
@@ -610,17 +715,32 @@ export const leaveGroup = async (req: Request, res: Response) => {
         },
         false
       );
+
+      // Delete the group
+      await targetGroup.deleteOne();
     } else {
+      // Remove userId from members in group
+      targetGroup.members = targetGroup.members.filter(
+        (id: mongoose.Types.ObjectId) => !id.equals(userObjectId)
+      );
+
       // Remove groupId from currentGroup of user
-      const targetUser = await User.findByIdAndUpdate(userId, {
-        currentGroup: undefined,
-      });
+      targetUser.currentGroup = undefined;
+
+      // Remove lastActive location from user
+      targetUser.lastActive = undefined;
 
       // Check if the user exists
       if (targetUser === null) {
         return res.status(400).send({ message: 'User does not exist!' });
       }
+
+      // Save the updated group
+      targetGroup.save();
     }
+
+    // Save the updated user and group
+    await targetUser.save();
 
     return res.status(200).send({ message: 'Successfully left group!' });
   } catch (error: any) {
@@ -648,31 +768,22 @@ export const getFriends = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
   try {
     // Find the user in the database
-    const targetUser = await User.findById(userId);
+    const targetUser = await User.findById(userObjectId).populate('friends');
 
     // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
-    // Find the friends of the user and omit their notificationTokens
-    const targetFriends = await User.find(
-      {
-        _id: { $in: targetUser?.friends },
-      },
-      { notificationToken: 0 }
-    );
-
-    // Check if the friends exist
-    if (targetFriends === null) {
-      return res.status(400).send({ message: 'A friend does not exist!' });
-    }
-
-    return res
-      .status(200)
-      .send({ message: 'Successfully found friends!', friends: targetFriends });
+    return res.status(200).send({
+      message: 'Successfully found friends!',
+      friends: targetUser.friends,
+    });
   } catch (error: any) {
     return res.status(500).send({ message: error?.message });
   }
@@ -708,21 +819,23 @@ export const requestFriend = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid friend ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Create a new ObjectId from the friendId
+  const friendObjectId = new mongoose.Types.ObjectId(friendId);
+
   try {
-    // Find the user in the database and add the friendId to their sentFriendRequests
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      $push: { sentFriendRequests: friendId },
-    });
+    // Find the user in the database
+    const targetUser = await User.findById(userObjectId);
+
+    // Find the friend in the database
+    const targetFriend = await User.findById(friendObjectId);
 
     // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
-
-    // Find the friend in the database and add the userId to their friendRequests
-    const targetFriend = await User.findByIdAndUpdate(friendId, {
-      $push: { friendRequests: userId },
-    });
 
     // Check if the friend exists
     if (targetFriend === null) {
@@ -730,6 +843,16 @@ export const requestFriend = async (req: Request, res: Response) => {
         .status(400)
         .send({ message: 'User being requested does not exist!' });
     }
+
+    // Update the user's sentFriendRequests array
+    targetUser.sentFriendRequests.push(friendObjectId);
+
+    // Update the friend's receivedFriendRequests array
+    targetFriend.receivedFriendRequests.push(userObjectId);
+
+    // Save the updated user and friend to the database
+    await targetUser.save();
+    await targetFriend.save();
 
     // Send a notification to the friend that they have received a friend request
     sendNotifications(
@@ -757,7 +880,7 @@ export const requestFriend = async (req: Request, res: Response) => {
 
 /**
  * Accepts friend request and adds the new friend to user's friends list while removing the request from
- * friendRequests list. Also adds the user to the friend's friends list and updates the sentFriendRequests list.
+ * receivedFriendRequests list. Also adds the user to the friend's friends list and updates the sentFriendRequests list.
  * @param {Request} req - Express Request object
  * @param {Response} res - Express Response object
  * @returns {Promise} Returns success message on successful addition of friend, otherwise returns an error message
@@ -787,29 +910,62 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid friend ID!' });
   }
 
+  // Convert user ID to mongoose ObjectId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Convert friend ID to mongoose ObjectId
+  const friendObjectId = new mongoose.Types.ObjectId(friendId);
+
   try {
-    // Find the user in the database and add the friendId to their friend array while removing it from their friendRequests array
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      $push: { friends: friendId },
-      $pull: { friendRequests: friendId },
-    });
+    // Find the user in the database and add the friendId to their friend array while removing it from their receivedFriendRequests array
+    const targetUser = await User.findById(userObjectId);
+
+    // Find the friend in the database and add the userId to their friend array
+    const targetFriendUser = await User.findById(friendObjectId);
 
     // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
-    // Find the friend in the database and add the userId to their friend array
-    const targetFriendUser = await User.findByIdAndUpdate(friendId, {
-      $pull: { sentFriendRequests: userId },
-      $push: { friends: userId },
-    });
-
     // Check if the friend exists
     if (targetFriendUser === null) {
       return res.status(400).send({ message: 'Friend does not exist!' });
     }
 
+    // Disallow friend acceptance if the invite was not sent or received
+    if (
+      !targetUser.receivedFriendRequests.includes(friendObjectId) ||
+      !targetFriendUser.sentFriendRequests.includes(userObjectId)
+    ) {
+      return res.status(400).send({ message: 'Friend request not found!' });
+    }
+
+    // Add the friendId to the user's friends array
+    targetUser.friends.push(friendObjectId);
+
+    // Add the userId to the friend's friends array
+    targetFriendUser.friends.push(userObjectId);
+
+    // Remove the friendId from the user's receivedFriendRequests array
+    targetUser.receivedFriendRequests = targetUser.receivedFriendRequests.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(friendObjectId)
+    );
+
+    // Remove the userId from the friend's sentFriendRequests array
+    targetFriendUser.sentFriendRequests =
+      targetFriendUser.sentFriendRequests.filter(
+        (id: mongoose.Types.ObjectId) => !id.equals(userObjectId)
+      );
+
+    // Save the updated user and friend to the database
+    await targetUser.save();
+    await targetFriendUser.save();
+
+    // Remove the invite notification from the user's notifications
+    await addFriendRequestResponseJob(userId, friendId);
+
+    // Send a notification to the friend that they have received a friend request
     sendNotifications(
       [friendId],
       'Friend request accepted! 🎉',
@@ -827,9 +983,6 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
       false
     );
 
-    // Remove the invite notification from the user's notifications
-    await addFriendRequestResponseJob(userId, friendId);
-
     return res
       .status(200)
       .send({ message: 'Successfully accepted friend request!' });
@@ -839,7 +992,7 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
 };
 
 /**
- * Declines a friend request for a user by updating both their friends and friendRequests arrays.
+ * Declines a friend request for a user by updating both their friends and receivedFriendRequests arrays.
  * Also updates the friend's friends and sentFriendRequests arrays.
  * @param {Request} req - the Request object containing userId in the params and friendId in the query
  * @param {Response} res - the Response object sent back to the client
@@ -870,30 +1023,55 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid friend ID!' });
   }
 
+  // Convert user ID to mongoose ObjectId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Convert friend ID to mongoose ObjectId
+  const friendObjectId = new mongoose.Types.ObjectId(friendId);
+
   try {
     // Find the friend user in the database
-    const targetFriend = await User.findByIdAndUpdate(friendId, {
-      $pull: { sentFriendRequests: userId },
-    });
+    const targetFriend = await User.findById(friendObjectId);
 
-    // Check if the friend exists
-    if (targetFriend === null) {
-      return res.status(400).send({ message: 'User requesting does not exist!' });
-    }
-
-    // Find the user in the database and remove the friendId from their friendRequests array
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      $pull: { friendRequests: friendId },
-    });
+    // Find the user in the database and remove the friendId from their receivedFriendRequests array
+    const targetUser = await User.findById(userObjectId);
 
     // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
+    // Check if the friend exists
+    if (targetFriend === null) {
+      return res.status(400).send({ message: 'User requesting does not exist!' });
+    }
+
+    // Disallow friend request decline if the invite was not sent or received
+    if (
+      !targetUser.receivedFriendRequests.includes(friendObjectId) ||
+      !targetFriend.sentFriendRequests.includes(userObjectId)
+    ) {
+      return res.status(400).send({ message: 'Friend request not found!' });
+    }
+
+    // Remove the friendId from the user's receivedFriendRequests array
+    targetUser.receivedFriendRequests = targetUser.receivedFriendRequests.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(friendObjectId)
+    );
+
+    // Remove the userId from the friend's sentFriendRequests array
+    targetFriend.sentFriendRequests = targetFriend.sentFriendRequests.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(userObjectId)
+    );
+
+    // Save the updated user and friend to the database
+    await targetUser.save();
+    await targetFriend.save();
+
     // Remove the invite notification from the user's notifications
     await addFriendRequestResponseJob(userId, friendId);
 
+    // Send a notification to the sender that their friend request was declined
     sendNotifications(
       [friendId],
       'Friend request declined! ❌',
@@ -920,7 +1098,7 @@ export const declineFriendRequest = async (req: Request, res: Response) => {
 };
 
 /**
- * Removes a friend request from a user's sentFriendRequests array and the friend's friendRequests array.
+ * Removes a friend request from a user's sentFriendRequests array and the friend's receivedFriendRequests array.
  * @param {Request} req - the Request object containing userId in the params and friendId in the query
  * @param {Response} res - the Response object sent back to the client
  * @returns {Promise} Returns either an error response with a 400 or 500 status code and a message,
@@ -950,26 +1128,51 @@ export const removeFriendRequest = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid friend ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Create a new ObjectId from the friendId
+  const friendObjectId = new mongoose.Types.ObjectId(friendId);
+
   try {
+    // Find the user in the database and remove the friendId from their receivedFriendRequests array
+    const targetUser = await User.findById(userObjectId);
+
     // Find the friend user in the database
-    const targetFriend = await User.findByIdAndUpdate(friendId, {
-      $pull: { friendRequests: userId },
-    });
+    const targetFriend = await User.findById(friendObjectId);
+
+    // Check if the user exists
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
 
     // Check if the friend exists
     if (targetFriend === null) {
       return res.status(400).send({ message: 'User requesting does not exist!' });
     }
 
-    // Find the user in the database and remove the friendId from their friendRequests array
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      $pull: { sentFriendRequests: friendId },
-    });
-
-    // Check if the user exists
-    if (targetUser === null) {
-      return res.status(400).send({ message: 'User does not exist!' });
+    // Disallow friend request removal if the invite was not sent or received
+    if (
+      !targetUser.sentFriendRequests.includes(friendObjectId) ||
+      !targetFriend.receivedFriendRequests.includes(userObjectId)
+    ) {
+      return res.status(400).send({ message: 'Friend request not found!' });
     }
+
+    // Remove the friendId from the user's receivedFriendRequests array
+    targetUser.sentFriendRequests = targetUser.sentFriendRequests.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(friendObjectId)
+    );
+
+    // Remove the userId from the friend's sentFriendRequests array
+    targetFriend.receivedFriendRequests =
+      targetFriend.receivedFriendRequests.filter(
+        (id: mongoose.Types.ObjectId) => !id.equals(userObjectId)
+      );
+
+    // Save the updated user and friend to the database
+    await targetUser.save();
+    await targetFriend.save();
 
     // Remove the invite notification from the friend user's notifications
     await addFriendRequestResponseJob(friendId, userId);
@@ -1010,25 +1213,42 @@ export const removeFriend = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid friend ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Create a new ObjectId from the friendId
+  const friendObjectId = new mongoose.Types.ObjectId(friendId);
+
   try {
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      $pull: { friends: friendId },
-    });
+    // Find the user in the database
+    const targetUser = await User.findByIdAndUpdate(userObjectId);
+
+    // Find the friend in the database
+    const targetFriendUser = await User.findById(friendObjectId);
 
     // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
-    // Find the friend in the database and add the userId to their friend array
-    const targetFriendUser = await User.findByIdAndUpdate(friendId, {
-      $pull: { friends: userId },
-    });
-
     // Check if the friend exists
     if (targetFriendUser === null) {
       return res.status(400).send({ message: 'Friend does not exist!' });
     }
+
+    // Remove the friendId from the user's friends array
+    targetUser.friends = targetUser.friends.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(friendObjectId)
+    );
+
+    // Remove the userId from the friend's friends array
+    targetFriendUser.friends = targetFriendUser.friends.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(userObjectId)
+    );
+
+    // Save the updated user and friend to the database
+    await targetUser.save();
+    await targetFriendUser.save();
 
     return res.status(200).send({ message: 'Successfully removed friend!' });
   } catch (error: any) {
@@ -1066,9 +1286,12 @@ export const addNotificationToken = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid notification token!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
   try {
     // Find the user in the database and add the notification token to their account
-    await User.findByIdAndUpdate(userId, {
+    await User.findByIdAndUpdate(userObjectId, {
       notificationToken: notificationToken,
     });
 
@@ -1097,9 +1320,12 @@ export const removeNotificationToken = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
   try {
     // Find the user in the database and remove the notification token from their account
-    await User.findByIdAndUpdate(userId, {
+    await User.findByIdAndUpdate(userObjectId, {
       notificationToken: undefined,
     });
 
@@ -1141,49 +1367,40 @@ export const addEmergencyContact = async (req: Request, res: Response) => {
     return res.status(400).send({ message: validationError });
   }
 
-  // Check if the emergency contact ID is valid
-  const targetUser = await User.findById(userId);
-
-  // Check if the user exists
-  if (targetUser === null) {
-    return res.status(400).send({
-      message: 'User does not exist!',
-    });
-  }
-
-  // Check if the emergency contact already exists
-  const duplicateExists = targetUser.emergencyContacts.some(
-    contact => contact.phone === emergencyContact.phone
-  );
-
-  // Check if the emergency contact already exists
-  if (duplicateExists) {
-    return res.status(400).send({
-      message: 'Emergency contact already exists!',
-    });
-  }
-
-  // Generate a new ID for the emergency contact
-  const generatedId = new mongoose.Types.ObjectId();
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
 
   try {
-    // Find the user in the database and add the emergency contact to their account
-    const targetUpdatedUser = await User.findByIdAndUpdate(
-      { _id: userId },
-      {
-        $push: {
-          emergencyContacts: { ...emergencyContact, _id: generatedId },
-        },
-      },
-      { new: true }
-    );
+    // Check if the emergency contact ID is valid
+    const targetUser = await User.findById(userObjectId);
 
     // Check if the user exists
-    if (targetUpdatedUser === null) {
+    if (targetUser === null) {
+      return res.status(400).send({ message: 'User does not exist!' });
+    }
+
+    // Check if the emergency contact already exists
+    if (
+      targetUser.emergencyContacts.some(
+        contact => contact.phone === emergencyContact.phone
+      )
+    ) {
       return res.status(400).send({
-        message: 'User does not exist!',
+        message: 'Emergency contact already exists!',
       });
     }
+
+    // Generate a new ID for the emergency contact
+    const generatedId = new mongoose.Types.ObjectId();
+
+    // Add the emergency contact to the user's account
+    targetUser.emergencyContacts.push({
+      ...emergencyContact,
+      _id: generatedId,
+    });
+
+    // Save the updated user to the database
+    await targetUser.save();
 
     return res.status(200).send({
       message: 'Successfully added emergency contact!',
@@ -1225,20 +1442,30 @@ export const removeEmergencyContact = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid emergency contact ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Create a new ObjectId from the emergency contact ID
+  const emergencyContactObjectId = new mongoose.Types.ObjectId(
+    emergencyContactId
+  );
+
   try {
     // Find the user in the database and remove the emergency contact from their account
-    const targetUser = await User.findByIdAndUpdate(
-      { _id: userId },
-      {
-        $pull: { emergencyContacts: { _id: emergencyContactId } },
-      },
-      { new: true }
-    );
+    const targetUser = await User.findById(userObjectId);
 
     // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
+
+    // Remove the emergency contact from the user's emergency contacts array
+    targetUser.emergencyContacts = targetUser.emergencyContacts.filter(
+      (contact: any) => !contact._id.equals(emergencyContactObjectId)
+    );
+
+    // Save the updated user to the database
+    await targetUser.save();
 
     return res
       .status(200)
@@ -1270,21 +1497,6 @@ export const updateEmergencyContact = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'No emergency contact ID provided!' });
   }
 
-  // Check if the emergency contact is valid
-  const validationError = verifyKeys(
-    emergencyContact,
-    KeyValidationType.EMERGENCY_CONTACTS
-  );
-  if (validationError !== '') {
-    return res.status(400).send({ message: validationError });
-  }
-
-  // Add the emergency contact ID to the emergency contact object
-  const updatedEmergencyContact = {
-    ...emergencyContact,
-    _id: emergencyContactId,
-  };
-
   // Check if the provided userId is valid
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
@@ -1295,7 +1507,30 @@ export const updateEmergencyContact = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid emergency contact ID!' });
   }
 
+  // Check if the emergency contact is valid
+  const validationError = verifyKeys(
+    emergencyContact,
+    KeyValidationType.EMERGENCY_CONTACTS
+  );
+
+  // Check if the validation error is not empty and return the error
+  if (validationError !== '') {
+    return res.status(400).send({ message: validationError });
+  }
+
+  // Create a new ObjectId from the emergency contact ID
+  const emergencyContactObjectId = new mongoose.Types.ObjectId(
+    emergencyContactId
+  );
+
+  // Add the emergency contact ID to the emergency contact object
+  const updatedEmergencyContact = {
+    ...emergencyContact,
+    _id: emergencyContactObjectId,
+  };
+
   try {
+    // Find and update the emergency contact in the database
     const targetUser = await User.findOneAndUpdate(
       { _id: userId, 'emergencyContacts._id': emergencyContactId },
       { $set: { 'emergencyContacts.$': updatedEmergencyContact } },
@@ -1336,9 +1571,12 @@ export const getEmergencyContacts = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
   try {
     // Find the user in the database
-    const targetUser = await User.findById(userId);
+    const targetUser = await User.findById(userObjectId);
 
     // Check if the user exists
     if (targetUser === null) {
@@ -1378,17 +1616,20 @@ export const activateEmergency = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
   try {
     // Find the user in the database
-    const targetUser = await User.findById(userId);
+    const targetUser = await User.findById(userObjectId);
 
     // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
-    // change the user document so that "isEmergency" is true
-    await User.findByIdAndUpdate(userId, { isEmergency: true });
+    // Change the user document so that "isEmergency" is true
+    targetUser.isEmergency = true;
 
     // If the user is in a group, send notifications to all users in the group
     if (targetUser.currentGroup) {
@@ -1424,6 +1665,9 @@ export const activateEmergency = async (req: Request, res: Response) => {
       );
     }
 
+    // Save the updated user to the database
+    await targetUser.save();
+
     // TODO LATER: send an SMS to all emergency contacts
 
     return res.status(200).send({ message: 'Successfully activated emergency!' });
@@ -1455,17 +1699,20 @@ export const deactivateEmergency = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
   try {
     // Find the user in the database
-    const targetUser = await User.findById(userId);
+    const targetUser = await User.findById(userObjectId);
 
     // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
-    // change the user document so that "isEmergency" is true
-    await User.findByIdAndUpdate(userId, { isEmergency: false });
+    // Change the user document so that "isEmergency" is false
+    targetUser.isEmergency = false;
 
     // If the user is in a group, send notifications to all users in the group
     if (targetUser.currentGroup) {
@@ -1501,6 +1748,9 @@ export const deactivateEmergency = async (req: Request, res: Response) => {
       );
     }
 
+    // Save the updated user to the database
+    await targetUser.save();
+
     // TODO LATER: send an SMS to all emergency contacts
 
     return res.status(200).send({ message: 'Successfully activated emergency!' });
@@ -1529,16 +1779,23 @@ export const goOnline = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
   try {
     // Find the user in the database
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      isActiveNow: true,
-    });
+    const targetUser = await User.findByIdAndUpdate(userObjectId);
 
     // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
+
+    // Change the user document so that "isActiveNow" is true
+    targetUser.isActiveNow = true;
+
+    // Save the updated user to the database
+    await targetUser.save();
 
     return res.status(200).send({ message: 'Successfully went online!' });
   } catch (error: any) {
@@ -1579,20 +1836,29 @@ export const goOffline = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Create a new ObjectId from the userId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
   // Create a new lastActive object with the provided location
   const lastActive = { ...req.body, time: new Date().toUTCString() };
 
   try {
     // Find and update the user in the database
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      isActiveNow: false,
-      lastActive: lastActive,
-    });
+    const targetUser = await User.findById(userObjectId);
 
     // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
+
+    // Change the user document so that "isActiveNow" is false
+    targetUser.isActiveNow = false;
+
+    // Change the user document so that "lastActive" is the provided location
+    targetUser.lastActive = lastActive;
+
+    // Save the updated user to the database
+    await targetUser.save();
 
     return res.status(200).send({ message: 'Successfully went offline!' });
   } catch (error: any) {
@@ -1616,7 +1882,7 @@ export const uploadProfileImg = async (req: Request, res: Response) => {
       throw new Error(err);
     }
 
-    const userId = req.params?.userId;
+    const userId = req.params.userId as string;
     const image = req.file;
 
     // Check if the user ID was provided
@@ -1634,8 +1900,11 @@ export const uploadProfileImg = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'No image provided!' });
     }
 
+    // Create a new ObjectId from the userId
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+
     try {
-      const targetUser = await User.findById(userId);
+      const targetUser = await User.findById(userObjectId);
 
       if (targetUser === null) {
         return res.status(400).send({ message: 'User does not exist!' });

@@ -32,7 +32,7 @@ export const expireGroup = async (groupId: string) => {
       await User.updateMany(
         { _id: targetGroup.invitedMembers },
         {
-          $pull: { invitedGroups: groupId },
+          $pull: { receivedGroupInvites: groupId },
         }
       );
     }
@@ -115,9 +115,6 @@ export const expirePing = async (pingId: string) => {
         notificationType: NotificationType.pingExpiredSender,
         sentDateTime: new Date().toUTCString(),
         pingId: pingId,
-        recipientId: ping?.recipientId.toString(),
-        recipientFirstName: recipientUser?.firstName,
-        recipientLastName: recipientUser?.lastName,
         senderId: ping.senderId.toString(),
         senderFirstName: senderUser?.firstName,
         senderLastName: senderUser?.lastName,
@@ -134,9 +131,6 @@ export const expirePing = async (pingId: string) => {
         notificationType: NotificationType.pingExpiredRecipient,
         sentDateTime: new Date().toUTCString(),
         pingId: pingId,
-        recipientId: ping?.recipientId.toString(),
-        recipientFirstName: recipientUser?.firstName,
-        recipientLastName: recipientUser?.lastName,
         senderId: ping.senderId.toString(),
         senderFirstName: senderUser?.firstName,
         senderLastName: senderUser?.lastName,
@@ -158,9 +152,9 @@ export const removeGroupInviteNotification = async (
   groupId: string
 ) => {
   try {
-    await Notification.findOneAndDelete({
-      userId: userId,
-      notificationType: NotificationType.groupInvite,
+    const test = await Notification.findOneAndDelete({
+      recipientId: userId,
+      'data.notificationType': NotificationType.groupInvite,
       'data.groupId': groupId,
     });
   } catch (error: any) {
@@ -178,11 +172,13 @@ export const removeFriendRequestNotification = async (
   friendId: string
 ) => {
   try {
-    await Notification.findOneAndDelete({
-      userId: userId,
-      notificationType: NotificationType.friendRequest,
+    const test = await Notification.findOneAndDelete({
+      recipientId: userId,
+      'data.notificationType': NotificationType.friendRequest,
       'data.senderId': friendId,
     });
+
+    console.log(test);
   } catch (error: any) {
     console.log(error.message);
   }

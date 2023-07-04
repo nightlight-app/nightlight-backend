@@ -15,7 +15,7 @@ import type { Document } from 'mongoose';
  */
 export interface MongoNotification {
   _id?: mongoose.Types.ObjectId;
-  userId: string;
+  recipientId: string;
   title: string;
   body: string;
   data: NotificationSpecificData;
@@ -72,7 +72,6 @@ export enum NotificationType {
  * It contains information such as the user ID, title, body, data, and delay for displaying notifications.
  */
 export interface NotificationDocument extends Document {
-  userId: mongoose.Types.ObjectId;
   title: string;
   body: string;
   data: NotificationSpecificData;
@@ -130,6 +129,18 @@ export interface GroupExpiredData extends NotificationData {
 }
 
 /**
+ * @interface GroupDeletedData
+ * Interface for the data that is specific to a notification type.
+ *
+ * @property {string} groupId - The ID of the group that the notification is related to.
+ * @property {string} groupName - The name of the group that the notification is related to.
+ */
+export interface GroupDeletedData extends NotificationData {
+  groupId: string;
+  groupName: string;
+}
+
+/**
  * @interface EmergencyNotificationData
  * Interface for the data that is specific to a notification type.
  *
@@ -153,12 +164,12 @@ export interface EmergencyNotificationData extends NotificationData {
  */
 export interface PingNotificationData extends NotificationData {
   pingId: string;
-  recipientId: string;
-  recipientFirstName: string;
-  recipientLastName: string;
   senderId: string;
   senderFirstName: string;
   senderLastName: string;
+  recipientId: string;
+  recipientFirstName: string;
+  recipientLastName: string;
 }
 
 /**
@@ -170,4 +181,5 @@ export type NotificationSpecificData =
   | GroupNotificationData
   | EmergencyNotificationData
   | PingNotificationData
-  | GroupExpiredData;
+  | GroupExpiredData
+  | GroupDeletedData;

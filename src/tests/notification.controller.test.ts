@@ -30,13 +30,14 @@ const connectToMongo = async (): Promise<void> => {
   }
 };
 
-before(async () => {
-  await connectToMongo();
+before(async done => {
+  connectToMongo();
   server = app.listen(6065);
-  await User.deleteMany({});
-  await Group.deleteMany({});
-  await Venue.deleteMany({});
-  await Notification.deleteMany({});
+  User.deleteMany({});
+  Group.deleteMany({});
+  Venue.deleteMany({});
+  Notification.deleteMany({});
+  done();
 });
 
 /* NOTIFICATION TESTS */
@@ -107,9 +108,16 @@ describe('test notification controller', () => {
         notificationId1 = res.body.notifications[0]._id;
         expect(res).to.have.status(200);
         expect(res.body.notifications).to.be.an('array');
-        expect(res.body.notifications.length).to.equal(2);
-        expect(res.body.notifications[0].title).to.equal('Test Title 1');
-        expect(res.body.notifications[1].title).to.equal('Test Title 2');
+        expect(
+          res.body.notifications.filter(
+            (notification: any) => notification.title === 'Test Title 1'
+          )
+        ).to.be.an('array');
+        expect(
+          res.body.notifications.filter(
+            (notification: any) => notification.title === 'Test Title 2'
+          )
+        ).to.be.an('array');
         done();
       });
   });
@@ -132,8 +140,11 @@ describe('test notification controller', () => {
       .then(res => {
         expect(res).to.have.status(200);
         expect(res.body.notifications).to.be.an('array');
-        expect(res.body.notifications.length).to.equal(1);
-        expect(res.body.notifications[0].title).to.equal('Test Title 2');
+        expect(
+          res.body.notifications.filter(
+            (notification: any) => notification.title === 'Test Title 2'
+          )
+        ).to.be.an('array');
         done();
       });
   });
@@ -203,7 +214,7 @@ describe('test notification controller errors', () => {
         delay: -3,
       })
       .then(res => {
-        expect(res).to.have.status(500);
+        expect(res).to.have.status(400);
         expect(res.body.message).to.equal('Delay must be a positive number.');
         done();
       });

@@ -144,6 +144,7 @@ describe('testing venue with reactions', () => {
       .get(`/venues/${venueId}/`)
       .query({ userId: userId1 })
       .then(res => {
+        console.log(res.body.venue.reactions);
         expect(res).to.have.status(200);
         expect(res.body.venue).to.have.keys(VENUE_KEYS_TEST);
         expect(res.body.venue.reactions['🔥']).to.have.keys(REACTION_KEYS_TEST);
@@ -314,7 +315,6 @@ describe('testing venue with reactions', () => {
       .get(`/venues/${venueId}/`)
       .query({ userId: userId6 })
       .then(res => {
-        console.log(JSON.stringify(res.body));
         expect(res).to.have.status(200);
         expect(res.body.venue).to.have.keys(VENUE_KEYS_TEST);
         expect(res.body.venue.reactions['🔥']).to.have.keys(REACTION_KEYS_TEST);

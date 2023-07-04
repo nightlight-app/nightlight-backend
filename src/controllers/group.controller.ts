@@ -2,7 +2,6 @@ import { NotificationType } from '../interfaces/Notification.interface';
 import Group from '../models/Group.model';
 import User from '../models/User.model';
 import { addGroupExpireJob } from '../queue/jobs';
-import { inviteUsersToGroup } from '../utils/group.utils';
 import { sendNotifications } from '../utils/notification.utils';
 import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
 import { GROUP_EXPIRY_DURATION } from '../utils/constants';
@@ -24,6 +23,11 @@ export const createGroup = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'No user ID provided!' });
   }
 
+  // check if user id is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
   // Check if the group was provided
   const validationError = verifyKeys(group, KeyValidationType.GROUPS);
   if (validationError !== '') {
@@ -33,20 +37,19 @@ export const createGroup = async (req: Request, res: Response) => {
   // create a new group from the request body
   const newGroup = new Group(group);
 
+  // Check if the group has any invited members
   if (newGroup.invitedMembers.length === 0) {
     return res
       .status(400)
       .send({ message: 'Group must have at least one invited member!' });
   }
 
-  try {
-    // check if user id is valid
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).send({ message: 'Invalid user ID!' });
-    }
+  // Create an ObjectId from the user ID
+  const userObjectId = new mongoose.Types.ObjectId(userId);
 
+  try {
     // retrieve user creating the group
-    const targetUser = await User.findById(userId);
+    const targetUser = await User.findById(userObjectId);
 
     // check if user exists
     if (targetUser === null) {
@@ -60,27 +63,27 @@ export const createGroup = async (req: Request, res: Response) => {
       });
     }
 
-    // save the new group to the database
-    await newGroup.save();
-
     // add the group id to the user's currentGroup field
     targetUser.currentGroup = newGroup._id;
+
+    // invite all users in the invitedMembers array to the group
+    await User.updateMany(
+      { _id: { $in: newGroup.invitedMembers } },
+      { $push: { receivedGroupInvites: newGroup._id } }
+    );
 
     // save the user to the database with the new group id
     await targetUser.save();
 
-    // invite all users in the invitedMembers array to the group
-    const result = inviteUsersToGroup(newGroup._id, newGroup.invitedMembers);
+    // save the new group to the database
+    await newGroup.save();
 
     // add the group to the expire queue
     addGroupExpireJob(newGroup._id.toString(), GROUP_EXPIRY_DURATION);
 
-    // convert all user ids to strings for notification sending
-    const stringIds = newGroup.invitedMembers.map(id => id.toString());
-
     // send notifications to all invited users that they have been invited to the group
     sendNotifications(
-      [...stringIds],
+      [...newGroup.invitedMembers.map(id => id.toString())],
       'New group invite! 🎉',
       targetUser.firstName +
         ' ' +
@@ -98,15 +101,9 @@ export const createGroup = async (req: Request, res: Response) => {
       true
     );
 
-    // TODO: refactor and remove group if failed to invite users
-    if (result.status !== 200) {
-      return res.status(result.status).send({ message: result.message });
-    } else {
-      return res.status(result.status).send({
-        message: result.message + ' and created group',
-        group: newGroup,
-      });
-    }
+    return res
+      .status(200)
+      .send({ message: 'Successfully created group!', group: newGroup });
   } catch (error: any) {
     return res.status(500).send({ message: error.message });
   }
@@ -127,14 +124,17 @@ export const getGroup = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'No group ID provided!' });
   }
 
-  try {
-    // check if group id is valid
-    if (!mongoose.Types.ObjectId.isValid(groupId)) {
-      return res.status(400).send({ message: 'Invalid group ID!' });
-    }
+  // check if group id is valid
+  if (!mongoose.Types.ObjectId.isValid(groupId)) {
+    return res.status(400).send({ message: 'Invalid group ID!' });
+  }
 
+  // Create an ObjectId from the group ID
+  const groupObjectId = new mongoose.Types.ObjectId(groupId);
+
+  try {
     // retrieve group from database
-    const targetGroup = await Group.findById(groupId);
+    const targetGroup = await Group.findById(groupObjectId);
 
     // check if group exists
     if (targetGroup === null) {
@@ -163,21 +163,45 @@ export const deleteGroup = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'No group ID provided!' });
   }
 
+  // check if group id is valid
+  if (!mongoose.Types.ObjectId.isValid(req.params?.groupId)) {
+    return res.status(400).send({ message: 'Invalid group ID!' });
+  }
+
+  // Create an ObjectId from the group ID
+  const groupObjectId = new mongoose.Types.ObjectId(groupId);
+
   try {
-    // check if group id is valid
-    if (!mongoose.Types.ObjectId.isValid(req.params?.groupId)) {
-      return res.status(400).send({ message: 'Invalid group ID!' });
+    // Find group to delete
+    const targetGroup = await Group.findById(groupObjectId);
+
+    // Check if group exists
+    if (targetGroup === null) {
+      return res.status(400).send({ message: 'Group does not exist!' });
     }
 
-    // delete group from database
-    const result = await Group.deleteOne({ _id: groupId });
+    // Remove currentGroup and lastActive from all users in the group
+    await User.updateMany(
+      { _id: { $in: targetGroup.members } },
+      { currentGroup: undefined, lastActive: undefined }
+    );
 
-    // TODO: remove group from expire queue
+    // Remove the group from the database
+    await targetGroup.remove();
 
-    // check if group was deleted
-    if (result.deletedCount === 0) {
-      return res.status(400).send({ message: 'Group not found!' });
-    }
+    // Send notification to members that group has been deleted
+    sendNotifications(
+      [...targetGroup.members.map(id => id.toString())],
+      'Group deleted! 😢',
+      'Your group has been deleted.',
+      {
+        notificationType: NotificationType.groupDeleted,
+        sentDateTime: new Date().toUTCString(),
+        groupId: targetGroup._id.toString(),
+        groupName: targetGroup.name,
+      },
+      true
+    );
 
     return res.status(200).send({ message: 'Successfully deleted group!' });
   } catch (error: any) {
@@ -214,63 +238,88 @@ export const inviteMembersToExistingGroup = async (
     return res.status(400).send({ message: 'No user ID provided!' });
   }
 
-  try {
-    // check if group id is valid
-    if (!mongoose.Types.ObjectId.isValid(groupId)) {
-      return res.status(400).send({ message: 'Invalid group ID!' });
-    }
+  // check if group id is valid
+  if (!mongoose.Types.ObjectId.isValid(groupId)) {
+    return res.status(400).send({ message: 'Invalid group ID!' });
+  }
 
-    // check if user id is valid
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
+  // check if user id is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  // Check if user IDs are valid
+  users.forEach((id: string) => {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).send({ message: 'Invalid user ID!' });
     }
+  });
+
+  // Create an ObjectId from the user ID
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Create an ObjectId from the group ID
+  const groupObjectId = new mongoose.Types.ObjectId(groupId);
+
+  // Create an ObjectId array from the user IDs
+  const usersObjectId = users.map(id => new mongoose.Types.ObjectId(id));
+
+  try {
+    // get target user
+    const targetUser = await User.findById(userObjectId);
 
     // add users to the group's invitedMembers array
-    const targetGroup = await Group.findByIdAndUpdate(groupId, {
-      $push: { invitedMembers: users },
-    });
-
-    // check if group exists
-    if (targetGroup === null) {
-      return res.status(400).send({ message: 'Group does not exist!' });
-    }
-
-    // invite all users in the invitedMembers array to the group
-    const result = inviteUsersToGroup(groupId, users);
-
-    // get target user
-    const targetUser = await User.findById(userId);
+    const targetGroup = await Group.findById(groupObjectId);
 
     // check if user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
-    if (result.status == 200) {
-      // send notifications to all invited users that they have been invited to the group
-      sendNotifications(
-        [...users],
-        'New group invite! 🎉',
-        targetUser.firstName +
-          ' ' +
-          targetUser.lastName +
-          ' has invited you to join their group.',
-        {
-          notificationType: NotificationType.groupInvite,
-          sentDateTime: new Date().toUTCString(),
-          senderId: userId,
-          senderFirstName: targetUser.firstName,
-          senderLastName: targetUser.lastName,
-          groupId: groupId,
-          groupName: targetGroup.name,
-        },
-        true
-      );
+    // check if group exists
+    if (targetGroup === null) {
+      return res.status(400).send({ message: 'Group does not exist!' });
     }
 
+    // Add invited users and remove repeated users from the invitedMembers array
+    usersObjectId.forEach((id: mongoose.Types.ObjectId) => {
+      if (!targetGroup.invitedMembers.includes(id)) {
+        targetGroup.invitedMembers.push(id);
+      }
+    });
+
+    // invite all users in the invitedMembers array to the group
+    await User.updateMany(
+      { _id: { $in: usersObjectId } },
+      { $push: { receivedGroupInvites: groupObjectId } }
+    );
+
+    // save the user and group to the database
+    await targetGroup.save();
+
+    // send notifications to all invited users that they have been invited to the group
+    sendNotifications(
+      [...users],
+      'New group invite! 🎉',
+      targetUser.firstName +
+        ' ' +
+        targetUser.lastName +
+        ' has invited you to join their group.',
+      {
+        notificationType: NotificationType.groupInvite,
+        sentDateTime: new Date().toUTCString(),
+        senderId: userId,
+        senderFirstName: targetUser.firstName,
+        senderLastName: targetUser.lastName,
+        groupId: groupId,
+        groupName: targetGroup.name,
+      },
+      true
+    );
+
     return res
-      .status(result.status)
-      .send({ message: result.message + ' to existing group' });
+      .status(200)
+      .send({ message: 'Successfully invited users to existing group!' });
   } catch (error: any) {
     return res.status(500).send({ message: error.message });
   }
@@ -296,36 +345,52 @@ export const removeMemberInvitation = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'No group ID provided!' });
   }
 
+  // check if group id is valid
+  if (!mongoose.Types.ObjectId.isValid(groupId)) {
+    return res.status(400).send({ message: 'Invalid group ID!' });
+  }
+
+  // check if user id is valid
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Invalid user ID!' });
+  }
+
+  // Create an ObjectId from the user ID
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Create an ObjectId from the group ID
+  const groupObjectId = new mongoose.Types.ObjectId(groupId);
+
   try {
-    // check if group id is valid
-    if (!mongoose.Types.ObjectId.isValid(groupId)) {
-      return res.status(400).send({ message: 'Invalid group ID!' });
-    }
-
-    // check if user id is valid
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).send({ message: 'Invalid user ID!' });
-    }
-
     // remove user from the group's invitedMembers array
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      $pull: { invitedGroups: groupId },
-    });
+    const targetUser = await User.findById(userObjectId);
+
+    // remove group from the user's receivedGroupInvites array
+    const targetGroup = await Group.findById(groupObjectId);
 
     // check if user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
-    // remove group from the user's invitedGroups array
-    const targetGroup = await Group.findByIdAndUpdate(groupId, {
-      $pull: { invitedMembers: userId },
-    });
-
     // check if group exists
     if (targetGroup === null) {
       return res.status(400).send({ message: 'Group does not exist!' });
     }
+
+    // remove group from the user's receivedGroupInvites array
+    targetUser.receivedGroupInvites = targetUser.receivedGroupInvites.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(groupObjectId)
+    );
+
+    // remove user from the group's invitedMembers array
+    targetGroup.invitedMembers = targetGroup.invitedMembers.filter(
+      (id: mongoose.Types.ObjectId) => !id.equals(userObjectId)
+    );
+
+    // save the user and group to the database
+    await targetUser.save();
+    await targetGroup.save();
 
     return res
       .status(200)

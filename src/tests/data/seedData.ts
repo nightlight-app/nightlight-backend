@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
+import type { SavedGroup } from '../../interfaces/SavedGroup.interface';
 import type { Group } from '../../interfaces/Group.interface';
-import type { User } from '../../interfaces/User.interface';
+import type { EmergencyContact, User } from '../../interfaces/User.interface';
 import type { Venue } from '../../interfaces/Venue.interface';
 import type mongoose from 'mongoose';
 
@@ -30,9 +31,9 @@ export const createUser = (
     faker.date.between('1990-01-01T00:00:00.000Z', '2001-01-01T00:00:00.000Z')
   ).toUTCString(),
   currentGroup: currentGroup,
-  invitedGroups: invitedGroups,
+  receivedGroupInvites: invitedGroups,
   friends: friends || ([] as mongoose.Types.ObjectId[]),
-  friendRequests: [] as mongoose.Types.ObjectId[],
+  receivedFriendRequests: [] as mongoose.Types.ObjectId[],
   lastActive: {
     location: {
       latitude: Number(faker.address.latitude()),
@@ -42,7 +43,11 @@ export const createUser = (
       faker.date.between('1990-01-01T00:00:00.000Z', '2001-01-01T00:00:00.000Z')
     ).toUTCString(),
   },
-  savedGroups: [],
+  savedGroups: [] as SavedGroup[],
+  emergencyContacts: [] as EmergencyContact[],
+  sentPings: [] as mongoose.Types.ObjectId[],
+  receivedPings: [] as mongoose.Types.ObjectId[],
+  isActiveNow: false,
 });
 
 /**

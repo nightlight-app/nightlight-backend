@@ -73,9 +73,6 @@ describe('test notification utils', () => {
       assert(notifications[1].body === 'Test Body');
       assert(notifications[1].data.notificationType === 'test');
       assert(notifications[1].delay === 0);
-      assert(notifications[0].userId !== notifications[1].userId);
-      assert(notifications[2].userId !== notifications[1].userId);
-      assert(notifications[2].userId !== notifications[0].userId);
       assert(notifications[2].title === 'Test Title');
       assert(notifications[2].body === 'Test Body');
       assert(notifications[2].data.notificationType === 'test');
@@ -161,7 +158,6 @@ describe('test notification utils errors', () => {
       assert(notifications[1].body === 'Test Body');
       assert(notifications[1].data.notificationType === 'test');
       assert(notifications[1].delay === 0);
-      assert(notifications[0].userId !== notifications[1].userId);
       done();
     });
   });

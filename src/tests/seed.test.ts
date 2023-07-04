@@ -66,7 +66,7 @@ describe('seed database for prod', () => {
   // loop for multiple users to be added
   for (let i = 0; i < 5; ++i) {
     // create user and add to array
-    const user = createUser(new mongoose.Types.ObjectId(groupId!), [], []);
+    const user = createUser(undefined, [], []);
     it('seed data - users', done => {
       chai
         .request(server)
@@ -75,7 +75,7 @@ describe('seed database for prod', () => {
         .then(res => {
           userIds.push(new mongoose.Types.ObjectId(res.body.user._id));
           expect(res).to.have.status(201);
-          expect(res.body.user).to.have.keys([...USER_KEYS_TEST, 'currentGroup']);
+          expect(res.body.user).to.have.keys([...USER_KEYS_TEST]);
           done();
         });
     });
@@ -117,7 +117,7 @@ describe('seed database for prod', () => {
       });
   });
 
-  for (let i = 0; i < 5; ++i) {
+  for (let i = 0; i < userIds.length; ++i) {
     it('seed data - accept group invitation', done => {
       chai
         .request(server)
@@ -129,6 +129,7 @@ describe('seed database for prod', () => {
         )
         .send()
         .then(res => {
+          console.log(res.body);
           expect(res).to.have.status(200);
           done();
         });

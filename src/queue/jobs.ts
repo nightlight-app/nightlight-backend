@@ -9,7 +9,7 @@ import type { Emoji } from '../utils/venue.utils';
  */
 export const addGroupExpireJob = async (groupId: string, delay: number) => {
   // override delay if environment is test
-  if (process.env.ENVIRONMENT === 'test') delay = 4000;
+  if (process.env.ENVIRONMENT === 'test') delay = 6000;
 
   try {
     await nightlightQueue.add(

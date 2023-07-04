@@ -67,12 +67,18 @@ export const getVenue = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
+  // Create user object ID from user ID
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Create venue object ID from venue ID
+  const venueObjectId = new mongoose.Types.ObjectId(venueId);
+
   // get the venue from the database with the aggregated and reshaped reactions
   try {
     const targetVenue: VenueInterface[] = await Venue.aggregate([
       {
         $match: {
-          _id: new mongoose.Types.ObjectId(venueId),
+          _id: venueObjectId,
         },
       },
       {
@@ -168,6 +174,9 @@ export const getVenues = async (req: Request, res: Response) => {
   if (Number(count) <= 0) {
     return res.status(400).send({ message: 'Invalid page count!' });
   }
+
+  // Create user object ID from user ID
+  const userObjectId = new mongoose.Types.ObjectId(userId);
 
   try {
     // Get the page number from the query parameters
@@ -282,58 +291,38 @@ export const toggleReactionToVenue = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid emoji!' });
   }
 
+  // Create venue object ID from venue ID
+  const venueObjectId = new mongoose.Types.ObjectId(venueId);
+
   try {
     // Find the venue by venueId and reactions that match userId and emoji
-    const venue = await Venue.findById(venueId);
+    const targetVenue = await Venue.findById(venueObjectId);
 
     // Check if venue exists
-    if (!venue) {
+    if (targetVenue === null) {
       return res.status(400).send({ message: 'Venue does not exist!' });
     }
 
-    // Check if venue ID is valid
-    if (!mongoose.Types.ObjectId.isValid(venueId)) {
-      return res.status(400).send({ message: 'Invalid venue ID!' });
-    }
-
     // Check if a reaction object with userId and emoji already exists
-    const existingReaction = venue.reactions.find(
+    const existingReaction = targetVenue.reactions.find(
       reaction => reaction.userId === userId && reaction.emoji === emoji
     );
 
     // If reaction exists, remove it. Otherwise, add it.
     if (existingReaction) {
-      // Get venue
-      const result = await Venue.findById(venueId);
-
-      // Check if venue exists
-      if (result === null) {
-        return res.status(400).send({ message: 'Venue does not exist!' });
-      }
-
-      // Get reaction to be removed
-      const removedReaction = result.reactions.filter(
-        reaction => reaction.userId === userId && reaction.emoji === emoji
-      )[0];
-
-      // Check if reaction exists
-      if (removedReaction === undefined) {
-        return res.status(400).send({ message: 'Reaction does not exist!' });
-      }
-
       // Remove reaction from venue
-      result.reactions = result.reactions.filter(
+      targetVenue.reactions = targetVenue.reactions.filter(
         reaction => reaction.userId !== userId || reaction.emoji !== emoji
       );
 
       // Obtain queue ID
-      const queueId = removedReaction.queueId;
-
-      // Remove reaction from queue
-      await result.updateOne({ $set: { reactions: result.reactions } });
+      const queueId = existingReaction.queueId;
 
       // Remove job from queue
       nightlightQueue.remove(queueId);
+
+      // Remove reaction from queue
+      await targetVenue.save();
 
       return res.status(200).send({
         message: 'Successfully deleted reaction from venue: ' + venueId,
@@ -356,7 +345,7 @@ export const toggleReactionToVenue = async (req: Request, res: Response) => {
 
       // Add reaction to venue
       const result = await Venue.findByIdAndUpdate(
-        venueId,
+        venueObjectId,
         {
           $push: {
             reactions: {
@@ -404,9 +393,12 @@ export const deleteVenue = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid venue ID!' });
   }
 
+  // Create venue object ID from venue ID
+  const venueObjectId = new mongoose.Types.ObjectId(venueId);
+
   try {
     // Delete venue
-    const result = await Venue.deleteOne({ _id: venueId });
+    const result = await Venue.deleteOne({ _id: venueObjectId });
 
     // Check if venue was deleted
     if (result.deletedCount === 0) {
@@ -438,9 +430,12 @@ export const updateVenue = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid venue ID!' });
   }
 
+  // Create venue object ID from venue ID
+  const venueObjectId = new mongoose.Types.ObjectId(venueId);
+
   try {
     // Update venue
-    const result = await Venue.findByIdAndUpdate(venueId, req.body);
+    const result = await Venue.findByIdAndUpdate(venueObjectId, req.body);
 
     // Check if venue was updated
     if (result === null) {
@@ -448,7 +443,7 @@ export const updateVenue = async (req: Request, res: Response) => {
     }
 
     return res.status(200).send({
-      message: 'Successfully added reaction to Venue!',
+      message: 'Successfully updated venue!',
     });
   } catch (error: any) {
     return res.status(500).send({ message: error.message });

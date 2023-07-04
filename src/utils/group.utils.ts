@@ -2,6 +2,8 @@ import User from '../models/User.model';
 import type mongoose from 'mongoose';
 
 /**
+ * DEPRECATED FUNCTION (keeping for possible future use)
+ *
  * Adds the groupId to the invitedGroups array of the user document
  * @param groupId the id of the group that the users are being invited to join
  * @param invitedUsers array of user ids to be invited to the group of groupId
@@ -15,7 +17,7 @@ export const inviteUsersToGroup = (
   try {
     invitedUsers.forEach(async (userId: mongoose.Types.ObjectId | string) => {
       await User.findByIdAndUpdate(userId, {
-        $push: { invitedGroups: groupId },
+        $push: { receivedGroupInvites: groupId },
       });
     });
 

@@ -333,7 +333,7 @@ describe('testing save groups', () => {
         expect(res.body.users[0]).to.have.keys(USER_KEYS_TEST);
         expect(res.body.users[0].savedGroups[2]).to.have.keys(SAVED_GROUP_KEYS);
         expect(res.body.users[0].savedGroups[2].name).to.equal('Test group');
-        expect(res.body.users[0].savedGroups[2].users).to.have.length(3);
+        expect(res.body.users[0].savedGroups[2].members).to.have.length(3);
         done();
       });
   });
@@ -511,7 +511,7 @@ describe('testing friend requests', () => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
         expect(user._id).to.equal(userId2);
-        expect(user.friendRequests).to.have.length(2);
+        expect(user.receivedFriendRequests).to.have.length(2);
         done();
       })
       .catch(err => done(err));
@@ -537,7 +537,7 @@ describe('testing friend requests', () => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
         expect(user._id).to.equal(userId2);
-        expect(user.friendRequests).to.have.length(1);
+        expect(user.receivedFriendRequests).to.have.length(1);
         done();
       })
       .catch(err => done(err));
@@ -589,7 +589,7 @@ describe('testing friend requests', () => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
         expect(user._id).to.equal(userId2);
-        expect(user.friendRequests).to.have.length(1);
+        expect(user.receivedFriendRequests).to.have.length(1);
         done();
       })
       .catch(err => done(err));
@@ -621,7 +621,7 @@ describe('testing friend requests', () => {
         expect(notifications).to.satisfy((nots: any[]) =>
           nots.some(
             not =>
-              not.userId === userId2 &&
+              not.recipientId === userId2 &&
               not.data.notificationType === 'friendRequest' &&
               not.data.senderId === userId3
           )
@@ -666,8 +666,6 @@ describe('testing friend requests', () => {
       .catch(err => done(err));
   });
 
-  // GET NOTIFICATIONS AGAIN
-
   it('should fetch a user via GET to check friend requests after decline /users/?userIds={userId}', done => {
     chai
       .request(server)
@@ -677,7 +675,7 @@ describe('testing friend requests', () => {
         const user = res.body.users[0];
         expect(res).to.have.status(200);
         expect(user._id).to.equal(userId2);
-        expect(user.friendRequests).to.have.length(0);
+        expect(user.receivedFriendRequests).to.have.length(0);
         done();
       })
       .catch(err => done(err));

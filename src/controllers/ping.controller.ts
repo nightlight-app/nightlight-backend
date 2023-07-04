@@ -22,6 +22,7 @@ export const sendPing = async (req: Request, res: Response) => {
   // Get the ping object from the request body
   const pingData = req.body;
 
+  // Get the current date and time
   const sentDateTime = new Date().toUTCString();
 
   // Verify that the ping object has all the necessary keys
@@ -37,20 +38,14 @@ export const sendPing = async (req: Request, res: Response) => {
     // Create a new ping from the request body
     const newPing = new Ping(ping);
 
-    // Save the ping to the database
-    const savedPing = await newPing.save();
-
-    // Check if the ping was saved
-    if (savedPing === null) {
-      return res.status(500).send({ message: 'Ping could not be saved' });
-    }
-
     // Calculate the delay for the ping expiration
     //const delay =
     //  new Date().getTime() - new Date(ping.expirationDateTime).getTime();
 
+    // TODO: Add the ping expiration to the queue after the ping frontend is finished (commented for now)
+
     // Add the ping expiration to the queue
-    //const job = await addPingExpireJob(savedPing._id.toString(), delay);
+    // const job = await addPingExpireJob(savedPing._id.toString(), delay);
 
     // Check if the job was added to the queue
     // if (!job) {
@@ -59,37 +54,35 @@ export const sendPing = async (req: Request, res: Response) => {
     //     .send({ message: 'Failed to remove ping, queue error!' });
     // }
 
-    // Update the ping with the queue id
-    const finalPing = await Ping.findByIdAndUpdate(
-      savedPing._id,
-      { queueId: '' },
-      { new: true }
-    );
-
-    // Check if the ping was updated
-    if (finalPing === null) {
-      return res.status(400).send({ message: 'Ping not found' });
-    }
+    // Add the queue ID to the ping (blank for now)
+    newPing.queueId = '';
 
     // Add the ping to the recipient's list of pings
-    const recipientUser = await User.findByIdAndUpdate(ping.recipientId, {
-      $push: { receivedPings: finalPing._id },
-    });
+    const recipientUser = await User.findById(ping.recipientId);
+
+    // Add the ping to the sender's list of pings
+    const senderUser = await User.findById(ping.senderId);
 
     // Check if the user exists
     if (recipientUser === null) {
       return res.status(400).send({ message: 'Recipient not found' });
     }
 
-    // Add the ping to the sender's list of pings
-    const senderUser = await User.findByIdAndUpdate(ping.senderId, {
-      $push: { sentPings: finalPing._id },
-    });
-
     // Check if the user exists
     if (senderUser === null) {
       return res.status(400).send({ message: 'Sender not found' });
     }
+
+    // Add the ping to the recipient's list of pings
+    recipientUser.receivedPings.push(newPing._id);
+
+    // Add the ping to the sender's list of pings
+    senderUser.sentPings.push(newPing._id);
+
+    // Save the pings and users to the database
+    await newPing.save();
+    await recipientUser.save();
+    await senderUser.save();
 
     // Send a notification to the recipient
     sendNotifications(
@@ -99,7 +92,7 @@ export const sendPing = async (req: Request, res: Response) => {
       {
         notificationType: NotificationType.pingReceived,
         sentDateTime: new Date().toUTCString(),
-        pingId: finalPing._id.toString(),
+        pingId: newPing._id.toString(),
         recipientId: ping.recipientId.toString(),
         recipientFirstName: recipientUser.firstName,
         recipientLastName: recipientUser.lastName,
@@ -113,7 +106,7 @@ export const sendPing = async (req: Request, res: Response) => {
     // Send the ping back to the user
     return res
       .status(201)
-      .send({ message: 'Ping sent successfully', ping: finalPing });
+      .send({ message: 'Ping sent successfully', ping: newPing });
   } catch (error: any) {
     return res.status(500).send({ error: error.message });
   }
@@ -155,38 +148,43 @@ export const respondToPing = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid response value.' });
   }
 
+  // Create a new mongoose ObjectId from the ping ID
+  const pingObjectId = new mongoose.Types.ObjectId(pingId);
+
   try {
-    const ping = await Ping.findByIdAndUpdate(
-      pingId,
-      { status: response },
-      { new: true }
-    );
+    const targetPing = await Ping.findById(pingObjectId);
 
     // Check if the ping exists
-    if (ping === null) {
+    if (targetPing === null) {
       return res.status(400).send({ message: 'Ping not found' });
     }
 
-    if (ping.queueId) {
-      // Remove the ping expiration from the queue
-      nightlightQueue.remove(ping.queueId);
-    }
-
     // Add the ping to the recipient's list of pings
-    const recipientUser = await User.findById(ping.recipientId);
+    const recipientUser = await User.findById(targetPing.recipientId);
+
+    // Find the sender
+    const senderUser = await User.findById(targetPing.senderId);
 
     // Check if the user exists
     if (recipientUser === null) {
       return res.status(400).send({ message: 'Recipient not found' });
     }
 
-    // Find the sender
-    const senderUser = await User.findById(ping.senderId);
-
     // Check if the user exists
     if (senderUser === null) {
       return res.status(400).send({ message: 'Sender not found' });
     }
+
+    if (targetPing.queueId) {
+      // Remove the ping expiration from the queue
+      nightlightQueue.remove(targetPing.queueId);
+    }
+
+    // Update the ping status
+    targetPing.status = response;
+
+    // Save the ping to the database
+    await targetPing.save();
 
     // Add the ping to the sender's list of pings
     const responseValue =
@@ -194,7 +192,7 @@ export const respondToPing = async (req: Request, res: Response) => {
 
     // Send a notification to the sender
     sendNotifications(
-      [ping.senderId.toString()],
+      [targetPing.senderId.toString()],
       'Ping response!📩',
       `${recipientUser.firstName} ${recipientUser.lastName} responded: ${responseValue}!`,
       {
@@ -203,11 +201,11 @@ export const respondToPing = async (req: Request, res: Response) => {
             ? NotificationType.pingRespondedOkay
             : NotificationType.pingRespondedNotOkay,
         sentDateTime: new Date().toUTCString(),
-        pingId: ping._id.toString(),
-        recipientId: ping.recipientId.toString(),
+        pingId: targetPing._id.toString(),
+        recipientId: targetPing.recipientId.toString(),
         recipientFirstName: recipientUser.firstName,
         recipientLastName: recipientUser.lastName,
-        senderId: ping.senderId.toString(),
+        senderId: targetPing.senderId.toString(),
         senderFirstName: senderUser.firstName,
         senderLastName: senderUser.lastName,
       },
@@ -217,7 +215,7 @@ export const respondToPing = async (req: Request, res: Response) => {
     // Send the ping back to the user
     return res
       .status(200)
-      .send({ message: 'Ping responded successfully', ping: ping });
+      .send({ message: 'Ping responded successfully', ping: targetPing });
   } catch (error: any) {
     return res.status(500).send({ error: error.message });
   }
@@ -243,46 +241,48 @@ export const removePing = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid ping ID' });
   }
 
+  // Create a new mongoose ObjectId from the ping ID
+  const pingObjectId = new mongoose.Types.ObjectId(pingId);
+
   try {
     // Remove the ping from the database
-    const removedPing = await Ping.findByIdAndRemove(pingId);
+    const removedPing = await Ping.findById(pingObjectId);
 
     // Check if the ping exists
     if (removedPing === null) {
       return res.status(400).send({ message: 'Ping not found' });
     }
 
-    // Remove the ping expiration from the queue
-    if (removedPing.queueId) {
-      nightlightQueue.remove(removedPing.queueId);
-    }
-
     // Remove the ping from the recipient's list of pings
-    const recipientUser = await User.findByIdAndUpdate(
-      removedPing.recipientId,
-      {
-        $pull: { receivedPings: removedPing._id },
-      },
-      { new: true }
-    );
+    const recipientUser = await User.findById(removedPing.recipientId);
+
+    // Remove the ping from the sender's list of pings
+    const senderUser = await User.findById(removedPing.senderId);
 
     // Check if the user exists
     if (recipientUser === null) {
       return res.status(400).send({ message: 'Recipient not found' });
     }
 
-    // Remove the ping from the sender's list of pings
-    const senderUser = await User.findByIdAndUpdate(
-      removedPing.senderId,
-      {
-        $pull: { sentPings: removedPing._id },
-      },
-      { new: true }
-    );
-
     // Check if the user exists
     if (senderUser === null) {
       return res.status(400).send({ message: 'Sender not found' });
+    }
+
+    // Remove the ping from the recipient's list of pings
+    recipientUser.receivedPings.filter(ping => !ping.equals(removedPing._id));
+
+    // Remove the ping from the sender's list of pings
+    senderUser.sentPings.filter(ping => !ping.equals(removedPing._id));
+
+    // Save the users to the database and remove the ping
+    await recipientUser.save();
+    await senderUser.save();
+    await removedPing.remove();
+
+    // Remove the ping expiration from the queue
+    if (removedPing.queueId) {
+      nightlightQueue.remove(removedPing.queueId);
     }
 
     // Send a notification to the recipient
@@ -294,9 +294,6 @@ export const removePing = async (req: Request, res: Response) => {
         notificationType: NotificationType.pingRemoved,
         sentDateTime: new Date().toUTCString(),
         pingId: removedPing._id.toString(),
-        recipientId: removedPing.recipientId.toString(),
-        recipientFirstName: recipientUser.firstName,
-        recipientLastName: recipientUser.lastName,
         senderId: removedPing.senderId.toString(),
         senderFirstName: senderUser.firstName,
         senderLastName: senderUser.lastName,

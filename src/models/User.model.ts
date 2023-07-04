@@ -38,12 +38,15 @@ const userSchema = new mongoose.Schema({
   },
   imgUrlProfileSmall: {
     type: String,
+    required: true,
   },
   imgUrlProfileLarge: {
     type: String,
+    required: true,
   },
   imgUrlCover: {
     type: String,
+    required: true,
   },
   firstName: {
     type: String,
@@ -63,14 +66,15 @@ const userSchema = new mongoose.Schema({
   },
   isEmergency: {
     type: Boolean,
-    default: false,
+    required: true,
   },
   isActiveNow: {
     type: Boolean,
-    required: false,
+    required: true,
   },
   birthday: {
     type: String,
+    required: true,
   },
   friends: [
     {
@@ -78,7 +82,7 @@ const userSchema = new mongoose.Schema({
       ref: 'User',
     },
   ],
-  friendRequests: [
+  receivedFriendRequests: [
     {
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -94,7 +98,7 @@ const userSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'Group',
   },
-  invitedGroups: [
+  receivedGroupInvites: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Group',
@@ -111,7 +115,7 @@ const userSchema = new mongoose.Schema({
     {
       _id: Schema.Types.ObjectId,
       name: String,
-      users: [
+      members: [
         {
           type: Schema.Types.ObjectId,
           ref: 'User',
