@@ -39,12 +39,15 @@ const userSchema = new mongoose.Schema({
   },
   imgUrlProfileSmall: {
     type: String,
+    required: true,
   },
   imgUrlProfileLarge: {
     type: String,
+    required: true,
   },
   imgUrlCover: {
     type: String,
+    required: true,
   },
   firstName: {
     type: String,
@@ -64,14 +67,15 @@ const userSchema = new mongoose.Schema({
   },
   isEmergency: {
     type: Boolean,
-    default: false,
+    required: true,
   },
   isActiveNow: {
     type: Boolean,
-    required: false,
+    required: true,
   },
   birthday: {
     type: String,
+    required: true,
   },
   friends: [
     {

@@ -389,27 +389,50 @@ export const acceptGroupInvitation = async (req: Request, res: Response) => {
   }
 
   try {
-    // Remove groupId from invited groups and add to currentGroup
-    const targetUser = await User.findByIdAndUpdate(userId, {
-      $pull: { invitedGroups: groupId },
-      currentGroup: groupId,
-    });
+    // Remove userId from invitedMembers in group and add to members in group
+    const targetGroup = await Group.findByIdAndUpdate(groupId);
+
+    const targetUser = await User.findById(userId);
 
     // Check if the user exists
     if (targetUser === null) {
       return res.status(400).send({ message: 'User does not exist!' });
     }
 
-    // Remove userId from invitedMembers in group and add to members in group
-    const targetGroup = await Group.findByIdAndUpdate(groupId, {
-      $pull: { invitedMembers: userId },
-      $push: { members: userId },
-    });
-
     // Check if the group exists
     if (targetGroup === null) {
       return res.status(400).send({ message: 'Group does not exist!' });
     }
+
+    // Check if the user is already in a group
+    if (targetUser?.currentGroup) {
+      return res
+        .status(400)
+        .send({ message: 'User already has a current group!' });
+    }
+
+    // Remove userId from invitedMembers
+    targetGroup.invitedMembers.splice(
+      targetGroup.invitedMembers.indexOf(new mongoose.Types.ObjectId(userId)),
+      1
+    );
+
+    // Add userId to members
+    targetGroup.members.push(new mongoose.Types.ObjectId(userId));
+
+    // Remove groupId from invited groups and add to currentGroup
+    targetUser.invitedGroups = targetUser.invitedGroups.filter(
+      group => group._id.toString() !== groupId
+    );
+
+    // Add groupId to currentGroup
+    targetUser.currentGroup = new mongoose.Types.ObjectId(groupId);
+
+    // Save the updated group
+    await targetGroup.save();
+
+    // Save the updated user
+    await targetUser.save();
 
     // Remove the invite notification from the user's notifications
     await addGroupInviteResponseJob(userId, groupId);

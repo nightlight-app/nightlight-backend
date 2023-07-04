@@ -22,7 +22,7 @@ export const getNotifications = async (req: Request, res: Response) => {
 
   try {
     // find all notifications for the given user
-    const notifications = await Notification.find({ userId: userId });
+    const notifications = await Notification.find({ recipientId: userId });
 
     // return found notifications
     return res.status(200).send({
@@ -74,7 +74,7 @@ export const addNotificationsToDatabase = async (req: Request, res: Response) =>
       if (mongoose.Types.ObjectId.isValid(id)) {
         // add notification to database via utils function
         await sendNotificationToUser({
-          userId: id,
+          recipientId: id,
           title: notification.title,
           body: notification.body,
           data: notification.data,
