@@ -80,12 +80,12 @@ export const GROUP_KEYS_ALL = [
 /**
  * The necessary keys for a saved group object
  */
-export const SAVED_GROUP_KEYS = ['name', 'users'];
+export const SAVED_GROUP_KEYS = ['name', 'members'];
 
 /**
  * All possible keys for a saved group object
  */
-export const SAVED_GROUP_KEYS_ALL = ['__v', '_id', 'name', 'users'];
+export const SAVED_GROUP_KEYS_ALL = ['__v', '_id', 'name', 'members'];
 
 /**
  * The necessary keys for a venue object
