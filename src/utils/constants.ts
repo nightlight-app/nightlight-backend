@@ -115,7 +115,7 @@ export const NOTIFICATION_KEYS = ['title', 'body', 'data'];
 export const NOTIFICATION_KEYS_ALL = [
   '__v',
   '_id',
-  'userId',
+  'recipientId',
   'userIds',
   'title',
   'body',
