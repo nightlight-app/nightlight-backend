@@ -61,6 +61,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Run CI
+        run: npm ci
+
       - name: Run prettier-check
         run: npm run format:check
   eslint-check:
@@ -72,6 +75,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+
+      - name: Run CI
+        run: npm ci
 
       - name: Run eslint
         run: npm run lint
