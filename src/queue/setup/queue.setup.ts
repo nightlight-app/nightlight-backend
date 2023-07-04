@@ -1,7 +1,7 @@
-import { Queue, QueueEvents } from 'bullmq';
-import Redis from 'ioredis';
 import { NIGHTLIGHT_QUEUE } from '../../utils/constants';
-import { JobsList, NightlightQueueJob } from '../jobs.interface';
+import { Queue } from 'bullmq';
+import Redis from 'ioredis';
+import type { JobsList, NightlightQueueJob } from '../jobs.interface';
 
 let redisHost = process.env.REDIS_HOST || '';
 
@@ -27,7 +27,7 @@ queueOptions.connection.on('error', err => {
  * Also can be used to retrieve the existing queue.
  * No two queues with the same name can exist.
  */
-export const nightlightQueue = new Queue<NightlightQueueJob, any, JobsList>(
+export const nightlightQueue = new Queue<NightlightQueueJob, unknown, JobsList>(
   NIGHTLIGHT_QUEUE,
   queueOptions
 );

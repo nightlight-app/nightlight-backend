@@ -1,7 +1,3 @@
-import mongoose, { ConnectOptions } from 'mongoose';
-import createServer from '../server';
-import chai, { expect } from 'chai';
-import chaiHttp from 'chai-http';
 import {
   GROUP_KEYS_TEST,
   TEST_GROUP2,
@@ -12,16 +8,21 @@ import {
   TEST_USER_5,
   USER_KEYS_TEST,
 } from './data/testData';
-import { ObjectId } from 'mongodb';
-import { Server } from 'http';
+import createServer from '../server';
 import { nightlightQueue } from '../queue/setup/queue.setup';
 import { useTestingDatabase } from '../../src/config/mongodb.config';
 import Group from '../models/Group.model';
 import User from '../models/User.model';
 import Venue from '../models/Venue.model';
 import Notification from '../models/Notification.model';
-
-require('dotenv').config();
+import { ObjectId } from 'mongodb';
+import chaiHttp from 'chai-http';
+import chai, { expect } from 'chai';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import type { Server } from 'http';
+import type { ConnectOptions } from 'mongoose';
+dotenv.config();
 
 chai.use(chaiHttp);
 chai.should();
@@ -339,15 +340,15 @@ describe('testing group actions', () => {
         expect(res).to.have.status(200);
         const notifications = res.body.notifications;
         // one of the notifications should be the friend request from 3 to 2
-        expect(notifications).to.satisfy((nots: any[]) => {
-          return nots.some(
+        expect(notifications).to.satisfy((nots: any[]) =>
+          nots.some(
             not =>
               not.data.notificationType === 'groupInvite' &&
               not.data.groupId === groupId &&
               not.data.senderId === userIdMain &&
               not.recipientId === userIdFriend5
-          );
-        });
+          )
+        );
         done();
       })
       .catch(err => done(err));
@@ -375,8 +376,8 @@ describe('testing group actions', () => {
         expect(res).to.have.status(200);
         const notifications = res.body.notifications;
         // one of the notifications should be the friend request from 3 to 2
-        expect(notifications).to.satisfy((nots: any[]) => {
-          return nots.every(
+        expect(notifications).to.satisfy((nots: any[]) =>
+          nots.every(
             not =>
               !(
                 not.data.notificationType === 'groupInvite' &&
@@ -384,8 +385,8 @@ describe('testing group actions', () => {
                 not.data.senderId === userIdMain &&
                 not.recipientId === userIdFriend5
               )
-          );
-        });
+          )
+        );
         done();
       })
       .catch(err => done(err));

@@ -1,11 +1,11 @@
-import { assert } from 'chai';
-import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
 import {
   TEST_GROUP1,
   TEST_NOTIFICATION,
   TEST_USER_1,
   TEST_VENUE,
 } from './data/testData';
+import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
+import { assert } from 'chai';
 
 describe('testing validation utils', () => {
   it('should validate keys in an object (user)', done => {

@@ -1,7 +1,5 @@
-import { Job, Worker, WorkerOptions } from 'bullmq';
 import { connectMongoDB } from '../../config/mongodb.config';
 import { NIGHTLIGHT_QUEUE } from '../../utils/constants';
-import { NightlightQueueJob } from '../jobs.interface';
 import {
   expireGroup,
   expirePing,
@@ -9,6 +7,9 @@ import {
   removeFriendRequestNotification,
   removeGroupInviteNotification,
 } from '../workers';
+import { Worker } from 'bullmq';
+import type { NightlightQueueJob } from '../jobs.interface';
+import type { Job, WorkerOptions } from 'bullmq';
 
 let redisHost = process.env.REDIS_HOST || '';
 

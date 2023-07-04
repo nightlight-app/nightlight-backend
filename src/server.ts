@@ -1,17 +1,16 @@
-import express from 'express';
-import http from 'http';
-import cors from 'cors';
 import groupsRouter from './routes/groups.router';
 import usersRouter from './routes/users.router';
 import venuesRouter from './routes/venues.router';
 import { createBullBoardAdapter } from './queue/setup/bullboard.setup';
 import notificationsRouter from './routes/notifications.router';
-import helmet from 'helmet';
-import { credential } from 'firebase-admin';
-import admin from 'firebase-admin';
 import { FIREBASE_ADMIN_CONFIG } from './utils/constants';
 import { authenticateFirebaseToken } from './middleware/auth.middleware';
 import pingsRouter from './routes/pings.router';
+import helmet from 'helmet';
+import admin, { credential } from 'firebase-admin';
+import cors from 'cors';
+import express from 'express';
+import http from 'http';
 
 const createServer = ({
   shouldRunBullBoard = true,

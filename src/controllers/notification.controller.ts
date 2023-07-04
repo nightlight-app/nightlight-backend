@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
-import mongoose from 'mongoose';
 import { sendNotificationToUser } from '../utils/notification.utils';
 import Notification from '../models/Notification.model';
-import { MongoNotification } from '../interfaces/Notification.interface';
 import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
+import mongoose from 'mongoose';
+import type { MongoNotification } from '../interfaces/Notification.interface';
+import type { Request, Response } from 'express';
 
 /**
  * Retrieves all notifications for a given user.

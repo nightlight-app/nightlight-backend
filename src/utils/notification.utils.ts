@@ -1,13 +1,13 @@
+import Notification from '../models/Notification.model';
+import User from '../models/User.model';
 import mongoose from 'mongoose';
-import {
+import axios from 'axios';
+import type {
   ExpoNotification,
   MongoNotification,
   NotificationDocument,
   NotificationSpecificData,
 } from '../interfaces/Notification.interface';
-import Notification from '../models/Notification.model';
-import User from '../models/User.model';
-import axios from 'axios';
 
 /**
  * Sends notification to specified user(s) through expo and saves notification to database.
@@ -34,10 +34,10 @@ export const sendNotifications = async (
   body: string,
   data: NotificationSpecificData,
   isPush: boolean,
-  delay: number = 0
+  delay = 0
 ) => {
   // array of notifications to return
-  let notifications: NotificationDocument[] = [];
+  const notifications: NotificationDocument[] = [];
   // Exit function if userId is an empty array
   if (recipientIds.length === 0) {
     return notifications;

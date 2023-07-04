@@ -9,7 +9,7 @@
  */
 export interface LastActive {
   location: LocationData;
-  time: String;
+  time: string;
 }
 
 /**

@@ -1,18 +1,17 @@
-import mongoose from 'mongoose';
-import { Group } from '../../interfaces/Group.interface';
-import { LastActive } from '../../interfaces/LastActive.interface';
-import {
-  MongoNotification,
-  NotificationData,
-  NotificationSpecificData,
-  NotificationType,
-} from '../../interfaces/Notification.interface';
-import { SavedGroup } from '../../interfaces/SavedGroup.interface';
-import { EmergencyContact, User } from '../../interfaces/User.interface';
-import { Venue, VenueReaction } from '../../interfaces/Venue.interface';
+import { NotificationType } from '../../interfaces/Notification.interface';
 import { REACTION_EMOJIS } from '../../utils/constants';
-import { Emoji } from '../../utils/venue.utils';
+import mongoose from 'mongoose';
 import { faker } from '@faker-js/faker';
+import type { Group } from '../../interfaces/Group.interface';
+import type { LastActive } from '../../interfaces/LastActive.interface';
+import type {
+  MongoNotification,
+  NotificationSpecificData,
+} from '../../interfaces/Notification.interface';
+import type { SavedGroup } from '../../interfaces/SavedGroup.interface';
+import type { EmergencyContact, User } from '../../interfaces/User.interface';
+import type { Venue, VenueReaction } from '../../interfaces/Venue.interface';
+import type { Emoji } from '../../utils/venue.utils';
 
 /* User 1 */
 const TEST_LAST_ACTIVE_1: LastActive = {
@@ -66,7 +65,7 @@ export const TEST_USER_1: User = {
   sentFriendRequests: [],
 };
 
-export const UPDATE_USER_1_TO_USER_2: any = {
+export const UPDATE_USER_1_TO_USER_2 = {
   firstName: 'Tom',
   lastName: 'Updated',
   email: 't-dawg@gmail.com',
@@ -345,12 +344,11 @@ export const TEST_EMERGENCY_CONTACT: EmergencyContact = {
 };
 
 /* Reactions */
-export const createTestReaction = (userId: string | number, emoji: Emoji) => {
-  return {
+export const createTestReaction = (userId: string | number, emoji: Emoji) =>
+  ({
     userId: new mongoose.Types.ObjectId(userId),
     emoji: emoji,
-  } as VenueReaction;
-};
+  } as VenueReaction);
 
 /* KEYS FOR TESTING */
 // TODO: can these be enums?

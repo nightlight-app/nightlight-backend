@@ -1,5 +1,3 @@
-import { Request, Response } from 'express';
-import mongoose from 'mongoose';
 import { NotificationType } from '../interfaces/Notification.interface';
 import Group from '../models/Group.model';
 import User from '../models/User.model';
@@ -7,6 +5,8 @@ import { addGroupExpireJob } from '../queue/jobs';
 import { sendNotifications } from '../utils/notification.utils';
 import { KeyValidationType, verifyKeys } from '../utils/validation.utils';
 import { GROUP_EXPIRY_DURATION } from '../utils/constants';
+import mongoose from 'mongoose';
+import type { Request, Response } from 'express';
 
 /**
  * Creates a new group and adds it to the database.

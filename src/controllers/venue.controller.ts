@@ -1,13 +1,12 @@
-/** source/controllers/posts.ts */
-import { Request, Response } from 'express';
-import mongoose from 'mongoose';
-import { Venue as VenueInterface } from '../interfaces/Venue.interface';
 import Venue from '../models/Venue.model';
 import { REACTION_EMOJIS, REACTION_EXPIRY_DURATION } from '../utils/constants';
-import { Emoji } from '../utils/venue.utils';
 import { addReactionExpireJob } from '../queue/jobs';
 import { nightlightQueue } from '../queue/setup/queue.setup';
 import { verifyKeys, KeyValidationType } from '../utils/validation.utils';
+import mongoose from 'mongoose';
+import type { Emoji } from '../utils/venue.utils';
+import type { Venue as VenueInterface } from '../interfaces/Venue.interface';
+import type { Request, Response } from 'express';
 
 /**
  * Create a new venue
@@ -67,9 +66,6 @@ export const getVenue = async (req: Request, res: Response) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
-
-  // Create user object ID from user ID
-  const userObjectId = new mongoose.Types.ObjectId(userId);
 
   // Create venue object ID from venue ID
   const venueObjectId = new mongoose.Types.ObjectId(venueId);
@@ -175,9 +171,6 @@ export const getVenues = async (req: Request, res: Response) => {
   if (Number(count) <= 0) {
     return res.status(400).send({ message: 'Invalid page count!' });
   }
-
-  // Create user object ID from user ID
-  const userObjectId = new mongoose.Types.ObjectId(userId);
 
   try {
     // Get the page number from the query parameters

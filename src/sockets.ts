@@ -1,4 +1,4 @@
-import { Server, Socket } from 'socket.io';
+import type { Server, Socket } from 'socket.io';
 
 interface LocationUpdateData {
   groupId: string;

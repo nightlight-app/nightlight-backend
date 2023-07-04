@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
 import admin from 'firebase-admin';
+import type { Request, Response, NextFunction } from 'express';
 
 // Define a custom interface for the request object with the `decodedFirebaseToken` property
 interface CustomRequest extends Request {

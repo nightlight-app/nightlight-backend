@@ -1,4 +1,3 @@
-import express from 'express';
 import {
   createUser,
   getUsers,
@@ -28,6 +27,7 @@ import {
   goOnline,
   goOffline,
 } from '../controllers/user.controller';
+import express from 'express';
 
 const usersRouter = express.Router();
 

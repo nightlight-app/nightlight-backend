@@ -13,6 +13,9 @@
     "express": "nodemon src/index.ts",
     "build": "rm -rf build/ && prettier --write src/ && tsc",
     "format": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
+    "format:check": "prettier --check '**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "typescript:check": "tsc --esModuleInterop",
     "seed": "ENVIRONMENT=test nyc mocha -r dotenv/config --exit --timeout 8000 -r ts-node/register src/tests/seed.test.ts",
     "test:venue-utils": "ENVIRONMENT=test nyc mocha -r dotenv/config --timeout 8000 --exit -r ts-node/register src/tests/venue.utils.test.ts",
     "test:notifs-utils": "ENVIRONMENT=test nyc mocha -r dotenv/config --timeout 8000 --exit -r ts-node/register src/tests/notification.utils.test.ts",
@@ -22,7 +25,8 @@
     "test:groups": "ENVIRONMENT=test nyc mocha -r dotenv/config --timeout 8000 --exit -r ts-node/register src/tests/group.controller.test.ts",
     "test:notifs": "ENVIRONMENT=test nyc mocha -r dotenv/config --timeout 8000 --exit -r ts-node/register src/tests/notification.controller.test.ts",
     "test:pings": "ENVIRONMENT=test nyc mocha -r dotenv/config --timeout 8000 --exit -r ts-node/register src/tests/ping.controller.test.ts",
-    "test": "ENVIRONMENT=test nyc mocha -r dotenv/config --timeout 20000 --exit -r ts-node/register src/tests/*.test.ts"
+    "test": "ENVIRONMENT=test nyc mocha -r dotenv/config --timeout 20000 --exit -r ts-node/register src/tests/*.test.ts",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@bull-board/express": "^5.0.0",
@@ -56,8 +60,15 @@
   "devDependencies": {
     "@types/multer": "^1.4.7",
     "@types/streamifier": "^0.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.11",
+    "@typescript-eslint/parser": "^5.59.11",
     "chai": "^4.1.2",
     "chai-http": "^4.0.0",
+    "eslint": "^8.43.0",
+    "eslint-plugin-autofix": "^1.1.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-react": "^7.32.2",
+    "husky": "^8.0.0",
     "mocha": "^5.2.0",
     "npm-run-all": "^4.1.5",
     "nyc": "^15.1.0",

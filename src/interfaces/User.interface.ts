@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
-import { LastActive } from './LastActive.interface';
-import { SavedGroup } from './SavedGroup.interface';
+import type { LastActive } from './LastActive.interface';
+import type { SavedGroup } from './SavedGroup.interface';
+import type mongoose from 'mongoose';
 
 /**
  * An interface representing a user object and its properties.

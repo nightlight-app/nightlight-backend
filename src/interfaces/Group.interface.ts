@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import type mongoose from 'mongoose';
 
 /**
  * Specifies the properties of a Group instance in the application.
@@ -16,6 +16,10 @@ export interface Group {
   name: string;
   members: mongoose.Types.ObjectId[];
   invitedMembers: mongoose.Types.ObjectId[];
-  creationDatetime: String;
-  expirationDatetime: String;
+  creationDatetime: string;
+  expirationDatetime: string;
+  expectedDestination?: {
+    latitude: number;
+    longitude: number;
+  };
 }

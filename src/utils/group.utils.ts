@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
 import User from '../models/User.model';
+import type mongoose from 'mongoose';
 
 /**
  * DEPRECATED FUNCTION (keeping for possible future use)

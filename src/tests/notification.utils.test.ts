@@ -1,9 +1,11 @@
-import mongoose, { ConnectOptions } from 'mongoose';
-import chai, { assert } from 'chai';
 import { sendNotifications } from '../utils/notification.utils';
-import { ObjectId } from 'mongodb';
 import { useTestingDatabase } from '../../src/config/mongodb.config';
-require('dotenv').config();
+import mongoose from 'mongoose';
+import chai, { assert } from 'chai';
+import { ObjectId } from 'mongodb';
+import dotenv from 'dotenv';
+import type { ConnectOptions } from 'mongoose';
+dotenv.config();
 
 chai.should();
 

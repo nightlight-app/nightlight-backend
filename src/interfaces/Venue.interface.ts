@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import { Emoji } from '../utils/venue.utils';
+import type { Emoji } from '../utils/venue.utils';
+import type mongoose from 'mongoose';
 
 /**
  * An interface representing a venue object with an optional id, the name of the venue, its address, any reactions to it, and its associated location.
