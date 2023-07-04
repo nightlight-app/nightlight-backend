@@ -67,9 +67,6 @@ export const getVenue = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid user ID!' });
   }
 
-  // Create user object ID from user ID
-  const userObjectId = new mongoose.Types.ObjectId(userId);
-
   // Create venue object ID from venue ID
   const venueObjectId = new mongoose.Types.ObjectId(venueId);
 
@@ -110,7 +107,7 @@ export const getVenue = async (req: Request, res: Response) => {
                               cond: {
                                 $and: [
                                   { $eq: ['$$this.emoji', '$$emoji'] },
-                                  { $eq: ['$$this.userId', userObjectId] },
+                                  { $eq: ['$$this.userId', userId] },
                                 ],
                               },
                             },
@@ -175,9 +172,6 @@ export const getVenues = async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Invalid page count!' });
   }
 
-  // Create user object ID from user ID
-  const userObjectId = new mongoose.Types.ObjectId(userId);
-
   try {
     // Get the page number from the query parameters
     const page = Number(req.query?.page);
@@ -216,7 +210,7 @@ export const getVenues = async (req: Request, res: Response) => {
                               cond: {
                                 $and: [
                                   { $eq: ['$$this.emoji', '$$emoji'] },
-                                  { $eq: ['$$this.userId', userObjectId] },
+                                  { $eq: ['$$this.userId', userId] },
                                 ],
                               },
                             },
