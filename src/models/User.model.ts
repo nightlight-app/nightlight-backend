@@ -38,15 +38,12 @@ const userSchema = new mongoose.Schema({
   },
   imgUrlProfileSmall: {
     type: String,
-    required: true,
   },
   imgUrlProfileLarge: {
     type: String,
-    required: true,
   },
   imgUrlCover: {
     type: String,
-    required: true,
   },
   firstName: {
     type: String,

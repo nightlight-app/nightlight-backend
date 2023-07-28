@@ -15,6 +15,8 @@ import Group from '../models/Group.model';
 import Venue from '../models/Venue.model';
 import Notification from '../models/Notification.model';
 import { useTestingDatabase } from '../../src/config/mongodb.config';
+import Ping from '../models/Ping.model';
+import { nightlightQueue } from '../queue/setup/queue.setup';
 import chaiHttp from 'chai-http';
 import chai, { expect } from 'chai';
 import mongoose from 'mongoose';
@@ -46,6 +48,8 @@ before(async () => {
   await Group.deleteMany({});
   await Venue.deleteMany({});
   await Notification.deleteMany({});
+  await Ping.deleteMany({});
+  await nightlightQueue.drain();
 });
 
 /**
